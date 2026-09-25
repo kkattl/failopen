@@ -6,7 +6,7 @@
         "generateName": "calico-kube-controllers-65d574b4b5-",
         "namespace": "kube-system",
         "uid": "80e792a3-edf4-4a80-9f0b-3dda92920571",
-        "resourceVersion": "1100",
+        "resourceVersion": "45383",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:43Z",
         "labels": {
@@ -15,9 +15,9 @@
           "topology.kubernetes.io/zone": "zone-c"
         },
         "annotations": {
-          "cni.projectcalico.org/containerID": "032df289976244b513ed547dd62005a44df74c893091f2d11d01f8778559018c",
-          "cni.projectcalico.org/podIP": "192.168.216.66/32",
-          "cni.projectcalico.org/podIPs": "192.168.216.66/32"
+          "cni.projectcalico.org/containerID": "4039874a59afc2399aac52c47848ae3742e95d3ebc48f890be17b9ca46eafb80",
+          "cni.projectcalico.org/podIP": "192.168.216.85/32",
+          "cni.projectcalico.org/podIPs": "192.168.216.85/32"
         },
         "ownerReferences": [
           {
@@ -174,7 +174,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:03Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "Initialized",
@@ -188,14 +188,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:06Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:06Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "PodScheduled",
@@ -211,10 +211,10 @@
             "ip": "172.18.0.6"
           }
         ],
-        "podIP": "192.168.216.66",
+        "podIP": "192.168.216.85",
         "podIPs": [
           {
-            "ip": "192.168.216.66"
+            "ip": "192.168.216.85"
           }
         ],
         "startTime": "2026-09-23T13:31:51Z",
@@ -223,15 +223,23 @@
             "name": "calico-kube-controllers",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:06Z"
+                "startedAt": "2026-09-24T13:08:15Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-23T13:32:06Z",
+                "finishedAt": "2026-09-24T10:55:40Z",
+                "containerID": "containerd://2666cd0d9e59b1eb5c119aa511b6b8077c4abb1fdcfa506a280c62b55edb11b4"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/calico/kube-controllers:v3.28.0",
             "imageID": "docker.io/calico/kube-controllers@sha256:8f04e4772a2b3fa752bc7fb98cc89c7fa0ab88a341115ee8c5b6faa4180053fd",
-            "containerID": "containerd://2666cd0d9e59b1eb5c119aa511b6b8077c4abb1fdcfa506a280c62b55edb11b4",
+            "containerID": "containerd://1ed7f5dbea08bb01e4c0e7a0484413b02836e29aecec896d8d22905b79f10ef3",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -263,7 +271,7 @@
         "generateName": "calico-node-",
         "namespace": "kube-system",
         "uid": "d50b0b6b-42a1-4882-9bc4-118765a99ce9",
-        "resourceVersion": "1122",
+        "resourceVersion": "45436",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:44Z",
         "labels": {
@@ -868,7 +876,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -882,14 +890,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:12Z"
+            "lastTransitionTime": "2026-09-24T13:08:23Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:12Z"
+            "lastTransitionTime": "2026-09-24T13:08:23Z"
           },
           {
             "type": "PodScheduled",
@@ -899,16 +907,16 @@
             "lastTransitionTime": "2026-09-23T13:31:44Z"
           }
         ],
-        "hostIP": "172.18.0.9",
+        "hostIP": "172.18.0.4",
         "hostIPs": [
           {
-            "ip": "172.18.0.9"
+            "ip": "172.18.0.4"
           }
         ],
-        "podIP": "172.18.0.9",
+        "podIP": "172.18.0.4",
         "podIPs": [
           {
-            "ip": "172.18.0.9"
+            "ip": "172.18.0.4"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -919,17 +927,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:54Z",
-                "finishedAt": "2026-09-23T13:31:54Z",
-                "containerID": "containerd://6fb613b56de909b9cc05791ad04b81cbed8880f98741cc46734d5e27179d7c78"
+                "startedAt": "2026-09-24T13:07:43Z",
+                "finishedAt": "2026-09-24T13:07:43Z",
+                "containerID": "containerd://6ba166cbf0ac25f17cc95c9466f368ab0364eed1867aa9f7b30fbbfb0fd50d43"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T10:55:44Z",
+                "containerID": "containerd://b4bfd81405b7e94a300a79db43e1f9397d2e35062c78f9067178dd58bce6efc6"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://6fb613b56de909b9cc05791ad04b81cbed8880f98741cc46734d5e27179d7c78",
+            "containerID": "containerd://6ba166cbf0ac25f17cc95c9466f368ab0364eed1867aa9f7b30fbbfb0fd50d43",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -964,17 +980,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:54Z",
-                "finishedAt": "2026-09-23T13:31:55Z",
-                "containerID": "containerd://9d993b3bf88b9b4f9fde2702d838adbb55758a3f0ca341f611a8136813f277ce"
+                "startedAt": "2026-09-24T13:07:44Z",
+                "finishedAt": "2026-09-24T13:07:45Z",
+                "containerID": "containerd://0cc3ef360669ac10e3c60b2b7678ee2b7d89ac409b5c2dd2cc38767762f35da1"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 1,
+                "reason": "Error",
+                "startedAt": "2026-09-24T10:55:45Z",
+                "finishedAt": "2026-09-24T10:55:46Z",
+                "containerID": "containerd://53bced0b4dd16828cc6d9f2183810c731506ef0139cacd4a2b7d0a9dcbd1728e"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 3,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://9d993b3bf88b9b4f9fde2702d838adbb55758a3f0ca341f611a8136813f277ce",
+            "containerID": "containerd://0cc3ef360669ac10e3c60b2b7678ee2b7d89ac409b5c2dd2cc38767762f35da1",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -1009,17 +1033,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
+                "startedAt": "2026-09-24T13:07:46Z",
+                "finishedAt": "2026-09-24T13:07:46Z",
+                "containerID": "containerd://b675dab5c2ea68afa3510b11f6f5ec773a0d1499ef6fc4d7c40e05080503d4c1"
+              }
+            },
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
                 "startedAt": "2026-09-23T13:32:01Z",
                 "finishedAt": "2026-09-23T13:32:01Z",
                 "containerID": "containerd://c1eeef86d87ecd4a4e047184e01ea4a278e1583e080e2bd8ae16f180069abb26"
               }
             },
-            "lastState": {},
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://c1eeef86d87ecd4a4e047184e01ea4a278e1583e080e2bd8ae16f180069abb26",
+            "containerID": "containerd://b675dab5c2ea68afa3510b11f6f5ec773a0d1499ef6fc4d7c40e05080503d4c1",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -1060,15 +1092,23 @@
             "name": "calico-node",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:01Z"
+                "startedAt": "2026-09-24T13:07:47Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-23T13:32:01Z",
+                "finishedAt": "2026-09-24T10:55:40Z",
+                "containerID": "containerd://6886f6d3cb992bad6a36a5ccebb67316dfaae5cab829ad8aaffb74eb4c6c5297"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://6886f6d3cb992bad6a36a5ccebb67316dfaae5cab829ad8aaffb74eb4c6c5297",
+            "containerID": "containerd://4d0fe60ecaa37f1ee15e0eaa710910683fb6e8d533a7e018ae10827dd9c2d8ee",
             "started": true,
             "allocatedResources": {
               "cpu": "250m"
@@ -1150,7 +1190,7 @@
         "generateName": "calico-node-",
         "namespace": "kube-system",
         "uid": "8d7e0abc-d556-4ec0-a856-5de57cf4dac0",
-        "resourceVersion": "1147",
+        "resourceVersion": "45544",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:43Z",
         "labels": {
@@ -1755,7 +1795,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -1769,14 +1809,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:15Z"
+            "lastTransitionTime": "2026-09-24T13:08:43Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:15Z"
+            "lastTransitionTime": "2026-09-24T13:08:43Z"
           },
           {
             "type": "PodScheduled",
@@ -1786,16 +1826,16 @@
             "lastTransitionTime": "2026-09-23T13:31:43Z"
           }
         ],
-        "hostIP": "172.18.0.10",
+        "hostIP": "172.18.0.13",
         "hostIPs": [
           {
-            "ip": "172.18.0.10"
+            "ip": "172.18.0.13"
           }
         ],
-        "podIP": "172.18.0.10",
+        "podIP": "172.18.0.13",
         "podIPs": [
           {
-            "ip": "172.18.0.10"
+            "ip": "172.18.0.13"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -1806,17 +1846,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:54Z",
-                "finishedAt": "2026-09-23T13:31:54Z",
-                "containerID": "containerd://fdec0f6872e947faecd89d472a69c35c9ed77436b4f8372e1aeb61ae381cc9e2"
+                "startedAt": "2026-09-24T13:07:43Z",
+                "finishedAt": "2026-09-24T13:07:43Z",
+                "containerID": "containerd://777efc739c00aa942b8b353ae3d47ddedff2cef9fff85b2557052218b358639b"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T10:55:44Z",
+                "containerID": "containerd://cb03e3fbedb21684d738d98152e9dcff4790a55eb02521b0d82a4d46d13ee9cc"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://fdec0f6872e947faecd89d472a69c35c9ed77436b4f8372e1aeb61ae381cc9e2",
+            "containerID": "containerd://777efc739c00aa942b8b353ae3d47ddedff2cef9fff85b2557052218b358639b",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -1851,17 +1899,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:54Z",
-                "finishedAt": "2026-09-23T13:31:55Z",
-                "containerID": "containerd://0b9bc9af14311acd13ac373631b79211c39b8a7d07bf69b335c2cba2927891f4"
+                "startedAt": "2026-09-24T13:08:20Z",
+                "finishedAt": "2026-09-24T13:08:20Z",
+                "containerID": "containerd://3a194b794a3d2e40c7fcabcf8597e20290c700c8ae07c5390f1de2f81f23d8b9"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 1,
+                "reason": "Error",
+                "startedAt": "2026-09-24T13:07:59Z",
+                "finishedAt": "2026-09-24T13:07:59Z",
+                "containerID": "containerd://f24c7ee2a00e717bf9d18e0c9e322daa799a051658ae2ec72c9d9cca8d29f63b"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 4,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://0b9bc9af14311acd13ac373631b79211c39b8a7d07bf69b335c2cba2927891f4",
+            "containerID": "containerd://3a194b794a3d2e40c7fcabcf8597e20290c700c8ae07c5390f1de2f81f23d8b9",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -1896,17 +1952,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
+                "startedAt": "2026-09-24T13:08:21Z",
+                "finishedAt": "2026-09-24T13:08:22Z",
+                "containerID": "containerd://9c1a5d0be8371de57bda7a7e1c13e7a5f588804666718b31a523283e7db242d3"
+              }
+            },
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
                 "startedAt": "2026-09-23T13:32:04Z",
                 "finishedAt": "2026-09-23T13:32:04Z",
                 "containerID": "containerd://b8a76719097654de3caa55780c0a33e93f114619e4001317c0fe6bb106bc61e5"
               }
             },
-            "lastState": {},
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://b8a76719097654de3caa55780c0a33e93f114619e4001317c0fe6bb106bc61e5",
+            "containerID": "containerd://9c1a5d0be8371de57bda7a7e1c13e7a5f588804666718b31a523283e7db242d3",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -1947,15 +2011,23 @@
             "name": "calico-node",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:04Z"
+                "startedAt": "2026-09-24T13:08:22Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-23T13:32:04Z",
+                "finishedAt": "2026-09-24T10:55:40Z",
+                "containerID": "containerd://3a67ab73489cff2d5aa550c021ee4c8d4a3f45e0ef74351dfd13d3ebbbdfe687"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://3a67ab73489cff2d5aa550c021ee4c8d4a3f45e0ef74351dfd13d3ebbbdfe687",
+            "containerID": "containerd://91809821969c2f223e1852c3de76fb8c6ee3fc55cbc876590687b604fcf21e07",
             "started": true,
             "allocatedResources": {
               "cpu": "250m"
@@ -2037,7 +2109,7 @@
         "generateName": "calico-node-",
         "namespace": "kube-system",
         "uid": "52c3f4de-883c-48d5-8e4f-9fa33c04a331",
-        "resourceVersion": "1150",
+        "resourceVersion": "45501",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:43Z",
         "labels": {
@@ -2642,7 +2714,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -2656,14 +2728,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:15Z"
+            "lastTransitionTime": "2026-09-24T13:08:31Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:15Z"
+            "lastTransitionTime": "2026-09-24T13:08:31Z"
           },
           {
             "type": "PodScheduled",
@@ -2673,16 +2745,16 @@
             "lastTransitionTime": "2026-09-23T13:31:44Z"
           }
         ],
-        "hostIP": "172.18.0.7",
+        "hostIP": "172.18.0.14",
         "hostIPs": [
           {
-            "ip": "172.18.0.7"
+            "ip": "172.18.0.14"
           }
         ],
-        "podIP": "172.18.0.7",
+        "podIP": "172.18.0.14",
         "podIPs": [
           {
-            "ip": "172.18.0.7"
+            "ip": "172.18.0.14"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -2693,17 +2765,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:57Z",
-                "finishedAt": "2026-09-23T13:31:57Z",
-                "containerID": "containerd://3802d56ecd38ed8d39186a32ecca2adee7d56a434c0bff3fcf06e0bd7ea8ae1b"
+                "startedAt": "2026-09-24T13:07:43Z",
+                "finishedAt": "2026-09-24T13:07:43Z",
+                "containerID": "containerd://ce8080659ecdbfc84954cc090e851a3dfc16f6a423ecefb0b36fea1d120df5d6"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T10:55:44Z",
+                "containerID": "containerd://1924fc036cdda245a87fd361a73c399196b3ce84b5ae3304685267c1af1e93cb"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://3802d56ecd38ed8d39186a32ecca2adee7d56a434c0bff3fcf06e0bd7ea8ae1b",
+            "containerID": "containerd://ce8080659ecdbfc84954cc090e851a3dfc16f6a423ecefb0b36fea1d120df5d6",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -2738,17 +2818,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:57Z",
-                "finishedAt": "2026-09-23T13:31:58Z",
-                "containerID": "containerd://d59b234b9a62162c849c7c6125ee7c9fcbb938cd57fbb67e1321edda50d55054"
+                "startedAt": "2026-09-24T13:07:44Z",
+                "finishedAt": "2026-09-24T13:07:45Z",
+                "containerID": "containerd://778ac0ebc5ae852db13a491e7314bb044c444c25cff1ad18b3d955c2fad0d184"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T10:55:45Z",
+                "containerID": "containerd://5219bcc87d3de4a3aa2c7b43838805fd2f91a60fb140506afb99f9e47cd2cbc0"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://d59b234b9a62162c849c7c6125ee7c9fcbb938cd57fbb67e1321edda50d55054",
+            "containerID": "containerd://778ac0ebc5ae852db13a491e7314bb044c444c25cff1ad18b3d955c2fad0d184",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -2783,17 +2871,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:32:03Z",
-                "finishedAt": "2026-09-23T13:32:03Z",
-                "containerID": "containerd://5156f98a82ea4c8adacfd1dd4f2ac539f4b42ad376472666536061a5b0cba333"
+                "startedAt": "2026-09-24T13:07:46Z",
+                "finishedAt": "2026-09-24T13:07:46Z",
+                "containerID": "containerd://87591adc27195f1ba0bb6ac15259ccea8812fc45180cdbbc63445b8894ad9f04"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:45Z",
+                "finishedAt": "2026-09-24T10:55:46Z",
+                "containerID": "containerd://8d244394b89a34a5a407abf20722c52a2ce0488c1310c4824ba3b7fc3daaf9f7"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://5156f98a82ea4c8adacfd1dd4f2ac539f4b42ad376472666536061a5b0cba333",
+            "containerID": "containerd://87591adc27195f1ba0bb6ac15259ccea8812fc45180cdbbc63445b8894ad9f04",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -2834,15 +2930,23 @@
             "name": "calico-node",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:04Z"
+                "startedAt": "2026-09-24T13:07:47Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 1,
+                "reason": "Error",
+                "startedAt": "2026-09-24T10:55:46Z",
+                "finishedAt": "2026-09-24T10:55:47Z",
+                "containerID": "containerd://d2af88f4d973268c1e6d47f2a7f7cc26a199380678aaef0bf8ee831e1af90a48"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://56490a74864a73211df5d538bac86681773e518d818be39fbc48f54aa651e0a4",
+            "containerID": "containerd://65fb851a64a088a0ec99cff45eed3cde6a7a8de148d11de855efdc03d06e9dfd",
             "started": true,
             "allocatedResources": {
               "cpu": "250m"
@@ -2924,7 +3028,7 @@
         "generateName": "calico-node-",
         "namespace": "kube-system",
         "uid": "539f3fd5-2699-4dd6-a639-cc3a36d1e4a9",
-        "resourceVersion": "1142",
+        "resourceVersion": "45538",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:44Z",
         "labels": {
@@ -3528,7 +3632,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -3542,14 +3646,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:14Z"
+            "lastTransitionTime": "2026-09-24T13:08:40Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:14Z"
+            "lastTransitionTime": "2026-09-24T13:08:40Z"
           },
           {
             "type": "PodScheduled",
@@ -3559,16 +3663,16 @@
             "lastTransitionTime": "2026-09-23T13:31:44Z"
           }
         ],
-        "hostIP": "172.18.0.5",
+        "hostIP": "172.18.0.9",
         "hostIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "podIP": "172.18.0.5",
+        "podIP": "172.18.0.9",
         "podIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -3579,17 +3683,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:50Z",
-                "finishedAt": "2026-09-23T13:31:50Z",
-                "containerID": "containerd://00ae32679e9ccbcdff3ec1d2b9363fb170314ccec3bdf3cb1e97b608e40f7e6a"
+                "startedAt": "2026-09-24T13:07:45Z",
+                "finishedAt": "2026-09-24T13:07:45Z",
+                "containerID": "containerd://ad82f9ea8fae58c7398ffdbc7dee6fa26f76c5cf6ba74f27bf745efde6436d3e"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "message": "Unable to get init container status from container runtime and pod has been initialized, treat it as exited normally",
+                "startedAt": null,
+                "finishedAt": null
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://00ae32679e9ccbcdff3ec1d2b9363fb170314ccec3bdf3cb1e97b608e40f7e6a",
+            "containerID": "containerd://ad82f9ea8fae58c7398ffdbc7dee6fa26f76c5cf6ba74f27bf745efde6436d3e",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -3624,17 +3736,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:51Z",
-                "finishedAt": "2026-09-23T13:31:51Z",
-                "containerID": "containerd://75c492add925bced44312616043de1c11568f16c76f2d32298ab3fa049abfd4c"
+                "startedAt": "2026-09-24T13:08:17Z",
+                "finishedAt": "2026-09-24T13:08:18Z",
+                "containerID": "containerd://d005e8378c51fee2725eae3ea57fd36d78a51b1bee64573e07d4e2353234222c"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 1,
+                "reason": "Error",
+                "startedAt": "2026-09-24T13:07:46Z",
+                "finishedAt": "2026-09-24T13:08:17Z",
+                "containerID": "containerd://7745bbaa214cf7b44cffbbf2006559e51d4fa5befbbb5d800c44458d2320b75a"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 4,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://75c492add925bced44312616043de1c11568f16c76f2d32298ab3fa049abfd4c",
+            "containerID": "containerd://d005e8378c51fee2725eae3ea57fd36d78a51b1bee64573e07d4e2353234222c",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -3669,17 +3789,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
+                "startedAt": "2026-09-24T13:08:18Z",
+                "finishedAt": "2026-09-24T13:08:19Z",
+                "containerID": "containerd://d09ee86a2fe022b8b6ac9adf96b5f34c26371e496ce8ebfba9042ca02279daff"
+              }
+            },
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
                 "startedAt": "2026-09-23T13:32:02Z",
                 "finishedAt": "2026-09-23T13:32:02Z",
                 "containerID": "containerd://3e4d533002ef85d47cc76dbb81e1755dbfd68740a7d20ebdc56afcfb26c57186"
               }
             },
-            "lastState": {},
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://3e4d533002ef85d47cc76dbb81e1755dbfd68740a7d20ebdc56afcfb26c57186",
+            "containerID": "containerd://d09ee86a2fe022b8b6ac9adf96b5f34c26371e496ce8ebfba9042ca02279daff",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -3720,15 +3848,23 @@
             "name": "calico-node",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:03Z"
+                "startedAt": "2026-09-24T13:08:19Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-23T13:32:03Z",
+                "finishedAt": "2026-09-24T10:55:40Z",
+                "containerID": "containerd://b2198bb7daa2b109d56119b40143e141ff2fa2b9949f3df3c5ef5ca5d645e3c8"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://b2198bb7daa2b109d56119b40143e141ff2fa2b9949f3df3c5ef5ca5d645e3c8",
+            "containerID": "containerd://639243163fdb2fa9d156ebbc9f08f198480cea6e9dad27bc7504d5c3cb1fa71f",
             "started": true,
             "allocatedResources": {
               "cpu": "250m"
@@ -3810,7 +3946,7 @@
         "generateName": "calico-node-",
         "namespace": "kube-system",
         "uid": "ebf378ca-db27-42e8-9039-0ef4b2c38200",
-        "resourceVersion": "1138",
+        "resourceVersion": "45649",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:44Z",
         "labels": {
@@ -4415,7 +4551,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -4429,14 +4565,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:13Z"
+            "lastTransitionTime": "2026-09-24T13:09:27Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:13Z"
+            "lastTransitionTime": "2026-09-24T13:09:27Z"
           },
           {
             "type": "PodScheduled",
@@ -4446,16 +4582,16 @@
             "lastTransitionTime": "2026-09-23T13:31:44Z"
           }
         ],
-        "hostIP": "172.18.0.11",
+        "hostIP": "172.18.0.3",
         "hostIPs": [
           {
-            "ip": "172.18.0.11"
+            "ip": "172.18.0.3"
           }
         ],
-        "podIP": "172.18.0.11",
+        "podIP": "172.18.0.3",
         "podIPs": [
           {
-            "ip": "172.18.0.11"
+            "ip": "172.18.0.3"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -4466,17 +4602,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:53Z",
-                "finishedAt": "2026-09-23T13:31:53Z",
-                "containerID": "containerd://02d3e1ab0e883b88c64282e84b2f9e42af97a6c270fdde954d30375f6f462842"
+                "startedAt": "2026-09-24T13:07:43Z",
+                "finishedAt": "2026-09-24T13:07:43Z",
+                "containerID": "containerd://d92c1af3907ce68fcc46a41d2df13420ff0c47cd11a5fbf005a7160083c5615e"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T10:55:44Z",
+                "containerID": "containerd://ed09b20e992d486a4622baa165e5c39816cd5688ab2c3967999cae4833eabb5e"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://02d3e1ab0e883b88c64282e84b2f9e42af97a6c270fdde954d30375f6f462842",
+            "containerID": "containerd://d92c1af3907ce68fcc46a41d2df13420ff0c47cd11a5fbf005a7160083c5615e",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -4511,17 +4655,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:54Z",
-                "finishedAt": "2026-09-23T13:31:54Z",
-                "containerID": "containerd://ae9de0861dcfea17a26b3dd6b62c5a5e82f4077a1e0434b118ce6ef3cef41250"
+                "startedAt": "2026-09-24T13:07:44Z",
+                "finishedAt": "2026-09-24T13:07:45Z",
+                "containerID": "containerd://91c6ef3f721d7d246697588b622fe7012323e65ae7887aceceec7a9cb6ddae31"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 1,
+                "reason": "Error",
+                "startedAt": "2026-09-24T10:55:45Z",
+                "finishedAt": "2026-09-24T10:55:46Z",
+                "containerID": "containerd://2bc1e32bcd90d9f3738e74e04ca7725a2f16753449c00a326f995c37f0334957"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 3,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://ae9de0861dcfea17a26b3dd6b62c5a5e82f4077a1e0434b118ce6ef3cef41250",
+            "containerID": "containerd://91c6ef3f721d7d246697588b622fe7012323e65ae7887aceceec7a9cb6ddae31",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -4556,17 +4708,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
+                "startedAt": "2026-09-24T13:07:46Z",
+                "finishedAt": "2026-09-24T13:07:46Z",
+                "containerID": "containerd://1ce85882672c06c9a9bfef2de53879548544e8e3ba0addafea228b25b5505b3a"
+              }
+            },
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
                 "startedAt": "2026-09-23T13:32:02Z",
                 "finishedAt": "2026-09-23T13:32:02Z",
                 "containerID": "containerd://9d2ab9abc5a850b8ce916a9e4f1b32395ae997e23207fd6d7bb97e6ccd6664b5"
               }
             },
-            "lastState": {},
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://9d2ab9abc5a850b8ce916a9e4f1b32395ae997e23207fd6d7bb97e6ccd6664b5",
+            "containerID": "containerd://1ce85882672c06c9a9bfef2de53879548544e8e3ba0addafea228b25b5505b3a",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -4607,15 +4767,23 @@
             "name": "calico-node",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:02Z"
+                "startedAt": "2026-09-24T13:09:17Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 1,
+                "reason": "Error",
+                "startedAt": "2026-09-24T13:08:29Z",
+                "finishedAt": "2026-09-24T13:08:29Z",
+                "containerID": "containerd://4ff4b362ae4534fe09329d7dd6fce293573f9d54408a5b821c77aac43a6fcfeb"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 4,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://3f90fb419a3ab13eecb1591b9b3f7cbab585082d2e63f09734432fb270b09af7",
+            "containerID": "containerd://7f17b73e9624969d8a31e5af017dd425a4beff459f7e0df11940b67f3a7e83f7",
             "started": true,
             "allocatedResources": {
               "cpu": "250m"
@@ -4697,7 +4865,7 @@
         "generateName": "calico-node-",
         "namespace": "kube-system",
         "uid": "adce3a30-c0a3-4996-b67c-aa04ab29f9f0",
-        "resourceVersion": "1160",
+        "resourceVersion": "45542",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:43Z",
         "labels": {
@@ -5302,7 +5470,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:44Z"
           },
           {
             "type": "Initialized",
@@ -5316,14 +5484,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:19Z"
+            "lastTransitionTime": "2026-09-24T13:08:42Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:19Z"
+            "lastTransitionTime": "2026-09-24T13:08:42Z"
           },
           {
             "type": "PodScheduled",
@@ -5333,16 +5501,16 @@
             "lastTransitionTime": "2026-09-23T13:31:44Z"
           }
         ],
-        "hostIP": "172.18.0.8",
+        "hostIP": "172.18.0.7",
         "hostIPs": [
           {
-            "ip": "172.18.0.8"
+            "ip": "172.18.0.7"
           }
         ],
-        "podIP": "172.18.0.8",
+        "podIP": "172.18.0.7",
         "podIPs": [
           {
-            "ip": "172.18.0.8"
+            "ip": "172.18.0.7"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -5353,17 +5521,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:51Z",
-                "finishedAt": "2026-09-23T13:31:51Z",
-                "containerID": "containerd://9b65a8f1dae4ea787ad088f304c39cbe9ed3ea267c42477d7af53655f67568d0"
+                "startedAt": "2026-09-24T13:07:44Z",
+                "finishedAt": "2026-09-24T13:07:44Z",
+                "containerID": "containerd://ac95fc2efcb25b5be0c316e32f963b6e7c34d6ea80d9ab20fde6a231c7976027"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T10:55:44Z",
+                "containerID": "containerd://9682bd3b490d6ecfed085f48002b9dc82a61f4e6364da8f447d8f3d83870261e"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://9b65a8f1dae4ea787ad088f304c39cbe9ed3ea267c42477d7af53655f67568d0",
+            "containerID": "containerd://ac95fc2efcb25b5be0c316e32f963b6e7c34d6ea80d9ab20fde6a231c7976027",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -5398,17 +5574,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:52Z",
-                "finishedAt": "2026-09-23T13:31:53Z",
-                "containerID": "containerd://4ccca606315877551572dcfa4466a19c4418e2bed80ab6035dd27e88cbd6e3db"
+                "startedAt": "2026-09-24T13:08:29Z",
+                "finishedAt": "2026-09-24T13:08:30Z",
+                "containerID": "containerd://1c7018446dd5f703a915ef3c7613d467a74d8ee71227ec16f34473eeb45eaa8d"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 1,
+                "reason": "Error",
+                "startedAt": "2026-09-24T13:07:59Z",
+                "finishedAt": "2026-09-24T13:07:59Z",
+                "containerID": "containerd://99f767de328330560ae31999cec7fb148aa24973bbc09271ed5978e1d9cb826e"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 3,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://4ccca606315877551572dcfa4466a19c4418e2bed80ab6035dd27e88cbd6e3db",
+            "containerID": "containerd://1c7018446dd5f703a915ef3c7613d467a74d8ee71227ec16f34473eeb45eaa8d",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -5443,17 +5627,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:58Z",
-                "finishedAt": "2026-09-23T13:31:58Z",
-                "containerID": "containerd://4f81d23756608d579020bd5a3453744fe698fbea6c797551813c34170854856b"
+                "startedAt": "2026-09-24T13:08:30Z",
+                "finishedAt": "2026-09-24T13:08:31Z",
+                "containerID": "containerd://a924af55390f6cf358e311e5a2a3ed81ca929dcd8513c917aedd99ac68cd9ca6"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:45Z",
+                "finishedAt": "2026-09-24T10:55:46Z",
+                "containerID": "containerd://310d9664fd4243f26f33eb94e6ec1fd9c70863801779651d73e1f09eb1f00e4c"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://4f81d23756608d579020bd5a3453744fe698fbea6c797551813c34170854856b",
+            "containerID": "containerd://a924af55390f6cf358e311e5a2a3ed81ca929dcd8513c917aedd99ac68cd9ca6",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -5494,15 +5686,23 @@
             "name": "calico-node",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:59Z"
+                "startedAt": "2026-09-24T13:08:31Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:46Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://ad1d9af021824a8301ffb2f7b22f59ef705edf74e253dd6d37b26d523ab8e679"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://7c0bf169d5206c1d589fd160575ee9d6773fb784be2fd353ecd69a51655b6c75",
+            "containerID": "containerd://ef577d09cc1efa1f067add07f7157400a3eab5f2071e868a46e2f7bfd18440cb",
             "started": true,
             "allocatedResources": {
               "cpu": "250m"
@@ -5584,7 +5784,7 @@
         "generateName": "calico-node-",
         "namespace": "kube-system",
         "uid": "05ce17d7-c428-4091-9d84-a264b5812fa8",
-        "resourceVersion": "1155",
+        "resourceVersion": "45410",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:44Z",
         "labels": {
@@ -6189,7 +6389,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -6203,14 +6403,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:17Z"
+            "lastTransitionTime": "2026-09-24T13:08:20Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:17Z"
+            "lastTransitionTime": "2026-09-24T13:08:20Z"
           },
           {
             "type": "PodScheduled",
@@ -6240,17 +6440,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:50Z",
-                "finishedAt": "2026-09-23T13:31:50Z",
-                "containerID": "containerd://9e8d4c073edd42e81415ceac23ed357ab82b43d1b4b878945feb699c328adb91"
+                "startedAt": "2026-09-24T13:07:43Z",
+                "finishedAt": "2026-09-24T13:07:43Z",
+                "containerID": "containerd://5e95c086ee50d3e3c16d704125a3bc51ff90edc6809b24c6bf46221ddd917464"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T10:55:44Z",
+                "containerID": "containerd://fbe92d5d984f8cce24eac28cbff57333309a9872afbfb1695efb384433e5bbb4"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://9e8d4c073edd42e81415ceac23ed357ab82b43d1b4b878945feb699c328adb91",
+            "containerID": "containerd://5e95c086ee50d3e3c16d704125a3bc51ff90edc6809b24c6bf46221ddd917464",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -6285,17 +6493,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:50Z",
-                "finishedAt": "2026-09-23T13:31:50Z",
-                "containerID": "containerd://bddbc888ed4149febfad489a491fad8cb160d2de6ff01c68fca63ab32068882b"
+                "startedAt": "2026-09-24T13:07:44Z",
+                "finishedAt": "2026-09-24T13:07:45Z",
+                "containerID": "containerd://1bafa0d43f2ca3b15f3ce83567aeae2a01ee2a5e51d06ea05916d78b14e9d590"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T10:55:45Z",
+                "containerID": "containerd://b7eb9a6c0a30dcb6f044da5dbd8b0ac425814ffe2113d9ded7ab54c573d8cf4c"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/cni:v3.28.0",
             "imageID": "docker.io/calico/cni@sha256:cef0c907b8f4cadc63701d371e6f24d325795bcf0be84d6a517e33000ff35f70",
-            "containerID": "containerd://bddbc888ed4149febfad489a491fad8cb160d2de6ff01c68fca63ab32068882b",
+            "containerID": "containerd://1bafa0d43f2ca3b15f3ce83567aeae2a01ee2a5e51d06ea05916d78b14e9d590",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -6330,17 +6546,25 @@
               "terminated": {
                 "exitCode": 0,
                 "reason": "Completed",
-                "startedAt": "2026-09-23T13:31:56Z",
-                "finishedAt": "2026-09-23T13:31:56Z",
-                "containerID": "containerd://d6dc7c40cce14cec28081ce1156df6868363eb207e350644190405811fbd29b1"
+                "startedAt": "2026-09-24T13:07:46Z",
+                "finishedAt": "2026-09-24T13:07:46Z",
+                "containerID": "containerd://e88bfed1c06512c0aa2a800367ba00deed80195b38529bbc68c4bce2963cabb1"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "reason": "Completed",
+                "startedAt": "2026-09-24T10:55:45Z",
+                "finishedAt": "2026-09-24T10:55:46Z",
+                "containerID": "containerd://9cc72ee698791a00ae492338cc9aa996066b1f313f1370618bed13f4d380e814"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://d6dc7c40cce14cec28081ce1156df6868363eb207e350644190405811fbd29b1",
+            "containerID": "containerd://e88bfed1c06512c0aa2a800367ba00deed80195b38529bbc68c4bce2963cabb1",
             "started": false,
             "resources": {},
             "volumeMounts": [
@@ -6381,15 +6605,23 @@
             "name": "calico-node",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:56Z"
+                "startedAt": "2026-09-24T13:07:47Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:46Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://750d30e54e8f7995d2c3d89ba03a437d2c7a0794022ce60763395087ca89639b"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "docker.io/calico/node:v3.28.0",
             "imageID": "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
-            "containerID": "containerd://bcd80f0872a22095279a70f258e59046cff40eb5baa2481b2d6c3072a92d2326",
+            "containerID": "containerd://ce744fd72c26263eb585b2ba5908d56fe90d58cde712f0f4aeff79cf3d351879",
             "started": true,
             "allocatedResources": {
               "cpu": "250m"
@@ -6471,7 +6703,7 @@
         "generateName": "coredns-559f6c778d-",
         "namespace": "kube-system",
         "uid": "ac95de25-54f4-423b-9043-cff98dab4c2c",
-        "resourceVersion": "1106",
+        "resourceVersion": "45374",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:39Z",
         "labels": {
@@ -6480,9 +6712,9 @@
           "topology.kubernetes.io/zone": "zone-c"
         },
         "annotations": {
-          "cni.projectcalico.org/containerID": "d68c39c0e5b4fe9e9d899abd5c6027e700d01ff086c899dbc942b029ae4adc0c",
-          "cni.projectcalico.org/podIP": "192.168.216.67/32",
-          "cni.projectcalico.org/podIPs": "192.168.216.67/32"
+          "cni.projectcalico.org/containerID": "f39353140a2402a8877c67d590144f801abefa7f5eace59deeef90b269493531",
+          "cni.projectcalico.org/podIP": "192.168.216.87/32",
+          "cni.projectcalico.org/podIPs": "192.168.216.87/32"
         },
         "ownerReferences": [
           {
@@ -6715,7 +6947,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:03Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "Initialized",
@@ -6729,14 +6961,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:04Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:04Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "PodScheduled",
@@ -6752,10 +6984,10 @@
             "ip": "172.18.0.6"
           }
         ],
-        "podIP": "192.168.216.67",
+        "podIP": "192.168.216.87",
         "podIPs": [
           {
-            "ip": "192.168.216.67"
+            "ip": "192.168.216.87"
           }
         ],
         "startTime": "2026-09-23T13:31:51Z",
@@ -6764,15 +6996,23 @@
             "name": "coredns",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:04Z"
+                "startedAt": "2026-09-24T13:08:15Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-23T13:32:04Z",
+                "finishedAt": "2026-09-24T10:55:40Z",
+                "containerID": "containerd://bd8f99893d796257f4d5e8744b6cc2b0b4d0effa3fd6b4e777e5486aff90ab96"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "registry.k8s.io/coredns/coredns:v1.14.6",
             "imageID": "sha256:520212b8b0fcd9309d7362d592f513b72880fa5a4e9e8b91442e7ee3b622c6a9",
-            "containerID": "containerd://bd8f99893d796257f4d5e8744b6cc2b0b4d0effa3fd6b4e777e5486aff90ab96",
+            "containerID": "containerd://cd1cc8a9db729b6f74b7366f135bfb6951c272379a951e989ad587ec697ff3e7",
             "started": true,
             "allocatedResources": {
               "cpu": "100m",
@@ -6834,7 +7074,7 @@
         "generateName": "coredns-559f6c778d-",
         "namespace": "kube-system",
         "uid": "b7c399d2-5bea-4a2e-8b97-b251269c72c4",
-        "resourceVersion": "1091",
+        "resourceVersion": "45378",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:39Z",
         "labels": {
@@ -6843,9 +7083,9 @@
           "topology.kubernetes.io/zone": "zone-c"
         },
         "annotations": {
-          "cni.projectcalico.org/containerID": "f61fd420a52dbea4ce5eae65cc9185d02f4820c38623975a4e62fe75b85c4906",
-          "cni.projectcalico.org/podIP": "192.168.216.68/32",
-          "cni.projectcalico.org/podIPs": "192.168.216.68/32"
+          "cni.projectcalico.org/containerID": "abb61f8816a866cfb25c3519cdb1369698d52d6cc2c1a45d3dbc173a0cd0c806",
+          "cni.projectcalico.org/podIP": "192.168.216.86/32",
+          "cni.projectcalico.org/podIPs": "192.168.216.86/32"
         },
         "ownerReferences": [
           {
@@ -7078,7 +7318,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:05Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "Initialized",
@@ -7092,14 +7332,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:06Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:06Z"
+            "lastTransitionTime": "2026-09-24T13:08:15Z"
           },
           {
             "type": "PodScheduled",
@@ -7115,10 +7355,10 @@
             "ip": "172.18.0.6"
           }
         ],
-        "podIP": "192.168.216.68",
+        "podIP": "192.168.216.86",
         "podIPs": [
           {
-            "ip": "192.168.216.68"
+            "ip": "192.168.216.86"
           }
         ],
         "startTime": "2026-09-23T13:31:51Z",
@@ -7127,15 +7367,23 @@
             "name": "coredns",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:05Z"
+                "startedAt": "2026-09-24T13:08:15Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-23T13:32:05Z",
+                "finishedAt": "2026-09-24T10:55:40Z",
+                "containerID": "containerd://46db7ba260b30234646e11321a407f32c739631347adb16f3c72e3422d99f083"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "registry.k8s.io/coredns/coredns:v1.14.6",
             "imageID": "sha256:520212b8b0fcd9309d7362d592f513b72880fa5a4e9e8b91442e7ee3b622c6a9",
-            "containerID": "containerd://46db7ba260b30234646e11321a407f32c739631347adb16f3c72e3422d99f083",
+            "containerID": "containerd://b61a06dc9cdbe00a15cda97ea43df19d550e32846dee38b2dacfa3b8beae41e3",
             "started": true,
             "allocatedResources": {
               "cpu": "100m",
@@ -7185,7 +7433,7 @@
             "memory": "170Mi"
           },
           "requests": {
-            "cpu": "100m",
+            "cpu": "79m",
             "memory": "70Mi"
           }
         }
@@ -7195,19 +7443,19 @@
       "metadata": {
         "name": "etcd-failopen-lab-control-plane",
         "namespace": "kube-system",
-        "uid": "6db7169b-803c-430d-8b6d-fa470ce6941e",
-        "resourceVersion": "458",
+        "uid": "bac21a14-94ea-416d-8c17-16e519b9c994",
+        "resourceVersion": "45212",
         "generation": 1,
-        "creationTimestamp": "2026-09-23T13:31:30Z",
+        "creationTimestamp": "2026-09-24T13:07:43Z",
         "labels": {
           "component": "etcd",
           "tier": "control-plane"
         },
         "annotations": {
-          "kubeadm.kubernetes.io/etcd.advertise-client-urls": "https://172.18.0.5:2379",
-          "kubernetes.io/config.hash": "5a94cf1dbf47aa147d56422aaae83bbe",
-          "kubernetes.io/config.mirror": "5a94cf1dbf47aa147d56422aaae83bbe",
-          "kubernetes.io/config.seen": "2026-09-23T13:31:26.691725959Z",
+          "kubeadm.kubernetes.io/etcd.advertise-client-urls": "https://172.18.0.9:2379",
+          "kubernetes.io/config.hash": "b3ce7763c95bce0ae0dea321d9168c6e",
+          "kubernetes.io/config.mirror": "b3ce7763c95bce0ae0dea321d9168c6e",
+          "kubernetes.io/config.seen": "2026-09-24T13:07:40.943497738Z",
           "kubernetes.io/config.source": "file"
         },
         "ownerReferences": [
@@ -7243,17 +7491,17 @@
             "image": "registry.k8s.io/etcd:3.7.0-0",
             "command": [
               "etcd",
-              "--advertise-client-urls=https://172.18.0.5:2379",
+              "--advertise-client-urls=https://172.18.0.9:2379",
               "--cert-file=/etc/kubernetes/pki/etcd/server.crt",
               "--client-cert-auth=true",
               "--data-dir=/var/lib/etcd",
               "--feature-gates=InitialCorruptCheck=true",
-              "--initial-advertise-peer-urls=https://172.18.0.5:2380",
-              "--initial-cluster=failopen-lab-control-plane=https://172.18.0.5:2380",
+              "--initial-advertise-peer-urls=https://172.18.0.9:2380",
+              "--initial-cluster=failopen-lab-control-plane=https://172.18.0.9:2380",
               "--key-file=/etc/kubernetes/pki/etcd/server.key",
-              "--listen-client-urls=https://127.0.0.1:2379,https://172.18.0.5:2379",
+              "--listen-client-urls=https://127.0.0.1:2379,https://172.18.0.9:2379",
               "--listen-metrics-urls=http://127.0.0.1:2381",
-              "--listen-peer-urls=https://172.18.0.5:2380",
+              "--listen-peer-urls=https://172.18.0.9:2380",
               "--name=failopen-lab-control-plane",
               "--peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt",
               "--peer-client-cert-auth=true",
@@ -7359,52 +7607,52 @@
             "type": "PodReadyToStartContainers",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           },
           {
             "type": "Initialized",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           },
           {
             "type": "Ready",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:42Z"
+            "lastTransitionTime": "2026-09-24T13:07:52Z"
           },
           {
             "type": "ContainersReady",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:42Z"
+            "lastTransitionTime": "2026-09-24T13:07:52Z"
           },
           {
             "type": "PodScheduled",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           }
         ],
-        "hostIP": "172.18.0.5",
+        "hostIP": "172.18.0.9",
         "hostIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "podIP": "172.18.0.5",
+        "podIP": "172.18.0.9",
         "podIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "startTime": "2026-09-23T13:31:31Z",
+        "startTime": "2026-09-24T13:07:41Z",
         "containerStatuses": [
           {
             "name": "etcd",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:27Z"
+                "startedAt": "2026-09-24T13:07:41Z"
               }
             },
             "lastState": {},
@@ -7412,7 +7660,7 @@
             "restartCount": 0,
             "image": "registry.k8s.io/etcd:3.7.0-0",
             "imageID": "sha256:270fbeb69717150d82de2f31e6d6a93a6a60f8843d63df68cebe33c4b59c5f78",
-            "containerID": "containerd://bc57fbbe5618a38db692369002d70b01ce41ba075892ff61b3b1f454916cccbb",
+            "containerID": "containerd://bdc3820f164ca60a1bf75ffb584ee4eb7d37cdb137d8054a48bc0002b70ab07f",
             "started": true,
             "allocatedResources": {
               "cpu": "100m",
@@ -7424,6 +7672,16 @@
                 "memory": "100Mi"
               }
             },
+            "volumeMounts": [
+              {
+                "name": "etcd-data",
+                "mountPath": "/var/lib/etcd"
+              },
+              {
+                "name": "etcd-certs",
+                "mountPath": "/etc/kubernetes/pki/etcd"
+              }
+            ],
             "user": {
               "linux": {
                 "uid": 0,
@@ -7452,19 +7710,19 @@
       "metadata": {
         "name": "kube-apiserver-failopen-lab-control-plane",
         "namespace": "kube-system",
-        "uid": "b13fb61e-f8e8-4871-ba95-d1e321ac167e",
-        "resourceVersion": "411",
+        "uid": "0e388d8c-3c8e-4b96-8e8a-a015585a9239",
+        "resourceVersion": "45211",
         "generation": 1,
-        "creationTimestamp": "2026-09-23T13:31:30Z",
+        "creationTimestamp": "2026-09-24T13:07:43Z",
         "labels": {
           "component": "kube-apiserver",
           "tier": "control-plane"
         },
         "annotations": {
-          "kubeadm.kubernetes.io/kube-apiserver.advertise-address.endpoint": "172.18.0.5:6443",
-          "kubernetes.io/config.hash": "dfc95d38529fd87e6799bed10c9c32d0",
-          "kubernetes.io/config.mirror": "dfc95d38529fd87e6799bed10c9c32d0",
-          "kubernetes.io/config.seen": "2026-09-23T13:31:26.691727562Z",
+          "kubeadm.kubernetes.io/kube-apiserver.advertise-address.endpoint": "172.18.0.9:6443",
+          "kubernetes.io/config.hash": "734e048b61ee368e51ac4052efaa5704",
+          "kubernetes.io/config.mirror": "734e048b61ee368e51ac4052efaa5704",
+          "kubernetes.io/config.seen": "2026-09-24T13:07:40.943499822Z",
           "kubernetes.io/config.source": "file"
         },
         "ownerReferences": [
@@ -7521,7 +7779,7 @@
             "image": "registry.k8s.io/kube-apiserver:v1.37.0",
             "command": [
               "kube-apiserver",
-              "--advertise-address=172.18.0.5",
+              "--advertise-address=172.18.0.9",
               "--allow-privileged=true",
               "--authorization-mode=Node,RBAC",
               "--client-ca-file=/etc/kubernetes/pki/ca.crt",
@@ -7594,7 +7852,7 @@
               "httpGet": {
                 "path": "/livez",
                 "port": "probe-port",
-                "host": "172.18.0.5",
+                "host": "172.18.0.9",
                 "scheme": "HTTPS"
               },
               "initialDelaySeconds": 10,
@@ -7607,7 +7865,7 @@
               "httpGet": {
                 "path": "/readyz",
                 "port": "probe-port",
-                "host": "172.18.0.5",
+                "host": "172.18.0.9",
                 "scheme": "HTTPS"
               },
               "timeoutSeconds": 15,
@@ -7619,7 +7877,7 @@
               "httpGet": {
                 "path": "/livez",
                 "port": "probe-port",
-                "host": "172.18.0.5",
+                "host": "172.18.0.9",
                 "scheme": "HTTPS"
               },
               "initialDelaySeconds": 10,
@@ -7662,52 +7920,52 @@
             "type": "PodReadyToStartContainers",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           },
           {
             "type": "Initialized",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           },
           {
             "type": "Ready",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:42Z"
+            "lastTransitionTime": "2026-09-24T13:07:51Z"
           },
           {
             "type": "ContainersReady",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:42Z"
+            "lastTransitionTime": "2026-09-24T13:07:51Z"
           },
           {
             "type": "PodScheduled",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           }
         ],
-        "hostIP": "172.18.0.5",
+        "hostIP": "172.18.0.9",
         "hostIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "podIP": "172.18.0.5",
+        "podIP": "172.18.0.9",
         "podIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "startTime": "2026-09-23T13:31:31Z",
+        "startTime": "2026-09-24T13:07:41Z",
         "containerStatuses": [
           {
             "name": "kube-apiserver",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:27Z"
+                "startedAt": "2026-09-24T13:07:41Z"
               }
             },
             "lastState": {},
@@ -7715,7 +7973,7 @@
             "restartCount": 0,
             "image": "registry.k8s.io/kube-apiserver-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:eff360f86083f21c9ceaa64cbaa2e4d439d9e7e1d6834c21d25daac35e58015b",
-            "containerID": "containerd://711d4e774350d6c1edabf5e40a144cc97af8a13d7216aad2ef202c67ecca619a",
+            "containerID": "containerd://1bd5023a656efb5450a6345b3b125bd2cc403786e7b1333c8624399dbae47799",
             "started": true,
             "allocatedResources": {
               "cpu": "250m"
@@ -7725,6 +7983,38 @@
                 "cpu": "250m"
               }
             },
+            "volumeMounts": [
+              {
+                "name": "ca-certs",
+                "mountPath": "/etc/ssl/certs",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "name": "etc-ca-certificates",
+                "mountPath": "/etc/ca-certificates",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "name": "k8s-certs",
+                "mountPath": "/etc/kubernetes/pki",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "name": "usr-local-share-ca-certificates",
+                "mountPath": "/usr/local/share/ca-certificates",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "name": "usr-share-ca-certificates",
+                "mountPath": "/usr/share/ca-certificates",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ],
             "user": {
               "linux": {
                 "uid": 0,
@@ -7752,7 +8042,7 @@
         "name": "kube-controller-manager-failopen-lab-control-plane",
         "namespace": "kube-system",
         "uid": "265a3fb3-ef49-4f2e-9b5a-c3863e291900",
-        "resourceVersion": "530",
+        "resourceVersion": "45234",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:30Z",
         "labels": {
@@ -7950,60 +8240,68 @@
             "type": "PodReadyToStartContainers",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           },
           {
             "type": "Initialized",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           },
           {
             "type": "Ready",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:43Z"
+            "lastTransitionTime": "2026-09-24T13:07:53Z"
           },
           {
             "type": "ContainersReady",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:43Z"
+            "lastTransitionTime": "2026-09-24T13:07:53Z"
           },
           {
             "type": "PodScheduled",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           }
         ],
-        "hostIP": "172.18.0.5",
+        "hostIP": "172.18.0.9",
         "hostIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "podIP": "172.18.0.5",
+        "podIP": "172.18.0.9",
         "podIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "startTime": "2026-09-23T13:31:31Z",
+        "startTime": "2026-09-24T13:07:41Z",
         "containerStatuses": [
           {
             "name": "kube-controller-manager",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:27Z"
+                "startedAt": "2026-09-24T13:07:41Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T11:00:42Z",
+                "finishedAt": "2026-09-24T13:07:39Z",
+                "containerID": "containerd://bdb76e7ef04349d82c345474b187c32f26406d2ac5c1fb175642e06e5c4f492a"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 3,
             "image": "registry.k8s.io/kube-controller-manager-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:79bd77de40aa3294690796f94cdc8a08c4cf6a51a6a3500425c56c9e13622cc7",
-            "containerID": "containerd://c4c630acd5155c4d8a8700b4f39ad9c3ad8a133bb8d3fc4c8c3dc8ba6ad64759",
+            "containerID": "containerd://66231eb7329df7b7032468d6b5747dee470eec60a9822e34a1229f0f40866f44",
             "started": true,
             "allocatedResources": {
               "cpu": "200m"
@@ -8041,7 +8339,7 @@
         "generateName": "kube-proxy-",
         "namespace": "kube-system",
         "uid": "ec886610-9181-4dc4-a247-3a5079e9f296",
-        "resourceVersion": "730",
+        "resourceVersion": "44815",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
@@ -8257,7 +8555,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -8271,14 +8569,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "PodScheduled",
@@ -8288,16 +8586,16 @@
             "lastTransitionTime": "2026-09-23T13:31:42Z"
           }
         ],
-        "hostIP": "172.18.0.9",
+        "hostIP": "172.18.0.4",
         "hostIPs": [
           {
-            "ip": "172.18.0.9"
+            "ip": "172.18.0.4"
           }
         ],
-        "podIP": "172.18.0.9",
+        "podIP": "172.18.0.4",
         "podIPs": [
           {
-            "ip": "172.18.0.9"
+            "ip": "172.18.0.4"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -8306,15 +8604,23 @@
             "name": "kube-proxy",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:45Z"
+                "startedAt": "2026-09-24T13:07:43Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://0d8d7fc3c126a2ee37a2a351391a41114053827ef6a9ec24893b081209350a7e"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "registry.k8s.io/kube-proxy-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:1aa5cce2a7d436c309f705cf2a32a50f8378a2b6f2e5dd4bb26f81c714dd0b86",
-            "containerID": "containerd://779d538f5e5da806059cd48f91b82d13d54233352cc76ce2fc7fe581670d9f74",
+            "containerID": "containerd://265c0766fc2bc4d866854b44f9b6f296e011cf03c68b4cd2d1ede61fb7f3f737",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -8360,7 +8666,7 @@
         "generateName": "kube-proxy-",
         "namespace": "kube-system",
         "uid": "3823fee7-73ec-4fcc-b15a-5ddcb234f4db",
-        "resourceVersion": "684",
+        "resourceVersion": "44818",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
@@ -8576,7 +8882,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -8590,14 +8896,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "PodScheduled",
@@ -8607,16 +8913,16 @@
             "lastTransitionTime": "2026-09-23T13:31:42Z"
           }
         ],
-        "hostIP": "172.18.0.11",
+        "hostIP": "172.18.0.3",
         "hostIPs": [
           {
-            "ip": "172.18.0.11"
+            "ip": "172.18.0.3"
           }
         ],
-        "podIP": "172.18.0.11",
+        "podIP": "172.18.0.3",
         "podIPs": [
           {
-            "ip": "172.18.0.11"
+            "ip": "172.18.0.3"
           }
         ],
         "startTime": "2026-09-23T13:31:43Z",
@@ -8625,15 +8931,23 @@
             "name": "kube-proxy",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:44Z"
+                "startedAt": "2026-09-24T13:07:43Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://3f017d37dd2de193c3594d54fe66628386f7adba60f17acaeeb50ccc27075ae7"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "registry.k8s.io/kube-proxy-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:1aa5cce2a7d436c309f705cf2a32a50f8378a2b6f2e5dd4bb26f81c714dd0b86",
-            "containerID": "containerd://f651b545773b4a45e0d9a6d8b8ed2934cb06ab86331a39b48237103ca0f58d0e",
+            "containerID": "containerd://5f956b86ee37e97187782f43e2f3f8799cc8f15b44be247251e51e9778728d5d",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -8679,7 +8993,7 @@
         "generateName": "kube-proxy-",
         "namespace": "kube-system",
         "uid": "ce417be0-e13a-4794-a0ec-5fed255b0ccf",
-        "resourceVersion": "404",
+        "resourceVersion": "45239",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:39Z",
         "labels": {
@@ -8894,7 +9208,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:40Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -8908,14 +9222,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:40Z"
+            "lastTransitionTime": "2026-09-24T13:07:58Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:40Z"
+            "lastTransitionTime": "2026-09-24T13:07:58Z"
           },
           {
             "type": "PodScheduled",
@@ -8925,16 +9239,16 @@
             "lastTransitionTime": "2026-09-23T13:31:39Z"
           }
         ],
-        "hostIP": "172.18.0.5",
+        "hostIP": "172.18.0.9",
         "hostIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "podIP": "172.18.0.5",
+        "podIP": "172.18.0.9",
         "podIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
         "startTime": "2026-09-23T13:31:39Z",
@@ -8943,15 +9257,23 @@
             "name": "kube-proxy",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:40Z"
+                "startedAt": "2026-09-24T13:07:58Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:46Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://5ec4556b0f9b288f7e660e22bea19bc6fde8c722366ce79184097ddb809b33d9"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "registry.k8s.io/kube-proxy-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:1aa5cce2a7d436c309f705cf2a32a50f8378a2b6f2e5dd4bb26f81c714dd0b86",
-            "containerID": "containerd://ff88066548cd100d29891857220f8427f61875e450eb3ea6a821594967b98640",
+            "containerID": "containerd://c64dc5e8abf156bd9e92012fa718e55d708d89009de940ad379a503ea8131798",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -8997,7 +9319,7 @@
         "generateName": "kube-proxy-",
         "namespace": "kube-system",
         "uid": "ed73d2ce-ca2a-4da8-943a-b50afddea494",
-        "resourceVersion": "706",
+        "resourceVersion": "44822",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
@@ -9213,7 +9535,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -9227,14 +9549,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:44Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "PodScheduled",
@@ -9262,15 +9584,23 @@
             "name": "kube-proxy",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:44Z"
+                "startedAt": "2026-09-24T13:07:43Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://e16292cc2c8140542b6aac0a8b5411b13237e305f603f79c490d4ac34c5fd26e"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "registry.k8s.io/kube-proxy-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:1aa5cce2a7d436c309f705cf2a32a50f8378a2b6f2e5dd4bb26f81c714dd0b86",
-            "containerID": "containerd://19451f668351d101a9fd4825a065a98184e5e6493126a073311176bc931db9d0",
+            "containerID": "containerd://3a057e55865a5d01f75b1bee6d157e47e7f49a3a85cb60e29b71b4587a372836",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -9316,7 +9646,7 @@
         "generateName": "kube-proxy-",
         "namespace": "kube-system",
         "uid": "a9967064-5f35-49d3-94df-de8156a20ccb",
-        "resourceVersion": "731",
+        "resourceVersion": "44813",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
@@ -9532,7 +9862,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -9546,14 +9876,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "PodScheduled",
@@ -9563,16 +9893,16 @@
             "lastTransitionTime": "2026-09-23T13:31:42Z"
           }
         ],
-        "hostIP": "172.18.0.10",
+        "hostIP": "172.18.0.13",
         "hostIPs": [
           {
-            "ip": "172.18.0.10"
+            "ip": "172.18.0.13"
           }
         ],
-        "podIP": "172.18.0.10",
+        "podIP": "172.18.0.13",
         "podIPs": [
           {
-            "ip": "172.18.0.10"
+            "ip": "172.18.0.13"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -9581,15 +9911,23 @@
             "name": "kube-proxy",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:45Z"
+                "startedAt": "2026-09-24T13:07:43Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://781da6026d2a23a2cfc4ea000a3bbb168de60e99d9b2b3efbef3f70ab2fbcf89"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "registry.k8s.io/kube-proxy-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:1aa5cce2a7d436c309f705cf2a32a50f8378a2b6f2e5dd4bb26f81c714dd0b86",
-            "containerID": "containerd://bc2218adbf4f0401a8072bac04808e3a337bdabba1aff77f0057349a8344ee8f",
+            "containerID": "containerd://0d212a291aece4f5fb4a3976d75a1f270bce0767e5b685fd88d5953065e1b5e5",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -9635,7 +9973,7 @@
         "generateName": "kube-proxy-",
         "namespace": "kube-system",
         "uid": "78d8a954-e2ce-423d-bafc-be58762e4f6b",
-        "resourceVersion": "739",
+        "resourceVersion": "44849",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:43Z",
         "labels": {
@@ -9851,7 +10189,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:44Z"
           },
           {
             "type": "Initialized",
@@ -9865,14 +10203,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:44Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:44Z"
           },
           {
             "type": "PodScheduled",
@@ -9882,16 +10220,16 @@
             "lastTransitionTime": "2026-09-23T13:31:43Z"
           }
         ],
-        "hostIP": "172.18.0.8",
+        "hostIP": "172.18.0.7",
         "hostIPs": [
           {
-            "ip": "172.18.0.8"
+            "ip": "172.18.0.7"
           }
         ],
-        "podIP": "172.18.0.8",
+        "podIP": "172.18.0.7",
         "podIPs": [
           {
-            "ip": "172.18.0.8"
+            "ip": "172.18.0.7"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -9900,15 +10238,23 @@
             "name": "kube-proxy",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:45Z"
+                "startedAt": "2026-09-24T13:07:44Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://582fc026cda6ac1f0573609f0a3b434a99c8aab93220f6aed20cb29f58a2b042"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "registry.k8s.io/kube-proxy-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:1aa5cce2a7d436c309f705cf2a32a50f8378a2b6f2e5dd4bb26f81c714dd0b86",
-            "containerID": "containerd://419b024a79d86046ee2c4578ecd98187cfbf498260486910c9a2175e192d5562",
+            "containerID": "containerd://a1095b3e5b5c43d64ee88986b2af9480a00cde7e327ddb93871915dd8fc8987d",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -9954,7 +10300,7 @@
         "generateName": "kube-proxy-",
         "namespace": "kube-system",
         "uid": "f636374f-27b4-42f6-a9f8-4692fbc00a79",
-        "resourceVersion": "738",
+        "resourceVersion": "44820",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:43Z",
         "labels": {
@@ -10170,7 +10516,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "Initialized",
@@ -10184,14 +10530,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:45Z"
+            "lastTransitionTime": "2026-09-24T13:07:43Z"
           },
           {
             "type": "PodScheduled",
@@ -10201,16 +10547,16 @@
             "lastTransitionTime": "2026-09-23T13:31:43Z"
           }
         ],
-        "hostIP": "172.18.0.7",
+        "hostIP": "172.18.0.14",
         "hostIPs": [
           {
-            "ip": "172.18.0.7"
+            "ip": "172.18.0.14"
           }
         ],
-        "podIP": "172.18.0.7",
+        "podIP": "172.18.0.14",
         "podIPs": [
           {
-            "ip": "172.18.0.7"
+            "ip": "172.18.0.14"
           }
         ],
         "startTime": "2026-09-23T13:31:44Z",
@@ -10219,15 +10565,23 @@
             "name": "kube-proxy",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:45Z"
+                "startedAt": "2026-09-24T13:07:43Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T10:55:44Z",
+                "finishedAt": "2026-09-24T11:00:40Z",
+                "containerID": "containerd://719db9a81541a27479669d0c83a80d796e390c5cabb00b6c3a8cefea4e3d1835"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 2,
             "image": "registry.k8s.io/kube-proxy-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:1aa5cce2a7d436c309f705cf2a32a50f8378a2b6f2e5dd4bb26f81c714dd0b86",
-            "containerID": "containerd://3734b5e27118cd1782038191123567f947a02cc2ad01e26f06a58a84bff8b612",
+            "containerID": "containerd://3f2c18c701e14681c8268f92b049f1f17dd56665d36c5a63c93b9279503b1d75",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -10272,7 +10626,7 @@
         "name": "kube-scheduler-failopen-lab-control-plane",
         "namespace": "kube-system",
         "uid": "1696c021-c847-42d4-834e-cb23c85edca3",
-        "resourceVersion": "758",
+        "resourceVersion": "45259",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:30Z",
         "labels": {
@@ -10409,60 +10763,68 @@
             "type": "PodReadyToStartContainers",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           },
           {
             "type": "Initialized",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           },
           {
             "type": "Ready",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:50Z"
+            "lastTransitionTime": "2026-09-24T13:08:00Z"
           },
           {
             "type": "ContainersReady",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:50Z"
+            "lastTransitionTime": "2026-09-24T13:08:00Z"
           },
           {
             "type": "PodScheduled",
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:31:31Z"
+            "lastTransitionTime": "2026-09-24T13:07:41Z"
           }
         ],
-        "hostIP": "172.18.0.5",
+        "hostIP": "172.18.0.9",
         "hostIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "podIP": "172.18.0.5",
+        "podIP": "172.18.0.9",
         "podIPs": [
           {
-            "ip": "172.18.0.5"
+            "ip": "172.18.0.9"
           }
         ],
-        "startTime": "2026-09-23T13:31:31Z",
+        "startTime": "2026-09-24T13:07:41Z",
         "containerStatuses": [
           {
             "name": "kube-scheduler",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:31:27Z"
+                "startedAt": "2026-09-24T13:07:41Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-24T11:00:42Z",
+                "finishedAt": "2026-09-24T13:07:39Z",
+                "containerID": "containerd://e4b1c37a7b157f824b58d7a702c2d003d02cec003ba6896bfba0b4d12a8c01ae"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 3,
             "image": "registry.k8s.io/kube-scheduler-amd64:v1.37.0",
             "imageID": "docker.io/library/import-2026-08-26@sha256:213e68034d4be2f89076d1d446501434d1bfdff862916392708f095f5fecb6e1",
-            "containerID": "containerd://8d5fb4d4ba137ed6fd65ed56948b60ead59b534856fc35966ff6a299e40bc799",
+            "containerID": "containerd://1c8460ced057f14b81d0c3e836f099844f622d5c259e9dd98665e84c1906831a",
             "started": true,
             "allocatedResources": {
               "cpu": "100m"
@@ -10500,7 +10862,7 @@
         "generateName": "local-path-provisioner-75f7fc7dc5-",
         "namespace": "local-path-storage",
         "uid": "2a06bea2-18b7-4d45-9382-c700d2aa5df6",
-        "resourceVersion": "1002",
+        "resourceVersion": "45468",
         "generation": 1,
         "creationTimestamp": "2026-09-23T13:31:39Z",
         "labels": {
@@ -10509,9 +10871,9 @@
           "topology.kubernetes.io/zone": "zone-c"
         },
         "annotations": {
-          "cni.projectcalico.org/containerID": "0f4f095058fc93f5d3741240f0d24e91dbb6ebe9ea71f51b554d308912937b50",
-          "cni.projectcalico.org/podIP": "192.168.216.65/32",
-          "cni.projectcalico.org/podIPs": "192.168.216.65/32"
+          "cni.projectcalico.org/containerID": "8fd78bcf2610567e8b81db769a64873e1e696b5a4df0b89570f214040c590da1",
+          "cni.projectcalico.org/podIP": "192.168.216.88/32",
+          "cni.projectcalico.org/podIPs": "192.168.216.88/32"
         },
         "ownerReferences": [
           {
@@ -10665,7 +11027,7 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:02Z"
+            "lastTransitionTime": "2026-09-24T13:08:25Z"
           },
           {
             "type": "Initialized",
@@ -10679,14 +11041,14 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:03Z"
+            "lastTransitionTime": "2026-09-24T13:08:26Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:03Z"
+            "lastTransitionTime": "2026-09-24T13:08:26Z"
           },
           {
             "type": "PodScheduled",
@@ -10702,10 +11064,10 @@
             "ip": "172.18.0.6"
           }
         ],
-        "podIP": "192.168.216.65",
+        "podIP": "192.168.216.88",
         "podIPs": [
           {
-            "ip": "192.168.216.65"
+            "ip": "192.168.216.88"
           }
         ],
         "startTime": "2026-09-23T13:31:51Z",
@@ -10714,15 +11076,23 @@
             "name": "local-path-provisioner",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:03Z"
+                "startedAt": "2026-09-24T13:08:26Z"
               }
             },
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 255,
+                "reason": "Unknown",
+                "startedAt": "2026-09-23T13:32:03Z",
+                "finishedAt": "2026-09-24T10:55:40Z",
+                "containerID": "containerd://efe352219b98ef911fa57b92ba1a30187a525318601644a173920c3157cfe157"
+              }
+            },
             "ready": true,
-            "restartCount": 0,
+            "restartCount": 1,
             "image": "docker.io/kindest/local-path-provisioner:v20260820-69b56db7",
             "imageID": "sha256:c82008e2cd0186ef96bfd05d6b49d3286768fae5bd7a961f70bd485a3785c006",
-            "containerID": "containerd://efe352219b98ef911fa57b92ba1a30187a525318601644a173920c3157cfe157",
+            "containerID": "containerd://e7a807786a38fa8690304f85279d07efebb203b2b13d5ed8111da13af25ef9c2",
             "started": true,
             "resources": {},
             "volumeMounts": [
@@ -10756,18 +11126,18 @@
       "metadata": {
         "name": "node-agent",
         "namespace": "monitoring",
-        "uid": "997c4610-91dd-4523-bec9-0ce15074624e",
-        "resourceVersion": "1253",
+        "uid": "e7692e9d-36a3-4f93-9671-80bc6be028a3",
+        "resourceVersion": "50020",
         "generation": 1,
-        "creationTimestamp": "2026-09-23T13:32:36Z",
+        "creationTimestamp": "2026-09-24T13:45:27Z",
         "labels": {
-          "topology.kubernetes.io/zone": "zone-b"
+          "topology.kubernetes.io/zone": "zone-a"
         }
       },
       "spec": {
         "volumes": [
           {
-            "name": "kube-api-access-92klk",
+            "name": "kube-api-access-ndz65",
             "projected": {
               "sources": [
                 {
@@ -10815,7 +11185,7 @@
             "resources": {},
             "volumeMounts": [
               {
-                "name": "kube-api-access-92klk",
+                "name": "kube-api-access-ndz65",
                 "readOnly": true,
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
               }
@@ -10830,7 +11200,7 @@
         "dnsPolicy": "ClusterFirst",
         "serviceAccountName": "default",
         "serviceAccount": "default",
-        "nodeName": "failopen-lab-worker2",
+        "nodeName": "failopen-lab-worker",
         "hostNetwork": true,
         "securityContext": {},
         "affinity": {
@@ -10878,56 +11248,56 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:36Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "Initialized",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:36Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "Ready",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:41Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:41Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "PodScheduled",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:36Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           }
         ],
-        "hostIP": "172.18.0.9",
+        "hostIP": "172.18.0.3",
         "hostIPs": [
           {
-            "ip": "172.18.0.9"
+            "ip": "172.18.0.3"
           }
         ],
-        "podIP": "172.18.0.9",
+        "podIP": "172.18.0.3",
         "podIPs": [
           {
-            "ip": "172.18.0.9"
+            "ip": "172.18.0.3"
           }
         ],
-        "startTime": "2026-09-23T13:32:36Z",
+        "startTime": "2026-09-24T13:45:27Z",
         "containerStatuses": [
           {
             "name": "app",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:41Z"
+                "startedAt": "2026-09-24T13:45:27Z"
               }
             },
             "lastState": {},
@@ -10935,12 +11305,12 @@
             "restartCount": 0,
             "image": "registry.k8s.io/e2e-test-images/agnhost:2.53",
             "imageID": "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
-            "containerID": "containerd://947fd719752c6633445e2b79f9c5f51f217092aad4562803447975e0aa10f785",
+            "containerID": "containerd://acc8e3a1cb90afab29687a772f1541d2faaa01ea8d7d42eb28a24f3d42989340",
             "started": true,
             "resources": {},
             "volumeMounts": [
               {
-                "name": "kube-api-access-92klk",
+                "name": "kube-api-access-ndz65",
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
@@ -10975,24 +11345,24 @@
       "metadata": {
         "name": "api-server",
         "namespace": "payments",
-        "uid": "36b6a953-86e5-46b9-b066-e4aa9850111a",
-        "resourceVersion": "1247",
+        "uid": "e1e1feac-0988-4f41-8d25-99af3d3e8cf0",
+        "resourceVersion": "50016",
         "generation": 1,
-        "creationTimestamp": "2026-09-23T13:32:35Z",
+        "creationTimestamp": "2026-09-24T13:45:27Z",
         "labels": {
           "app": "api-server",
-          "topology.kubernetes.io/zone": "zone-b"
+          "topology.kubernetes.io/zone": "zone-a"
         },
         "annotations": {
-          "cni.projectcalico.org/containerID": "61e6166e7786a95b954be61a9fbb2d34e700855ca052bd5213faa993e59d44a1",
-          "cni.projectcalico.org/podIP": "192.168.189.65/32",
-          "cni.projectcalico.org/podIPs": "192.168.189.65/32"
+          "cni.projectcalico.org/containerID": "d090e8300f4fc608a424f66240f7d745ce1991277b4a8c4ce2ba960c85a66472",
+          "cni.projectcalico.org/podIP": "192.168.201.190/32",
+          "cni.projectcalico.org/podIPs": "192.168.201.190/32"
         }
       },
       "spec": {
         "volumes": [
           {
-            "name": "kube-api-access-g9nf6",
+            "name": "kube-api-access-lqngs",
             "projected": {
               "sources": [
                 {
@@ -11047,7 +11417,7 @@
             "resources": {},
             "volumeMounts": [
               {
-                "name": "kube-api-access-g9nf6",
+                "name": "kube-api-access-lqngs",
                 "readOnly": true,
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
               }
@@ -11062,7 +11432,7 @@
         "dnsPolicy": "ClusterFirst",
         "serviceAccountName": "default",
         "serviceAccount": "default",
-        "nodeName": "failopen-lab-worker2",
+        "nodeName": "failopen-lab-worker",
         "securityContext": {},
         "schedulerName": "default-scheduler",
         "tolerations": [
@@ -11092,56 +11462,56 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:36Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "Initialized",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:35Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "Ready",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:41Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:41Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "PodScheduled",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:35Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           }
         ],
-        "hostIP": "172.18.0.9",
+        "hostIP": "172.18.0.3",
         "hostIPs": [
           {
-            "ip": "172.18.0.9"
+            "ip": "172.18.0.3"
           }
         ],
-        "podIP": "192.168.189.65",
+        "podIP": "192.168.201.190",
         "podIPs": [
           {
-            "ip": "192.168.189.65"
+            "ip": "192.168.201.190"
           }
         ],
-        "startTime": "2026-09-23T13:32:35Z",
+        "startTime": "2026-09-24T13:45:27Z",
         "containerStatuses": [
           {
             "name": "app",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:41Z"
+                "startedAt": "2026-09-24T13:45:27Z"
               }
             },
             "lastState": {},
@@ -11149,12 +11519,12 @@
             "restartCount": 0,
             "image": "registry.k8s.io/e2e-test-images/agnhost:2.53",
             "imageID": "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
-            "containerID": "containerd://96b39183c1ea20fbdc7abc765eba00110f70735730bb37d24e7ae96aeb823795",
+            "containerID": "containerd://18331a002c3695d39d5eb3af2fc81869167516417116c6ca79e9299df772de81",
             "started": true,
             "resources": {},
             "volumeMounts": [
               {
-                "name": "kube-api-access-g9nf6",
+                "name": "kube-api-access-lqngs",
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
@@ -11189,19 +11559,19 @@
       "metadata": {
         "name": "host-probe",
         "namespace": "payments",
-        "uid": "b839da5a-42fd-4add-84fa-efafd1086326",
-        "resourceVersion": "1238",
+        "uid": "e3373951-22a6-4511-ab78-6c5bbb8dd04c",
+        "resourceVersion": "50008",
         "generation": 1,
-        "creationTimestamp": "2026-09-23T13:32:35Z",
+        "creationTimestamp": "2026-09-24T13:45:27Z",
         "labels": {
           "app": "host-probe",
-          "topology.kubernetes.io/zone": "zone-a"
+          "topology.kubernetes.io/zone": "zone-b"
         }
       },
       "spec": {
         "volumes": [
           {
-            "name": "kube-api-access-zlf7g",
+            "name": "kube-api-access-6wn9q",
             "projected": {
               "sources": [
                 {
@@ -11257,7 +11627,7 @@
             "resources": {},
             "volumeMounts": [
               {
-                "name": "kube-api-access-zlf7g",
+                "name": "kube-api-access-6wn9q",
                 "readOnly": true,
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
               }
@@ -11272,7 +11642,7 @@
         "dnsPolicy": "ClusterFirst",
         "serviceAccountName": "default",
         "serviceAccount": "default",
-        "nodeName": "failopen-lab-worker",
+        "nodeName": "failopen-lab-worker2",
         "hostNetwork": true,
         "securityContext": {},
         "schedulerName": "default-scheduler",
@@ -11303,56 +11673,56 @@
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:36Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "Initialized",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:35Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "Ready",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:40Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "ContainersReady",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:40Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           },
           {
             "type": "PodScheduled",
             "observedGeneration": 1,
             "status": "True",
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-09-23T13:32:35Z"
+            "lastTransitionTime": "2026-09-24T13:45:27Z"
           }
         ],
-        "hostIP": "172.18.0.11",
+        "hostIP": "172.18.0.4",
         "hostIPs": [
           {
-            "ip": "172.18.0.11"
+            "ip": "172.18.0.4"
           }
         ],
-        "podIP": "172.18.0.11",
+        "podIP": "172.18.0.4",
         "podIPs": [
           {
-            "ip": "172.18.0.11"
+            "ip": "172.18.0.4"
           }
         ],
-        "startTime": "2026-09-23T13:32:35Z",
+        "startTime": "2026-09-24T13:45:27Z",
         "containerStatuses": [
           {
             "name": "app",
             "state": {
               "running": {
-                "startedAt": "2026-09-23T13:32:40Z"
+                "startedAt": "2026-09-24T13:45:27Z"
               }
             },
             "lastState": {},
@@ -11360,12 +11730,12 @@
             "restartCount": 0,
             "image": "registry.k8s.io/e2e-test-images/agnhost:2.53",
             "imageID": "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
-            "containerID": "containerd://fd05007389c03de730e5c2bc8959ecbf53c147db1496cf4ca64148daa14a534e",
+            "containerID": "containerd://ca9c757ac51c1cc4c766ce57237401c5abc1c73f361799210e4e25bf0a7df1f8",
             "started": true,
             "resources": {},
             "volumeMounts": [
               {
-                "name": "kube-api-access-zlf7g",
+                "name": "kube-api-access-6wn9q",
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
@@ -11459,9 +11829,9 @@
       "metadata": {
         "name": "api-nodeport",
         "namespace": "payments",
-        "uid": "1ee78346-45f0-4703-b1ea-353ad282f5a7",
-        "resourceVersion": "1212",
-        "creationTimestamp": "2026-09-23T13:32:35Z"
+        "uid": "6c4a2fdf-92cf-4503-9c7e-cae51cdff9da",
+        "resourceVersion": "49991",
+        "creationTimestamp": "2026-09-24T13:45:27Z"
       },
       "spec": {
         "ports": [
@@ -11475,9 +11845,9 @@
         "selector": {
           "app": "api-server"
         },
-        "clusterIP": "10.96.151.208",
+        "clusterIP": "10.96.12.122",
         "clusterIPs": [
-          "10.96.151.208"
+          "10.96.12.122"
         ],
         "type": "NodePort",
         "sessionAffinity": "None",
@@ -11498,10 +11868,10 @@
       "metadata": {
         "name": "default-deny-all",
         "namespace": "payments",
-        "uid": "bb8e4fc7-9460-409a-b9ef-73c29030d310",
-        "resourceVersion": "1201",
+        "uid": "d8bcd683-51b1-4619-b97d-df9b6e84abb2",
+        "resourceVersion": "49979",
         "generation": 1,
-        "creationTimestamp": "2026-09-23T13:32:35Z"
+        "creationTimestamp": "2026-09-24T13:45:27Z"
       },
       "spec": {
         "podSelector": {},
@@ -11591,9 +11961,9 @@
     {
       "metadata": {
         "name": "monitoring",
-        "uid": "48c89a42-6606-428a-bb50-39e12115b141",
-        "resourceVersion": "1215",
-        "creationTimestamp": "2026-09-23T13:32:35Z",
+        "uid": "03c683e6-5380-4cd2-9c2c-1dfaab048c4c",
+        "resourceVersion": "49994",
+        "creationTimestamp": "2026-09-24T13:45:27Z",
         "labels": {
           "kubernetes.io/metadata.name": "monitoring"
         }
@@ -11610,9 +11980,9 @@
     {
       "metadata": {
         "name": "payments",
-        "uid": "e839d0ea-4b36-44ea-b93f-3ff77a68b44d",
-        "resourceVersion": "1198",
-        "creationTimestamp": "2026-09-23T13:32:35Z",
+        "uid": "bc32aab5-bf72-44ed-8005-e104df060208",
+        "resourceVersion": "49977",
+        "creationTimestamp": "2026-09-24T13:45:27Z",
         "labels": {
           "kubernetes.io/metadata.name": "payments"
         }
@@ -11632,7 +12002,7 @@
       "metadata": {
         "name": "failopen-lab-control-plane",
         "uid": "fe739da6-0e9d-4c01-a6a0-6ffd760c6c2f",
-        "resourceVersion": "1188",
+        "resourceVersion": "49421",
         "creationTimestamp": "2026-09-23T13:31:29Z",
         "labels": {
           "beta.kubernetes.io/arch": "amd64",
@@ -11645,7 +12015,7 @@
         },
         "annotations": {
           "node.alpha.kubernetes.io/ttl": "0",
-          "projectcalico.org/IPv4Address": "172.18.0.5/16",
+          "projectcalico.org/IPv4Address": "172.18.0.9/16",
           "projectcalico.org/IPv4IPIPTunnelAddr": "192.168.163.128",
           "volumes.kubernetes.io/controller-managed-attach-detach": "true"
         }
@@ -11669,7 +12039,7 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "allocatable": {
@@ -11677,22 +12047,22 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "conditions": [
           {
             "type": "NetworkUnavailable",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:03Z",
-            "lastTransitionTime": "2026-09-23T13:32:03Z",
+            "lastHeartbeatTime": "2026-09-24T13:08:19Z",
+            "lastTransitionTime": "2026-09-24T13:08:19Z",
             "reason": "CalicoIsUp",
             "message": "Calico is running on this node"
           },
           {
             "type": "MemoryPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:33Z",
+            "lastHeartbeatTime": "2026-09-24T13:40:51Z",
             "lastTransitionTime": "2026-09-23T13:31:28Z",
             "reason": "KubeletHasSufficientMemory",
             "message": "kubelet has sufficient memory available"
@@ -11700,7 +12070,7 @@
           {
             "type": "DiskPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:33Z",
+            "lastHeartbeatTime": "2026-09-24T13:40:51Z",
             "lastTransitionTime": "2026-09-23T13:31:28Z",
             "reason": "KubeletHasNoDiskPressure",
             "message": "kubelet has no disk pressure"
@@ -11708,7 +12078,7 @@
           {
             "type": "PIDPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:33Z",
+            "lastHeartbeatTime": "2026-09-24T13:40:51Z",
             "lastTransitionTime": "2026-09-23T13:31:28Z",
             "reason": "KubeletHasSufficientPID",
             "message": "kubelet has sufficient PID available"
@@ -11716,7 +12086,7 @@
           {
             "type": "Ready",
             "status": "True",
-            "lastHeartbeatTime": "2026-09-23T13:32:33Z",
+            "lastHeartbeatTime": "2026-09-24T13:40:51Z",
             "lastTransitionTime": "2026-09-23T13:31:51Z",
             "reason": "KubeletReady",
             "message": "kubelet is posting ready status"
@@ -11725,7 +12095,7 @@
         "addresses": [
           {
             "type": "InternalIP",
-            "address": "172.18.0.5"
+            "address": "172.18.0.9"
           },
           {
             "type": "Hostname",
@@ -11738,9 +12108,9 @@
           }
         },
         "nodeInfo": {
-          "machineID": "d9de9d8bd386446d80af81f29d587666",
+          "machineID": "c7efb679dd9b4fb5a8509bf9fdde63fe",
           "systemUUID": "78cd5435-1112-4479-911a-7258ef6d2bf7",
-          "bootID": "65673a80-bdd7-4527-a28c-1746f69287a7",
+          "bootID": "e1bf4ba5-f2e8-46c0-a8c8-4a0957defd36",
           "kernelVersion": "7.0.0-31-generic",
           "osImage": "Debian GNU/Linux 13 (trixie)",
           "containerRuntimeVersion": "containerd://2.3.4",
@@ -11782,7 +12152,7 @@
               "registry.k8s.io/kube-controller-manager-amd64:v1.37.0",
               "registry.k8s.io/kube-controller-manager:v1.37.0"
             ],
-            "sizeBytes": 91037796
+            "sizeBytes": 91037405
           },
           {
             "names": [
@@ -11802,9 +12172,30 @@
           },
           {
             "names": [
+              "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
+              "registry.k8s.io/e2e-test-images/agnhost:2.53"
+            ],
+            "sizeBytes": 54468442
+          },
+          {
+            "names": [
+              "docker.io/fluent/fluent-bit@sha256:d6dec000c4929a439562525728c708f6e99800d7ddc82efd6aa4f45f3a20b562",
+              "docker.io/fluent/fluent-bit:3.2"
+            ],
+            "sizeBytes": 42719581
+          },
+          {
+            "names": [
               "docker.io/kindest/kindnetd:v20260820-69b56db7"
             ],
             "sizeBytes": 39744255
+          },
+          {
+            "names": [
+              "cr.fluentbit.io/fluent/fluent-bit@sha256:b7a2b9ee1958607da9a16b0efeb24a70a43c5b7e91dbabca4dc02e916aadb914",
+              "cr.fluentbit.io/fluent/fluent-bit:3.2.2"
+            ],
+            "sizeBytes": 39223724
           },
           {
             "names": [
@@ -11823,6 +12214,20 @@
               "docker.io/kindest/local-path-provisioner:v20260820-69b56db7"
             ],
             "sizeBytes": 15868133
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a",
+              "quay.io/prometheus/node-exporter:v1.9.1"
+            ],
+            "sizeBytes": 12955907
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706",
+              "quay.io/prometheus/node-exporter:v1.8.2"
+            ],
+            "sizeBytes": 12041464
           },
           {
             "names": [
@@ -11875,7 +12280,7 @@
       "metadata": {
         "name": "failopen-lab-worker",
         "uid": "aa5f09b1-a3be-4228-9455-2ad3344a4d44",
-        "resourceVersion": "1128",
+        "resourceVersion": "49489",
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
           "beta.kubernetes.io/arch": "amd64",
@@ -11888,7 +12293,7 @@
         },
         "annotations": {
           "node.alpha.kubernetes.io/ttl": "0",
-          "projectcalico.org/IPv4Address": "172.18.0.11/16",
+          "projectcalico.org/IPv4Address": "172.18.0.3/16",
           "projectcalico.org/IPv4IPIPTunnelAddr": "192.168.201.128",
           "volumes.kubernetes.io/controller-managed-attach-detach": "true"
         }
@@ -11906,7 +12311,7 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "allocatable": {
@@ -11914,22 +12319,22 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "conditions": [
           {
             "type": "NetworkUnavailable",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:03Z",
-            "lastTransitionTime": "2026-09-23T13:32:03Z",
+            "lastHeartbeatTime": "2026-09-24T13:09:17Z",
+            "lastTransitionTime": "2026-09-24T13:09:17Z",
             "reason": "CalicoIsUp",
             "message": "Calico is running on this node"
           },
           {
             "type": "MemoryPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:41:23Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientMemory",
             "message": "kubelet has sufficient memory available"
@@ -11937,7 +12342,7 @@
           {
             "type": "DiskPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:41:23Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasNoDiskPressure",
             "message": "kubelet has no disk pressure"
@@ -11945,7 +12350,7 @@
           {
             "type": "PIDPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:41:23Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientPID",
             "message": "kubelet has sufficient PID available"
@@ -11953,7 +12358,7 @@
           {
             "type": "Ready",
             "status": "True",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:41:23Z",
             "lastTransitionTime": "2026-09-23T13:31:55Z",
             "reason": "KubeletReady",
             "message": "kubelet is posting ready status"
@@ -11962,7 +12367,7 @@
         "addresses": [
           {
             "type": "InternalIP",
-            "address": "172.18.0.11"
+            "address": "172.18.0.3"
           },
           {
             "type": "Hostname",
@@ -11975,9 +12380,9 @@
           }
         },
         "nodeInfo": {
-          "machineID": "64a0b68038334a88a67dfff49cfe5832",
+          "machineID": "61db8b341d644034808e45980acf6313",
           "systemUUID": "c8306200-949c-4ce9-bc7f-0b11eb11f25e",
-          "bootID": "65673a80-bdd7-4527-a28c-1746f69287a7",
+          "bootID": "e1bf4ba5-f2e8-46c0-a8c8-4a0957defd36",
           "kernelVersion": "7.0.0-31-generic",
           "osImage": "Debian GNU/Linux 13 (trixie)",
           "containerRuntimeVersion": "containerd://2.3.4",
@@ -11993,10 +12398,31 @@
         "images": [
           {
             "names": [
+              "quay.io/prometheus/prometheus@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996",
+              "quay.io/prometheus/prometheus:v3.5.0"
+            ],
+            "sizeBytes": 123797512
+          },
+          {
+            "names": [
+              "docker.io/library/postgres@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+              "docker.io/library/postgres:17-alpine"
+            ],
+            "sizeBytes": 117212703
+          },
+          {
+            "names": [
               "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
               "docker.io/calico/node:v3.28.0"
             ],
             "sizeBytes": 115239232
+          },
+          {
+            "names": [
+              "quay.io/prometheus/prometheus@sha256:2659f4c2ebb718e7695cb9b25ffa7d6be64db013daba13e05c875451cf51b0d3",
+              "quay.io/prometheus/prometheus:v2.55.1"
+            ],
+            "sizeBytes": 114286128
           },
           {
             "names": [
@@ -12005,6 +12431,13 @@
               "registry.k8s.io/kube-apiserver:v1.37.0"
             ],
             "sizeBytes": 104328436
+          },
+          {
+            "names": [
+              "docker.io/library/postgres@sha256:5660c2cbfea50c7a9127d17dc4e48543eedd3d7a41a595a2dfa572471e37e64c",
+              "docker.io/library/postgres:16.4-alpine"
+            ],
+            "sizeBytes": 99175927
           },
           {
             "names": [
@@ -12027,7 +12460,7 @@
               "registry.k8s.io/kube-proxy-amd64:v1.37.0",
               "registry.k8s.io/kube-proxy:v1.37.0"
             ],
-            "sizeBytes": 82822887
+            "sizeBytes": 82823264
           },
           {
             "names": [
@@ -12035,13 +12468,34 @@
               "registry.k8s.io/kube-scheduler-amd64:v1.37.0",
               "registry.k8s.io/kube-scheduler:v1.37.0"
             ],
-            "sizeBytes": 62689371
+            "sizeBytes": 62688989
+          },
+          {
+            "names": [
+              "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
+              "registry.k8s.io/e2e-test-images/agnhost:2.53"
+            ],
+            "sizeBytes": 54468442
+          },
+          {
+            "names": [
+              "docker.io/fluent/fluent-bit@sha256:d6dec000c4929a439562525728c708f6e99800d7ddc82efd6aa4f45f3a20b562",
+              "docker.io/fluent/fluent-bit:3.2"
+            ],
+            "sizeBytes": 42719581
           },
           {
             "names": [
               "docker.io/kindest/kindnetd:v20260820-69b56db7"
             ],
             "sizeBytes": 39744255
+          },
+          {
+            "names": [
+              "cr.fluentbit.io/fluent/fluent-bit@sha256:b7a2b9ee1958607da9a16b0efeb24a70a43c5b7e91dbabca4dc02e916aadb914",
+              "cr.fluentbit.io/fluent/fluent-bit:3.2.2"
+            ],
+            "sizeBytes": 39223724
           },
           {
             "names": [
@@ -12057,9 +12511,30 @@
           },
           {
             "names": [
+              "docker.io/library/redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+              "docker.io/library/redis:7.4-alpine"
+            ],
+            "sizeBytes": 16260342
+          },
+          {
+            "names": [
               "docker.io/kindest/local-path-provisioner:v20260820-69b56db7"
             ],
             "sizeBytes": 15868133
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a",
+              "quay.io/prometheus/node-exporter:v1.9.1"
+            ],
+            "sizeBytes": 12955907
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706",
+              "quay.io/prometheus/node-exporter:v1.8.2"
+            ],
+            "sizeBytes": 12041464
           },
           {
             "names": [
@@ -12112,7 +12587,7 @@
       "metadata": {
         "name": "failopen-lab-worker2",
         "uid": "78320490-8ae2-4e4f-8179-26a0f027bd11",
-        "resourceVersion": "1123",
+        "resourceVersion": "49626",
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
           "beta.kubernetes.io/arch": "amd64",
@@ -12125,7 +12600,7 @@
         },
         "annotations": {
           "node.alpha.kubernetes.io/ttl": "0",
-          "projectcalico.org/IPv4Address": "172.18.0.9/16",
+          "projectcalico.org/IPv4Address": "172.18.0.4/16",
           "projectcalico.org/IPv4IPIPTunnelAddr": "192.168.189.64",
           "volumes.kubernetes.io/controller-managed-attach-detach": "true"
         }
@@ -12143,7 +12618,7 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "allocatable": {
@@ -12151,22 +12626,22 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "conditions": [
           {
             "type": "NetworkUnavailable",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:01Z",
-            "lastTransitionTime": "2026-09-23T13:32:01Z",
+            "lastHeartbeatTime": "2026-09-24T13:07:47Z",
+            "lastTransitionTime": "2026-09-24T13:07:47Z",
             "reason": "CalicoIsUp",
             "message": "Calico is running on this node"
           },
           {
             "type": "MemoryPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:33Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientMemory",
             "message": "kubelet has sufficient memory available"
@@ -12174,7 +12649,7 @@
           {
             "type": "DiskPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:33Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasNoDiskPressure",
             "message": "kubelet has no disk pressure"
@@ -12182,7 +12657,7 @@
           {
             "type": "PIDPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:33Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientPID",
             "message": "kubelet has sufficient PID available"
@@ -12190,7 +12665,7 @@
           {
             "type": "Ready",
             "status": "True",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:33Z",
             "lastTransitionTime": "2026-09-23T13:31:55Z",
             "reason": "KubeletReady",
             "message": "kubelet is posting ready status"
@@ -12199,7 +12674,7 @@
         "addresses": [
           {
             "type": "InternalIP",
-            "address": "172.18.0.9"
+            "address": "172.18.0.4"
           },
           {
             "type": "Hostname",
@@ -12212,9 +12687,9 @@
           }
         },
         "nodeInfo": {
-          "machineID": "71a0937a08fa4a8893744ab6da677e7a",
+          "machineID": "f8b3a88632ac472c8c0f08b2571d93e5",
           "systemUUID": "d7ec70a0-2c82-432d-9794-9ca1587fd264",
-          "bootID": "65673a80-bdd7-4527-a28c-1746f69287a7",
+          "bootID": "e1bf4ba5-f2e8-46c0-a8c8-4a0957defd36",
           "kernelVersion": "7.0.0-31-generic",
           "osImage": "Debian GNU/Linux 13 (trixie)",
           "containerRuntimeVersion": "containerd://2.3.4",
@@ -12230,6 +12705,13 @@
         "images": [
           {
             "names": [
+              "docker.io/library/postgres@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+              "docker.io/library/postgres:17-alpine"
+            ],
+            "sizeBytes": 117212703
+          },
+          {
+            "names": [
               "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
               "docker.io/calico/node:v3.28.0"
             ],
@@ -12237,11 +12719,25 @@
           },
           {
             "names": [
+              "quay.io/prometheus/prometheus@sha256:2659f4c2ebb718e7695cb9b25ffa7d6be64db013daba13e05c875451cf51b0d3",
+              "quay.io/prometheus/prometheus:v2.55.1"
+            ],
+            "sizeBytes": 114286128
+          },
+          {
+            "names": [
               "docker.io/library/import-2026-08-26@sha256:eff360f86083f21c9ceaa64cbaa2e4d439d9e7e1d6834c21d25daac35e58015b",
               "registry.k8s.io/kube-apiserver-amd64:v1.37.0",
               "registry.k8s.io/kube-apiserver:v1.37.0"
             ],
-            "sizeBytes": 104328054
+            "sizeBytes": 104328436
+          },
+          {
+            "names": [
+              "docker.io/library/postgres@sha256:5660c2cbfea50c7a9127d17dc4e48543eedd3d7a41a595a2dfa572471e37e64c",
+              "docker.io/library/postgres:16.4-alpine"
+            ],
+            "sizeBytes": 99175927
           },
           {
             "names": [
@@ -12276,9 +12772,30 @@
           },
           {
             "names": [
+              "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
+              "registry.k8s.io/e2e-test-images/agnhost:2.53"
+            ],
+            "sizeBytes": 54468442
+          },
+          {
+            "names": [
+              "docker.io/fluent/fluent-bit@sha256:d6dec000c4929a439562525728c708f6e99800d7ddc82efd6aa4f45f3a20b562",
+              "docker.io/fluent/fluent-bit:3.2"
+            ],
+            "sizeBytes": 42719581
+          },
+          {
+            "names": [
               "docker.io/kindest/kindnetd:v20260820-69b56db7"
             ],
             "sizeBytes": 39744255
+          },
+          {
+            "names": [
+              "cr.fluentbit.io/fluent/fluent-bit@sha256:b7a2b9ee1958607da9a16b0efeb24a70a43c5b7e91dbabca4dc02e916aadb914",
+              "cr.fluentbit.io/fluent/fluent-bit:3.2.2"
+            ],
+            "sizeBytes": 39223724
           },
           {
             "names": [
@@ -12294,9 +12811,30 @@
           },
           {
             "names": [
+              "docker.io/library/redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+              "docker.io/library/redis:7.4-alpine"
+            ],
+            "sizeBytes": 16260342
+          },
+          {
+            "names": [
               "docker.io/kindest/local-path-provisioner:v20260820-69b56db7"
             ],
             "sizeBytes": 15868133
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a",
+              "quay.io/prometheus/node-exporter:v1.9.1"
+            ],
+            "sizeBytes": 12955907
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706",
+              "quay.io/prometheus/node-exporter:v1.8.2"
+            ],
+            "sizeBytes": 12041464
           },
           {
             "names": [
@@ -12349,7 +12887,7 @@
       "metadata": {
         "name": "failopen-lab-worker3",
         "uid": "27aabc67-5db0-452d-bc05-8da597baabb8",
-        "resourceVersion": "1139",
+        "resourceVersion": "49658",
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
           "beta.kubernetes.io/arch": "amd64",
@@ -12380,7 +12918,7 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "allocatable": {
@@ -12388,22 +12926,22 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "conditions": [
           {
             "type": "NetworkUnavailable",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:31:56Z",
-            "lastTransitionTime": "2026-09-23T13:31:56Z",
+            "lastHeartbeatTime": "2026-09-24T13:07:48Z",
+            "lastTransitionTime": "2026-09-24T13:07:48Z",
             "reason": "CalicoIsUp",
             "message": "Calico is running on this node"
           },
           {
             "type": "MemoryPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:46Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientMemory",
             "message": "kubelet has sufficient memory available"
@@ -12411,7 +12949,7 @@
           {
             "type": "DiskPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:46Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasNoDiskPressure",
             "message": "kubelet has no disk pressure"
@@ -12419,7 +12957,7 @@
           {
             "type": "PIDPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:46Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientPID",
             "message": "kubelet has sufficient PID available"
@@ -12427,8 +12965,8 @@
           {
             "type": "Ready",
             "status": "True",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
-            "lastTransitionTime": "2026-09-23T13:31:51Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:46Z",
+            "lastTransitionTime": "2026-09-24T13:08:24Z",
             "reason": "KubeletReady",
             "message": "kubelet is posting ready status"
           }
@@ -12449,9 +12987,9 @@
           }
         },
         "nodeInfo": {
-          "machineID": "66fa13d8f3d2468aa643f81b8b9ca97c",
+          "machineID": "b7e6b47b94d048068b0a774d3bd0ea34",
           "systemUUID": "2d2b6773-066b-4a84-8484-2daefa732c90",
-          "bootID": "65673a80-bdd7-4527-a28c-1746f69287a7",
+          "bootID": "e1bf4ba5-f2e8-46c0-a8c8-4a0957defd36",
           "kernelVersion": "7.0.0-31-generic",
           "osImage": "Debian GNU/Linux 13 (trixie)",
           "containerRuntimeVersion": "containerd://2.3.4",
@@ -12467,6 +13005,13 @@
         "images": [
           {
             "names": [
+              "quay.io/prometheus/prometheus@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996",
+              "quay.io/prometheus/prometheus:v3.5.0"
+            ],
+            "sizeBytes": 123797512
+          },
+          {
+            "names": [
               "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
               "docker.io/calico/node:v3.28.0"
             ],
@@ -12478,7 +13023,7 @@
               "registry.k8s.io/kube-apiserver-amd64:v1.37.0",
               "registry.k8s.io/kube-apiserver:v1.37.0"
             ],
-            "sizeBytes": 104328436
+            "sizeBytes": 104328054
           },
           {
             "names": [
@@ -12501,7 +13046,7 @@
               "registry.k8s.io/kube-proxy-amd64:v1.37.0",
               "registry.k8s.io/kube-proxy:v1.37.0"
             ],
-            "sizeBytes": 82822887
+            "sizeBytes": 82823264
           },
           {
             "names": [
@@ -12509,13 +13054,34 @@
               "registry.k8s.io/kube-scheduler-amd64:v1.37.0",
               "registry.k8s.io/kube-scheduler:v1.37.0"
             ],
-            "sizeBytes": 62689371
+            "sizeBytes": 62688989
+          },
+          {
+            "names": [
+              "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
+              "registry.k8s.io/e2e-test-images/agnhost:2.53"
+            ],
+            "sizeBytes": 54468442
+          },
+          {
+            "names": [
+              "docker.io/fluent/fluent-bit@sha256:d6dec000c4929a439562525728c708f6e99800d7ddc82efd6aa4f45f3a20b562",
+              "docker.io/fluent/fluent-bit:3.2"
+            ],
+            "sizeBytes": 42719581
           },
           {
             "names": [
               "docker.io/kindest/kindnetd:v20260820-69b56db7"
             ],
             "sizeBytes": 39744255
+          },
+          {
+            "names": [
+              "cr.fluentbit.io/fluent/fluent-bit@sha256:b7a2b9ee1958607da9a16b0efeb24a70a43c5b7e91dbabca4dc02e916aadb914",
+              "cr.fluentbit.io/fluent/fluent-bit:3.2.2"
+            ],
+            "sizeBytes": 39223724
           },
           {
             "names": [
@@ -12541,6 +13107,20 @@
               "docker.io/kindest/local-path-provisioner:v20260820-69b56db7"
             ],
             "sizeBytes": 15868133
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a",
+              "quay.io/prometheus/node-exporter:v1.9.1"
+            ],
+            "sizeBytes": 12955907
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706",
+              "quay.io/prometheus/node-exporter:v1.8.2"
+            ],
+            "sizeBytes": 12041464
           },
           {
             "names": [
@@ -12593,7 +13173,7 @@
       "metadata": {
         "name": "failopen-lab-worker4",
         "uid": "8fd1c20e-f59b-4b45-ae25-fec884fcd69c",
-        "resourceVersion": "1126",
+        "resourceVersion": "49419",
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
           "beta.kubernetes.io/arch": "amd64",
@@ -12606,7 +13186,7 @@
         },
         "annotations": {
           "node.alpha.kubernetes.io/ttl": "0",
-          "projectcalico.org/IPv4Address": "172.18.0.8/16",
+          "projectcalico.org/IPv4Address": "172.18.0.7/16",
           "projectcalico.org/IPv4IPIPTunnelAddr": "192.168.219.192",
           "volumes.kubernetes.io/controller-managed-attach-detach": "true"
         }
@@ -12631,7 +13211,7 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "allocatable": {
@@ -12639,22 +13219,22 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "conditions": [
           {
             "type": "NetworkUnavailable",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:31:59Z",
-            "lastTransitionTime": "2026-09-23T13:31:59Z",
+            "lastHeartbeatTime": "2026-09-24T13:08:32Z",
+            "lastTransitionTime": "2026-09-24T13:08:32Z",
             "reason": "CalicoIsUp",
             "message": "Calico is running on this node"
           },
           {
             "type": "MemoryPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:40:50Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientMemory",
             "message": "kubelet has sufficient memory available"
@@ -12662,7 +13242,7 @@
           {
             "type": "DiskPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:40:50Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasNoDiskPressure",
             "message": "kubelet has no disk pressure"
@@ -12670,7 +13250,7 @@
           {
             "type": "PIDPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:40:50Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientPID",
             "message": "kubelet has sufficient PID available"
@@ -12678,7 +13258,7 @@
           {
             "type": "Ready",
             "status": "True",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:40:50Z",
             "lastTransitionTime": "2026-09-23T13:31:53Z",
             "reason": "KubeletReady",
             "message": "kubelet is posting ready status"
@@ -12687,7 +13267,7 @@
         "addresses": [
           {
             "type": "InternalIP",
-            "address": "172.18.0.8"
+            "address": "172.18.0.7"
           },
           {
             "type": "Hostname",
@@ -12700,9 +13280,9 @@
           }
         },
         "nodeInfo": {
-          "machineID": "7b8bcf11bca34ed0ac2c6d9c92cd0c75",
+          "machineID": "8a1b4ddfc69243e3a982188612c1f64f",
           "systemUUID": "a13d2d90-ba29-4d2c-8580-17178c161c90",
-          "bootID": "65673a80-bdd7-4527-a28c-1746f69287a7",
+          "bootID": "e1bf4ba5-f2e8-46c0-a8c8-4a0957defd36",
           "kernelVersion": "7.0.0-31-generic",
           "osImage": "Debian GNU/Linux 13 (trixie)",
           "containerRuntimeVersion": "containerd://2.3.4",
@@ -12729,7 +13309,7 @@
               "registry.k8s.io/kube-apiserver-amd64:v1.37.0",
               "registry.k8s.io/kube-apiserver:v1.37.0"
             ],
-            "sizeBytes": 104328054
+            "sizeBytes": 104328436
           },
           {
             "names": [
@@ -12760,13 +13340,34 @@
               "registry.k8s.io/kube-scheduler-amd64:v1.37.0",
               "registry.k8s.io/kube-scheduler:v1.37.0"
             ],
-            "sizeBytes": 62689371
+            "sizeBytes": 62688989
+          },
+          {
+            "names": [
+              "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
+              "registry.k8s.io/e2e-test-images/agnhost:2.53"
+            ],
+            "sizeBytes": 54468442
+          },
+          {
+            "names": [
+              "docker.io/fluent/fluent-bit@sha256:d6dec000c4929a439562525728c708f6e99800d7ddc82efd6aa4f45f3a20b562",
+              "docker.io/fluent/fluent-bit:3.2"
+            ],
+            "sizeBytes": 42719581
           },
           {
             "names": [
               "docker.io/kindest/kindnetd:v20260820-69b56db7"
             ],
             "sizeBytes": 39744255
+          },
+          {
+            "names": [
+              "cr.fluentbit.io/fluent/fluent-bit@sha256:b7a2b9ee1958607da9a16b0efeb24a70a43c5b7e91dbabca4dc02e916aadb914",
+              "cr.fluentbit.io/fluent/fluent-bit:3.2.2"
+            ],
+            "sizeBytes": 39223724
           },
           {
             "names": [
@@ -12782,9 +13383,30 @@
           },
           {
             "names": [
+              "docker.io/nginxinc/nginx-unprivileged@sha256:65e3e85dbaed8ba248841d9d58a899b6197106c23cb0ff1a132b7bfe0547e4c0",
+              "docker.io/nginxinc/nginx-unprivileged:1.27-alpine"
+            ],
+            "sizeBytes": 20986061
+          },
+          {
+            "names": [
               "docker.io/kindest/local-path-provisioner:v20260820-69b56db7"
             ],
             "sizeBytes": 15868133
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a",
+              "quay.io/prometheus/node-exporter:v1.9.1"
+            ],
+            "sizeBytes": 12955907
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706",
+              "quay.io/prometheus/node-exporter:v1.8.2"
+            ],
+            "sizeBytes": 12041464
           },
           {
             "names": [
@@ -12837,7 +13459,7 @@
       "metadata": {
         "name": "failopen-lab-worker5",
         "uid": "02d3d220-1ef9-4ca1-baa3-372109029401",
-        "resourceVersion": "1134",
+        "resourceVersion": "49465",
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
           "beta.kubernetes.io/arch": "amd64",
@@ -12850,7 +13472,7 @@
         },
         "annotations": {
           "node.alpha.kubernetes.io/ttl": "0",
-          "projectcalico.org/IPv4Address": "172.18.0.7/16",
+          "projectcalico.org/IPv4Address": "172.18.0.14/16",
           "projectcalico.org/IPv4IPIPTunnelAddr": "192.168.220.64",
           "volumes.kubernetes.io/controller-managed-attach-detach": "true"
         }
@@ -12875,7 +13497,7 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "allocatable": {
@@ -12883,22 +13505,22 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "conditions": [
           {
             "type": "NetworkUnavailable",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:04Z",
-            "lastTransitionTime": "2026-09-23T13:32:04Z",
+            "lastHeartbeatTime": "2026-09-24T13:07:52Z",
+            "lastTransitionTime": "2026-09-24T13:07:52Z",
             "reason": "CalicoIsUp",
             "message": "Calico is running on this node"
           },
           {
             "type": "MemoryPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:41:13Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientMemory",
             "message": "kubelet has sufficient memory available"
@@ -12906,7 +13528,7 @@
           {
             "type": "DiskPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:41:13Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasNoDiskPressure",
             "message": "kubelet has no disk pressure"
@@ -12914,7 +13536,7 @@
           {
             "type": "PIDPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:41:13Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientPID",
             "message": "kubelet has sufficient PID available"
@@ -12922,7 +13544,7 @@
           {
             "type": "Ready",
             "status": "True",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:41:13Z",
             "lastTransitionTime": "2026-09-23T13:31:58Z",
             "reason": "KubeletReady",
             "message": "kubelet is posting ready status"
@@ -12931,7 +13553,7 @@
         "addresses": [
           {
             "type": "InternalIP",
-            "address": "172.18.0.7"
+            "address": "172.18.0.14"
           },
           {
             "type": "Hostname",
@@ -12944,9 +13566,9 @@
           }
         },
         "nodeInfo": {
-          "machineID": "c26ede085157436fadc9139c86df4360",
+          "machineID": "2587a7aece5e43558147e94948abd140",
           "systemUUID": "1e6f4201-5bef-4140-872c-7987e98f0ed1",
-          "bootID": "65673a80-bdd7-4527-a28c-1746f69287a7",
+          "bootID": "e1bf4ba5-f2e8-46c0-a8c8-4a0957defd36",
           "kernelVersion": "7.0.0-31-generic",
           "osImage": "Debian GNU/Linux 13 (trixie)",
           "containerRuntimeVersion": "containerd://2.3.4",
@@ -12962,6 +13584,13 @@
         "images": [
           {
             "names": [
+              "docker.io/library/postgres@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+              "docker.io/library/postgres:17-alpine"
+            ],
+            "sizeBytes": 117212703
+          },
+          {
+            "names": [
               "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
               "docker.io/calico/node:v3.28.0"
             ],
@@ -12973,7 +13602,7 @@
               "registry.k8s.io/kube-apiserver-amd64:v1.37.0",
               "registry.k8s.io/kube-apiserver:v1.37.0"
             ],
-            "sizeBytes": 104328436
+            "sizeBytes": 104328054
           },
           {
             "names": [
@@ -12988,7 +13617,7 @@
               "registry.k8s.io/kube-controller-manager-amd64:v1.37.0",
               "registry.k8s.io/kube-controller-manager:v1.37.0"
             ],
-            "sizeBytes": 91037796
+            "sizeBytes": 91037405
           },
           {
             "names": [
@@ -13004,13 +13633,34 @@
               "registry.k8s.io/kube-scheduler-amd64:v1.37.0",
               "registry.k8s.io/kube-scheduler:v1.37.0"
             ],
-            "sizeBytes": 62689371
+            "sizeBytes": 62688989
+          },
+          {
+            "names": [
+              "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
+              "registry.k8s.io/e2e-test-images/agnhost:2.53"
+            ],
+            "sizeBytes": 54468442
+          },
+          {
+            "names": [
+              "docker.io/fluent/fluent-bit@sha256:d6dec000c4929a439562525728c708f6e99800d7ddc82efd6aa4f45f3a20b562",
+              "docker.io/fluent/fluent-bit:3.2"
+            ],
+            "sizeBytes": 42719581
           },
           {
             "names": [
               "docker.io/kindest/kindnetd:v20260820-69b56db7"
             ],
             "sizeBytes": 39744255
+          },
+          {
+            "names": [
+              "cr.fluentbit.io/fluent/fluent-bit@sha256:b7a2b9ee1958607da9a16b0efeb24a70a43c5b7e91dbabca4dc02e916aadb914",
+              "cr.fluentbit.io/fluent/fluent-bit:3.2.2"
+            ],
+            "sizeBytes": 39223724
           },
           {
             "names": [
@@ -13029,6 +13679,20 @@
               "docker.io/kindest/local-path-provisioner:v20260820-69b56db7"
             ],
             "sizeBytes": 15868133
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a",
+              "quay.io/prometheus/node-exporter:v1.9.1"
+            ],
+            "sizeBytes": 12955907
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706",
+              "quay.io/prometheus/node-exporter:v1.8.2"
+            ],
+            "sizeBytes": 12041464
           },
           {
             "names": [
@@ -13081,7 +13745,7 @@
       "metadata": {
         "name": "failopen-lab-worker6",
         "uid": "fadf66de-5f9d-472e-8142-be4d31987c27",
-        "resourceVersion": "1132",
+        "resourceVersion": "49603",
         "creationTimestamp": "2026-09-23T13:31:42Z",
         "labels": {
           "beta.kubernetes.io/arch": "amd64",
@@ -13094,7 +13758,7 @@
         },
         "annotations": {
           "node.alpha.kubernetes.io/ttl": "0",
-          "projectcalico.org/IPv4Address": "172.18.0.10/16",
+          "projectcalico.org/IPv4Address": "172.18.0.13/16",
           "projectcalico.org/IPv4IPIPTunnelAddr": "192.168.41.0",
           "volumes.kubernetes.io/controller-managed-attach-detach": "true"
         }
@@ -13119,7 +13783,7 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "allocatable": {
@@ -13127,22 +13791,22 @@
           "ephemeral-storage": "244939624448",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "31941824Ki",
+          "memory": "31941820Ki",
           "pods": "110"
         },
         "conditions": [
           {
             "type": "NetworkUnavailable",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:05Z",
-            "lastTransitionTime": "2026-09-23T13:32:05Z",
+            "lastHeartbeatTime": "2026-09-24T13:08:23Z",
+            "lastTransitionTime": "2026-09-24T13:08:23Z",
             "reason": "CalicoIsUp",
             "message": "Calico is running on this node"
           },
           {
             "type": "MemoryPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:20Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientMemory",
             "message": "kubelet has sufficient memory available"
@@ -13150,7 +13814,7 @@
           {
             "type": "DiskPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:20Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasNoDiskPressure",
             "message": "kubelet has no disk pressure"
@@ -13158,7 +13822,7 @@
           {
             "type": "PIDPressure",
             "status": "False",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:20Z",
             "lastTransitionTime": "2026-09-23T13:31:42Z",
             "reason": "KubeletHasSufficientPID",
             "message": "kubelet has sufficient PID available"
@@ -13166,7 +13830,7 @@
           {
             "type": "Ready",
             "status": "True",
-            "lastHeartbeatTime": "2026-09-23T13:32:13Z",
+            "lastHeartbeatTime": "2026-09-24T13:42:20Z",
             "lastTransitionTime": "2026-09-23T13:31:55Z",
             "reason": "KubeletReady",
             "message": "kubelet is posting ready status"
@@ -13175,7 +13839,7 @@
         "addresses": [
           {
             "type": "InternalIP",
-            "address": "172.18.0.10"
+            "address": "172.18.0.13"
           },
           {
             "type": "Hostname",
@@ -13188,9 +13852,9 @@
           }
         },
         "nodeInfo": {
-          "machineID": "295f9303d9fe45a281002d96a3a7c530",
+          "machineID": "396d37704bea47c59f9349d257dc9d92",
           "systemUUID": "2f770483-a63b-4194-b413-28b17a6049fb",
-          "bootID": "65673a80-bdd7-4527-a28c-1746f69287a7",
+          "bootID": "e1bf4ba5-f2e8-46c0-a8c8-4a0957defd36",
           "kernelVersion": "7.0.0-31-generic",
           "osImage": "Debian GNU/Linux 13 (trixie)",
           "containerRuntimeVersion": "containerd://2.3.4",
@@ -13206,6 +13870,13 @@
         "images": [
           {
             "names": [
+              "docker.io/library/postgres@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+              "docker.io/library/postgres:17-alpine"
+            ],
+            "sizeBytes": 117212703
+          },
+          {
+            "names": [
               "docker.io/calico/node@sha256:385bf6391fea031649b8575799248762a2caece86e6e3f33ffee19c0c096e6a8",
               "docker.io/calico/node:v3.28.0"
             ],
@@ -13217,7 +13888,7 @@
               "registry.k8s.io/kube-apiserver-amd64:v1.37.0",
               "registry.k8s.io/kube-apiserver:v1.37.0"
             ],
-            "sizeBytes": 104328436
+            "sizeBytes": 104328054
           },
           {
             "names": [
@@ -13240,7 +13911,7 @@
               "registry.k8s.io/kube-proxy-amd64:v1.37.0",
               "registry.k8s.io/kube-proxy:v1.37.0"
             ],
-            "sizeBytes": 82822887
+            "sizeBytes": 82823264
           },
           {
             "names": [
@@ -13248,13 +13919,34 @@
               "registry.k8s.io/kube-scheduler-amd64:v1.37.0",
               "registry.k8s.io/kube-scheduler:v1.37.0"
             ],
-            "sizeBytes": 62689371
+            "sizeBytes": 62688989
+          },
+          {
+            "names": [
+              "registry.k8s.io/e2e-test-images/agnhost@sha256:99c6b4bb4a1e1df3f0b3752168c89358794d02258ebebc26bf21c29399011a85",
+              "registry.k8s.io/e2e-test-images/agnhost:2.53"
+            ],
+            "sizeBytes": 54468442
+          },
+          {
+            "names": [
+              "docker.io/fluent/fluent-bit@sha256:d6dec000c4929a439562525728c708f6e99800d7ddc82efd6aa4f45f3a20b562",
+              "docker.io/fluent/fluent-bit:3.2"
+            ],
+            "sizeBytes": 42719581
           },
           {
             "names": [
               "docker.io/kindest/kindnetd:v20260820-69b56db7"
             ],
             "sizeBytes": 39744255
+          },
+          {
+            "names": [
+              "cr.fluentbit.io/fluent/fluent-bit@sha256:b7a2b9ee1958607da9a16b0efeb24a70a43c5b7e91dbabca4dc02e916aadb914",
+              "cr.fluentbit.io/fluent/fluent-bit:3.2.2"
+            ],
+            "sizeBytes": 39223724
           },
           {
             "names": [
@@ -13273,6 +13965,20 @@
               "docker.io/kindest/local-path-provisioner:v20260820-69b56db7"
             ],
             "sizeBytes": 15868133
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a",
+              "quay.io/prometheus/node-exporter:v1.9.1"
+            ],
+            "sizeBytes": 12955907
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706",
+              "quay.io/prometheus/node-exporter:v1.8.2"
+            ],
+            "sizeBytes": 12041464
           },
           {
             "names": [
@@ -13324,6 +14030,11 @@
   ],
   "cni": {
     "name": "calico",
-    "enforcesPolicy": true
+    "enforcesPolicy": true,
+    "podCIDRs": [
+      "192.168.0.0/16"
+    ],
+    "encapsulation": "ipip",
+    "podCIDRSource": "calico-ippool"
   }
 }

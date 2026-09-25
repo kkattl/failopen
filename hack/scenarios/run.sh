@@ -2,19 +2,20 @@
 # Measure one scenario on the current cluster: apply -> oracle -> delete.
 # Results land in <scenario>/<cni>/{snapshot,reachability}.json.
 #
-# Usage: hack/scenarios/run.sh testdata/scenarios/<name> [kubeconfig]
+# Usage: hack/scenarios/run.sh testdata/scenarios/<name> <kubeconfig> <profile>
 #        KEEP=1 hack/scenarios/run.sh ...   # leave the scenario deployed
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 
-dir=${1:?usage: $0 testdata/scenarios/<name> [kubeconfig]}
-kubeconfig=${2:-hack/demo/kubeconfig}
+dir=${1:?usage: $0 testdata/scenarios/<name> <kubeconfig> <profile>}
+kubeconfig=${2:?kubeconfig required}
+profile=${3:?profile required (hack/lab/profiles)}
 K="kubectl --kubeconfig=$kubeconfig"
 
-# "external" probes come from this machine; on kind the cluster sees the
-# docker network gateway as their source IP.
-external_ip=$(docker network inspect kind -f '{{range .IPAM.Config}}{{.Gateway}} {{end}}' 2>/dev/null \
-  | tr ' ' '\n' | grep -m1 '\.' || echo 203.0.113.10)
+# "External" probes come from a container outside the node network
+# (see hack/lab/external.sh for why the docker gateway won't do).
+cluster=$($K config current-context | sed -E 's/^(kind|k3d)-//')
+hack/lab/external.sh ensure "$cluster"
 
 $K apply -f "$dir/manifests.yaml"
 cleanup() {
@@ -23,4 +24,4 @@ cleanup() {
 trap cleanup EXIT
 
 bin/oracle --kubeconfig "$kubeconfig" --manifests "$dir/manifests.yaml" \
-  --out "$dir" --external-ip "$external_ip"
+  --out "$dir" --external-ip 10.250.0.10 --external-container failopen-ext --profile "$profile"

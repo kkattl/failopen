@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -61,6 +62,12 @@ func TestClassifyCNI(t *testing.T) {
 			wantEnforces: true,
 		},
 		{
+			name:         "kindnet enforces policy",
+			daemonSets:   []appsv1.DaemonSet{ds("kindnet")},
+			wantName:     "kindnet",
+			wantEnforces: true,
+		},
+		{
 			name:         "enforcing CNI wins over flannel regardless of order",
 			daemonSets:   []appsv1.DaemonSet{dsIn("kube-flannel", "kube-flannel-ds"), ds("calico-node")},
 			wantName:     "calico",
@@ -88,6 +95,34 @@ func TestClassifyCNI(t *testing.T) {
 			}
 			if got.EnforcesPolicy != tt.wantEnforces {
 				t.Errorf("EnforcesPolicy = %t, want %t", got.EnforcesPolicy, tt.wantEnforces)
+			}
+		})
+	}
+}
+
+func k3sNode(args string) corev1.Node {
+	return corev1.Node{ObjectMeta: metav1.ObjectMeta{Annotations: map[string]string{
+		annotationK3sNodeArgs:    args,
+		annotationFlannelBackend: "vxlan",
+	}}}
+}
+
+func TestClassifyEmbeddedCNI(t *testing.T) {
+	tests := []struct {
+		name         string
+		nodes        []corev1.Node
+		wantName     string
+		wantEnforces bool
+	}{
+		{"k3s default enforces", []corev1.Node{k3sNode(`["server"]`), k3sNode(`["agent"]`)}, "k3s", true},
+		{"k3s with netpol disabled", []corev1.Node{k3sNode(`["server","--disable-network-policy"]`)}, "k3s", false},
+		{"plain nodes are unknown", []corev1.Node{{}}, "unknown", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := classifyEmbeddedCNI(tt.nodes)
+			if got.Name != tt.wantName || got.EnforcesPolicy != tt.wantEnforces {
+				t.Errorf("got %+v, want %s enforces=%t", got, tt.wantName, tt.wantEnforces)
 			}
 		})
 	}

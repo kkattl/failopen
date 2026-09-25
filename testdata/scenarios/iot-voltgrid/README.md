@@ -90,3 +90,12 @@ Every `iot-*` namespace starts with `default-deny-all` (Ingress **and** Egress).
 ## Smoke result (lab, kind 1.37 + Calico)
 
 `./smoke.sh ../lab-kubeconfig` gave **51 passed, 0 failed**: 18/18 pods Ready, node-agent on 7/7 nodes, all intended flows OK, all 22 deny checks dropped by policy (TIMEOUT), and the 4 "not exposed" checks confirmed.
+
+---
+**Corpus note (not from the original author).** The agent that designed this
+scenario had to use the kind docker network (172.18.0.0/16) as the stand-in
+for the external network, which overlaps the node IPs and made SNAT'd pod
+traffic look "external". The ipBlock was rewritten to the lab's dedicated
+external network (10.250.0.0/24, client 10.250.0.10 — see
+`hack/lab/external.sh`). `smoke.sh` is kept as the author wrote it; its
+host-side external checks predate that change.

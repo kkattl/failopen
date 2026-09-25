@@ -1,0 +1,1087 @@
+# Paylane lab deployment. Built-in kinds only. See README.md for the design.
+#
+# Namespaces
+#   fintech-edge : internet-facing reverse proxy (pool=edge)
+#   fintech-app  : checkout-api, redis, admin-panel (pool=general)   -- non-CDE
+#   fintech-cde  : payments-core, card-gateway, ledger, postgres (pool=restricted) -- PCI CDE
+#   fintech-ops  : node agent DaemonSet (node-exporter + fluent-bit) and prometheus
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fintech-edge
+  labels:
+    paylane.io/zone: edge
+    paylane.io/pci-scope: connected
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fintech-app
+  labels:
+    paylane.io/zone: app
+    paylane.io/pci-scope: connected
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fintech-cde
+  labels:
+    paylane.io/zone: cde
+    paylane.io/pci-scope: cde
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fintech-ops
+  labels:
+    paylane.io/zone: ops
+    paylane.io/pci-scope: security-impacting
+    # node agent needs read-only hostPath mounts -> baseline/restricted would reject it.
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: baseline
+
+########################################################################
+# NetworkPolicies (applied before any workload so no pod ever starts
+# unprotected): default deny everything (ingress + egress) in every
+# namespace, then allow exactly the flows in README.md.
+########################################################################
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: fintech-edge}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: fintech-app}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: fintech-cde}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: fintech-ops}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+# --- DNS (cluster CoreDNS only) for pods that resolve names ---
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: fintech-edge}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+          podSelector: {matchLabels: {k8s-app: kube-dns}}
+      ports:
+        - {protocol: UDP, port: 53}
+        - {protocol: TCP, port: 53}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: fintech-app}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+          podSelector: {matchLabels: {k8s-app: kube-dns}}
+      ports:
+        - {protocol: UDP, port: 53}
+        - {protocol: TCP, port: 53}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: fintech-cde}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+          podSelector: {matchLabels: {k8s-app: kube-dns}}
+      ports:
+        - {protocol: UDP, port: 53}
+        - {protocol: TCP, port: 53}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: fintech-ops}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+          podSelector: {matchLabels: {k8s-app: kube-dns}}
+      ports:
+        - {protocol: UDP, port: 53}
+        - {protocol: TCP, port: 53}
+# --- edge ---
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: edge-proxy, namespace: fintech-edge}
+spec:
+  podSelector: {matchLabels: {app: edge-proxy}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - ipBlock: {cidr: 0.0.0.0/0}   # internet via corporate edge LB (source IP preserved)
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: fintech-app}}
+          podSelector: {matchLabels: {app: checkout-api}}
+      ports: [{protocol: TCP, port: 8080}]
+# --- app ---
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: checkout-api, namespace: fintech-app}
+spec:
+  podSelector: {matchLabels: {app: checkout-api}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: fintech-edge}}
+          podSelector: {matchLabels: {app: edge-proxy}}
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    - to:
+        - podSelector: {matchLabels: {app: redis}}
+      ports: [{protocol: TCP, port: 6379}]
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: fintech-cde}}
+          podSelector: {matchLabels: {app: payments-core}}
+      ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: redis, namespace: fintech-app}
+spec:
+  podSelector: {matchLabels: {app: redis}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app: checkout-api}}
+      ports: [{protocol: TCP, port: 6379}]
+  egress: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: admin-panel, namespace: fintech-app}
+spec:
+  podSelector: {matchLabels: {app: admin-panel}}
+  policyTypes: [Ingress, Egress]
+  ingress: []   # staff reach it via authenticated kubectl port-forward / future internal LB only
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: fintech-cde}}
+          podSelector: {matchLabels: {app: payments-core}}
+      ports: [{protocol: TCP, port: 8080}]
+# --- cde ---
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: payments-core, namespace: fintech-cde}
+spec:
+  podSelector: {matchLabels: {app: payments-core}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: fintech-app}}
+          podSelector: {matchLabels: {app: checkout-api}}
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: fintech-app}}
+          podSelector: {matchLabels: {app: admin-panel}}
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    - to:
+        - podSelector: {matchLabels: {app: ledger}}
+      ports: [{protocol: TCP, port: 8080}]
+    - to:
+        - podSelector: {matchLabels: {app: card-gateway}}
+      ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: card-gateway, namespace: fintech-cde}
+spec:
+  podSelector: {matchLabels: {app: card-gateway}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app: payments-core}}
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    # Card networks: public internet on 443 only. Private/cluster ranges excluded
+    # so this rule cannot be used to reach pods, nodes or internal services.
+    # In production, narrow to the card networks' published CIDRs.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10, 169.254.0.0/16, 127.0.0.0/8]
+      ports: [{protocol: TCP, port: 443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: ledger, namespace: fintech-cde}
+spec:
+  podSelector: {matchLabels: {app: ledger}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app: payments-core}}
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    - to:
+        - podSelector: {matchLabels: {app: postgres}}
+      ports: [{protocol: TCP, port: 5432}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: postgres, namespace: fintech-cde}
+spec:
+  podSelector: {matchLabels: {app: postgres}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app: ledger}}
+      ports: [{protocol: TCP, port: 5432}]
+  egress: []
+# --- ops ---
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: node-agent, namespace: fintech-ops}
+spec:
+  podSelector: {matchLabels: {app: node-agent}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app: prometheus}}
+      ports: [{protocol: TCP, port: 9100}]
+  egress:
+    - to:   # log vendor intake (public internet, TLS)
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10, 169.254.0.0/16, 127.0.0.0/8]
+      ports: [{protocol: TCP, port: 443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: prometheus, namespace: fintech-ops}
+spec:
+  podSelector: {matchLabels: {app: prometheus}}
+  policyTypes: [Ingress, Egress]
+  ingress: []   # operators use kubectl port-forward; add remote_write egress when a backend exists
+  egress:
+    - to:
+        - podSelector: {matchLabels: {app: node-agent}}
+      ports: [{protocol: TCP, port: 9100}]
+
+########################################################################
+# fintech-edge : reverse proxy (nginx) on the edge pool
+########################################################################
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: edge-proxy-config
+  namespace: fintech-edge
+data:
+  default.conf: |
+    server_tokens off;
+    server {
+      listen 8080;
+      client_max_body_size 64k;
+      location = /healthz { access_log off; return 200 "ok\n"; }
+      location / {
+        proxy_pass http://checkout-api.fintech-app.svc.cluster.local:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 3s;
+        proxy_read_timeout 15s;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-proxy
+  namespace: fintech-edge
+  labels: {app: edge-proxy}
+spec:
+  replicas: 1   # only one edge node exists; see README
+  selector:
+    matchLabels: {app: edge-proxy}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 1, maxUnavailable: 0}
+  template:
+    metadata:
+      labels: {app: edge-proxy}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: edge}
+      tolerations:
+        - {key: dedicated, operator: Equal, value: edge, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:1.27-alpine
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: conf, mountPath: /etc/nginx/conf.d}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: conf
+          configMap: {name: edge-proxy-config}
+        - name: tmp
+          emptyDir: {sizeLimit: 32Mi}
+---
+# The corporate edge LB forwards to <edge-node-IP>:30880.
+# externalTrafficPolicy: Local => only nodes running an edge-proxy pod (the edge node)
+# answer on this port; general/restricted nodes drop it, and client source IPs are kept.
+apiVersion: v1
+kind: Service
+metadata:
+  name: edge-proxy
+  namespace: fintech-edge
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector: {app: edge-proxy}
+  ports:
+    - {name: http, port: 8080, targetPort: http, nodePort: 30880}
+
+########################################################################
+# fintech-app : checkout-api, redis, admin-panel (general pool)
+########################################################################
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redis-auth
+  namespace: fintech-app
+type: Opaque
+stringData:
+  password: lab-only-change-me-redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-api
+  namespace: fintech-app
+  labels: {app: checkout-api}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: checkout-api}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 0, maxUnavailable: 1}
+  template:
+    metadata:
+      labels: {app: checkout-api}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels: {app: checkout-api}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: app
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: checkout-api
+  namespace: fintech-app
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: checkout-api}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout-api
+  namespace: fintech-app
+spec:
+  selector: {app: checkout-api}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: fintech-app
+  labels: {app: redis}
+spec:
+  replicas: 1   # idempotency cache; loss = degraded, not data loss (ledger is system of record)
+  selector:
+    matchLabels: {app: redis}
+  strategy: {type: Recreate}
+  template:
+    metadata:
+      labels: {app: redis}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: redis
+          image: redis:7.4-alpine
+          command: ["sh", "-c", "exec redis-server --port 6379 --requirepass \"$REDIS_PASSWORD\" --save '' --appendonly no --maxmemory 48mb --maxmemory-policy volatile-lru"]
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom: {secretKeyRef: {name: redis-auth, key: password}}
+          ports: [{name: redis, containerPort: 6379}]
+          readinessProbe:
+            exec: {command: ["sh", "-c", "REDISCLI_AUTH=\"$REDIS_PASSWORD\" redis-cli ping | grep -q PONG"]}
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket: {port: redis}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 32Mi}
+            limits: {memory: 96Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+      volumes:
+        - name: data
+          emptyDir: {sizeLimit: 64Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: fintech-app
+spec:
+  selector: {app: redis}
+  ports: [{name: redis, port: 6379, targetPort: redis}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-panel
+  namespace: fintech-app
+  labels: {app: admin-panel}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: admin-panel}
+  template:
+    metadata:
+      labels: {app: admin-panel}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: app
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-panel
+  namespace: fintech-app
+spec:
+  selector: {app: admin-panel}
+  ports: [{name: http, port: 8080, targetPort: http}]
+
+########################################################################
+# fintech-cde : payments-core, card-gateway, ledger, postgres (restricted pool)
+########################################################################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-core
+  namespace: fintech-cde
+  labels: {app: payments-core}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: payments-core}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 0, maxUnavailable: 1}
+  template:
+    metadata:
+      labels: {app: payments-core}
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations:
+        - {key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels: {app: payments-core}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: app
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: payments-core
+  namespace: fintech-cde
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: payments-core}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-core
+  namespace: fintech-cde
+spec:
+  selector: {app: payments-core}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: card-gateway
+  namespace: fintech-cde
+  labels: {app: card-gateway}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: card-gateway}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 0, maxUnavailable: 1}
+  template:
+    metadata:
+      labels: {app: card-gateway}
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations:
+        - {key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels: {app: card-gateway}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: app
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: card-gateway
+  namespace: fintech-cde
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: card-gateway}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: card-gateway
+  namespace: fintech-cde
+spec:
+  selector: {app: card-gateway}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledger
+  namespace: fintech-cde
+  labels: {app: ledger}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: ledger}
+  template:
+    metadata:
+      labels: {app: ledger}
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations:
+        - {key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: app
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          env:
+            - {name: PGHOST, value: postgres.fintech-cde.svc.cluster.local}
+            - {name: PGUSER, value: ledger}
+            - name: PGPASSWORD
+              valueFrom: {secretKeyRef: {name: postgres-auth, key: password}}
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ledger
+  namespace: fintech-cde
+spec:
+  selector: {app: ledger}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-auth
+  namespace: fintech-cde
+type: Opaque
+stringData:
+  password: lab-only-change-me-postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: fintech-cde
+  labels: {app: postgres}
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels: {app: postgres}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Retain
+  template:
+    metadata:
+      labels: {app: postgres}
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations:
+        - {key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          env:
+            - {name: POSTGRES_USER, value: ledger}
+            - {name: POSTGRES_DB, value: ledger}
+            - name: POSTGRES_PASSWORD
+              valueFrom: {secretKeyRef: {name: postgres-auth, key: password}}
+            - {name: PGDATA, value: /var/lib/postgresql/data/pgdata}
+          ports: [{name: postgres, containerPort: 5432}]
+          readinessProbe:
+            exec: {command: ["pg_isready", "-U", "ledger", "-d", "ledger", "-h", "127.0.0.1"]}
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket: {port: postgres}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 20m, memory: 64Mi}
+            limits: {memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/postgresql/data}
+            - {name: run, mountPath: /var/run/postgresql}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {sizeLimit: 64Mi}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests: {storage: 1Gi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: fintech-cde
+spec:
+  selector: {app: postgres}
+  ports: [{name: postgres, port: 5432, targetPort: postgres}]
+
+########################################################################
+# fintech-ops : node agent (every node) + prometheus
+########################################################################
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: fintech-ops
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush         5
+        Log_Level     warn
+        HTTP_Server   On
+        HTTP_Listen   0.0.0.0
+        HTTP_Port     2020
+        Parsers_File  /fluent-bit/etc/parsers.conf
+        storage.path  /buffer
+    [INPUT]
+        Name              tail
+        Path              /var/log/containers/*.log
+        multiline.parser  cri
+        Tag               kube.*
+        Mem_Buf_Limit     5MB
+        Skip_Long_Lines   On
+        DB                /buffer/tail.db
+        storage.type      filesystem
+    [FILTER]
+        Name    record_modifier
+        Match   *
+        Record  node ${NODE_NAME}
+        Record  cluster paylane-lab
+    [OUTPUT]
+        # Log vendor endpoint (placeholder hostname; replace with the real vendor intake).
+        Name         http
+        Match        *
+        Host         logs.log-vendor.example
+        Port         443
+        URI          /v1/ingest
+        Format       json_lines
+        tls          On
+        tls.verify   On
+        Header       Authorization Bearer ${LOG_VENDOR_TOKEN}
+        Retry_Limit  5
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: log-vendor
+  namespace: fintech-ops
+type: Opaque
+stringData:
+  token: lab-only-placeholder-token
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-agent
+  namespace: fintech-ops
+  labels: {app: node-agent}
+spec:
+  selector:
+    matchLabels: {app: node-agent}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate: {maxUnavailable: 1}
+  template:
+    metadata:
+      labels: {app: node-agent}
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      # MUTATION: hostNetwork, as the upstream node-exporter chart ships it.
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+        - operator: Exists   # every node: general, edge, restricted, control-plane
+      securityContext:
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: node-exporter
+          image: quay.io/prometheus/node-exporter:v1.8.2
+          args:
+            - --path.procfs=/host/proc
+            - --path.sysfs=/host/sys
+            - --path.rootfs=/host/root
+            - --web.listen-address=:9100
+            - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/kubelet/.+|run/containerd/.+)($|/)
+          ports: [{name: metrics, containerPort: 9100}]
+          readinessProbe:
+            httpGet: {path: /, port: metrics}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 24Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: proc, mountPath: /host/proc, readOnly: true}
+            - {name: sys, mountPath: /host/sys, readOnly: true}
+            - {name: root, mountPath: /host/root, readOnly: true, mountPropagation: HostToContainer}
+        - name: fluent-bit
+          image: cr.fluentbit.io/fluent/fluent-bit:3.2.2
+          env:
+            - name: NODE_NAME
+              valueFrom: {fieldRef: {fieldPath: spec.nodeName}}
+            - name: LOG_VENDOR_TOKEN
+              valueFrom: {secretKeyRef: {name: log-vendor, key: token}}
+          ports: [{name: fb-http, containerPort: 2020}]
+          readinessProbe:
+            httpGet: {path: /, port: fb-http}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 10m, memory: 24Mi}
+            limits: {memory: 96Mi}
+          securityContext:
+            runAsUser: 0          # container log files on the node are root-owned
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: config, mountPath: /fluent-bit/etc/fluent-bit.conf, subPath: fluent-bit.conf}
+            - {name: varlog, mountPath: /var/log, readOnly: true}
+            - {name: buffer, mountPath: /buffer}
+      volumes:
+        - name: proc
+          hostPath: {path: /proc, type: Directory}
+        - name: sys
+          hostPath: {path: /sys, type: Directory}
+        - name: root
+          hostPath: {path: /, type: Directory}
+        - name: varlog
+          hostPath: {path: /var/log, type: Directory}
+        - name: config
+          configMap: {name: fluent-bit-config}
+        - name: buffer
+          emptyDir: {sizeLimit: 128Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-agent
+  namespace: fintech-ops
+spec:
+  clusterIP: None   # headless: prometheus discovers every node agent via DNS A records
+  selector: {app: node-agent}
+  ports: [{name: metrics, port: 9100, targetPort: metrics}]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: fintech-ops
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 30s
+    scrape_configs:
+      - job_name: node
+        dns_sd_configs:
+          - names: [node-agent.fintech-ops.svc.cluster.local]
+            type: A
+            port: 9100
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: fintech-ops
+  labels: {app: prometheus}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: prometheus}
+  strategy: {type: Recreate}
+  template:
+    metadata:
+      labels: {app: prometheus}
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: prometheus
+          image: quay.io/prometheus/prometheus:v2.55.1
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention.time=2d
+          ports: [{name: web, containerPort: 9090}]
+          readinessProbe:
+            httpGet: {path: /-/ready, port: web}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 20m, memory: 96Mi}
+            limits: {memory: 384Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: config, mountPath: /etc/prometheus}
+            - {name: data, mountPath: /prometheus}
+      volumes:
+        - name: config
+          configMap: {name: prometheus-config}
+        - name: data
+          emptyDir: {sizeLimit: 512Mi}
+

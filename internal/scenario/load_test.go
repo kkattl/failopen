@@ -3,7 +3,7 @@ package scenario
 import "testing"
 
 // TestCorpusLoads keeps testdata/scenarios well-formed: every measured run
-// must parse and agree on its CNI.
+// must parse and agree with its profile directory.
 func TestCorpusLoads(t *testing.T) {
 	cases, err := LoadAll("../../testdata/scenarios")
 	if err != nil {
@@ -12,7 +12,7 @@ func TestCorpusLoads(t *testing.T) {
 	for _, c := range cases {
 		for _, r := range c.Runs {
 			if len(r.Reachability.Probes) == 0 {
-				t.Errorf("%s/%s: no probes", c.Name, r.CNI)
+				t.Errorf("%s/%s: no probes", c.Name, r.Profile)
 			}
 		}
 	}

@@ -25,7 +25,34 @@ type Snapshot struct {
 type CNIInfo struct {
 	Name           string `json:"name"` // "calico" | "flannel" | "cilium" | "canal" | "unknown"
 	EnforcesPolicy bool   `json:"enforcesPolicy"`
+
+	// Pod network as configured in the CNI itself. Needed to reason about
+	// ipBlocks: does "0.0.0.0/0 except <pod CIDR>" still admit node IPs?
+	PodCIDRs      []string `json:"podCIDRs,omitempty"`
+	Encapsulation string   `json:"encapsulation,omitempty"` // Encap* constant
+	PodCIDRSource string   `json:"podCIDRSource,omitempty"` // Source* constant: where PodCIDRs came from
 }
+
+// Encapsulation of pod-to-pod traffic between nodes. It decides the source
+// IP of node-originated traffic to remote pods (e.g. the tunl0 address with
+// IPIP), and therefore whether ipBlocks on node IPs match it.
+const (
+	EncapIPIP      = "ipip"
+	EncapVXLAN     = "vxlan"
+	EncapGeneve    = "geneve"
+	EncapWireGuard = "wireguard"
+	EncapNone      = "none" // native routing / host-gw / BGP without overlay
+)
+
+// Where PodCIDRs came from, most to least trustworthy.
+const (
+	SourceCalicoIPPool = "calico-ippool"
+	SourceFlannelConf  = "flannel-config"
+	SourceCiliumConf   = "cilium-config"
+	// SourceNodePodCIDR is a fallback only: Calico IPAM ignores
+	// Node.spec.podCIDR and allocates from its IPPools instead.
+	SourceNodePodCIDR = "node-podcidr"
+)
 
 // Collector gathers a Snapshot from the cluster.
 type Collector interface {

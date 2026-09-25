@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -13,6 +14,7 @@ import (
 	networkingv1 "k8s.io/api/networking/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/httpstream"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
@@ -125,18 +127,23 @@ func (k *kube) setupOracle(ctx context.Context) (oracleAgents, error) {
 	if _, err := k.cs.AppsV1().DaemonSets(oracleNS).Create(ctx, ds, metav1.CreateOptions{}); err != nil && !apierrors.IsAlreadyExists(err) {
 		return agents, err
 	}
+	nodes, err := k.cs.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return agents, err
+	}
+	// Pin the outsider to a fixed node: where it runs decides which node's
+	// SNAT its traffic gets, and cross-CNI comparisons need the same place.
 	outsider := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{Name: "outsider", Namespace: oracleNS},
-		Spec:       corev1.PodSpec{Containers: []corev1.Container{agnhostContainer("pause")}},
+		Spec: corev1.PodSpec{
+			NodeName:   outsiderNode(nodes.Items),
+			Containers: []corev1.Container{agnhostContainer("pause")},
+		},
 	}
 	if _, err := k.cs.CoreV1().Pods(oracleNS).Create(ctx, outsider, metav1.CreateOptions{}); err != nil && !apierrors.IsAlreadyExists(err) {
 		return agents, err
 	}
 
-	nodes, err := k.cs.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
-	if err != nil {
-		return agents, err
-	}
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, 3*time.Minute, true, func(ctx context.Context) (bool, error) {
 		pods, err := k.cs.CoreV1().Pods(oracleNS).List(ctx, metav1.ListOptions{})
 		if err != nil {
@@ -162,14 +169,34 @@ func (k *kube) setupOracle(ctx context.Context) (oracleAgents, error) {
 	return agents, nil
 }
 
+// outsiderNode picks the first (by name) untainted node labelled
+// pool=general; failing that, the first untainted node.
+func outsiderNode(nodes []corev1.Node) string {
+	slices.SortFunc(nodes, func(a, b corev1.Node) int { return strings.Compare(a.Name, b.Name) })
+	var fallback string
+	for _, n := range nodes {
+		if len(n.Spec.Taints) > 0 {
+			continue
+		}
+		if n.Labels["pool"] == "general" {
+			return n.Name
+		}
+		if fallback == "" {
+			fallback = n.Name
+		}
+	}
+	return fallback
+}
+
 func (k *kube) teardownOracle(ctx context.Context) {
 	_ = k.cs.CoreV1().Namespaces().Delete(ctx, oracleNS, metav1.DeleteOptions{})
 }
 
 // injectProbes adds an agnhost ephemeral container to every scenario pod
-// source, so probes originate from the pod's real network identity.
+// source, so probes originate from the pod's real network identity, and
+// the pod can report which source address it sees (identity.go).
 // The security context satisfies the "restricted" Pod Security profile.
-func (k *kube) injectProbes(ctx context.Context, sources []source) error {
+func (k *kube) injectProbes(ctx context.Context, sources []source, ports map[types.UID]int) error {
 	for _, s := range sources {
 		if s.Pod == nil || s.Container != probeContainer {
 			continue
@@ -178,12 +205,18 @@ func (k *kube) injectProbes(ctx context.Context, sources []source) error {
 		if err != nil {
 			return err
 		}
+		port, ok := ports[pod.UID]
+		if !ok {
+			return fmt.Errorf("%s/%s: no identity port assigned", pod.Namespace, pod.Name)
+		}
 		if !slices.ContainsFunc(pod.Spec.EphemeralContainers, func(c corev1.EphemeralContainer) bool { return c.Name == probeContainer }) {
 			pod.Spec.EphemeralContainers = append(pod.Spec.EphemeralContainers, corev1.EphemeralContainer{
 				EphemeralContainerCommon: corev1.EphemeralContainerCommon{
 					Name:  probeContainer,
 					Image: agnhostImage,
-					Args:  []string{"pause"},
+					// netexec: serves /clientip (observed source) on the
+					// identity port; probes are exec'd next to it.
+					Args: []string{"netexec", "--http-port=" + strconv.Itoa(port), "--udp-port=-1"},
 					SecurityContext: &corev1.SecurityContext{
 						RunAsNonRoot:             ptr.To(true),
 						RunAsUser:                ptr.To[int64](65534),

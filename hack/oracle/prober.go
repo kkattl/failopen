@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os/exec"
 	"strings"
 	"sync"
 	"syscall"
@@ -13,79 +14,75 @@ import (
 	"github.com/kkattl/failopen/internal/scenario"
 )
 
-// probeParallelism caps concurrent connects inside one source pod.
-const probeParallelism = 4
+// job is one thing a source does: a TCP connect, or an HTTP GET of
+// /clientip to learn which source address the target saw.
+type job struct {
+	key      string
+	addr     string
+	identity bool
+}
 
 type prober struct {
 	kube    *kube
 	timeout time.Duration
+	// extContainer, if set, is a docker container that sources "external"
+	// probes (hack/lab/external.sh); otherwise the oracle host dials itself.
+	extContainer string
+	// parallelism caps concurrent connects inside one source pod. Ephemeral
+	// containers have no limits of their own: they share the pod cgroup with
+	// the app, and a 64Mi pod OOMs with 4 concurrent agnhost processes.
+	parallelism int
 
 	mu       sync.Mutex
 	failures []string // sources whose exec failed; results would be garbage
 }
 
-// probeAll runs every applicable probe; one exec per source fans out all
-// of that source's connections in parallel inside the pod.
-func (p *prober) probeAll(ctx context.Context, sources []source, targets []target) map[pair]string {
-	results := map[pair]string{}
+// run executes every source's jobs (sources in parallel, jobs batched inside
+// each source) and returns raw results: source index -> job key -> output.
+func (p *prober) run(ctx context.Context, sources []source, plan map[int][]job) map[int]map[string]string {
+	results := map[int]map[string]string{}
 	var mu sync.Mutex
 	var wg sync.WaitGroup
 	sem := make(chan struct{}, 8)
-
-	for si, src := range sources {
-		var idx []int
-		for ti, t := range targets {
-			if applicable(src, t) {
-				idx = append(idx, ti)
-			}
-		}
-		if len(idx) == 0 {
+	for si, jobs := range plan {
+		if len(jobs) == 0 {
 			continue
 		}
 		wg.Add(1)
 		sem <- struct{}{}
-		go func(si int, src source, idx []int) {
+		go func(si int, jobs []job) {
 			defer wg.Done()
 			defer func() { <-sem }()
-			got := p.probeFrom(ctx, src, targets, idx)
+			got := p.runFrom(ctx, sources[si], jobs)
 			mu.Lock()
-			defer mu.Unlock()
-			for ti, r := range got {
-				results[pair{si, ti}] = r
-			}
-		}(si, src, idx)
+			results[si] = got
+			mu.Unlock()
+		}(si, jobs)
 	}
 	wg.Wait()
 	return results
 }
 
-func (p *prober) probeFrom(ctx context.Context, src source, targets []target, idx []int) map[int]string {
-	out := map[int]string{}
-	if src.Kind == scenario.SourceExternal {
-		for _, ti := range idx {
-			out[ti] = p.dial(targets[ti].Address)
+func (p *prober) runFrom(ctx context.Context, src source, jobs []job) map[string]string {
+	out := map[string]string{}
+	if src.Kind == scenario.SourceExternal && p.extContainer == "" {
+		for _, j := range jobs {
+			if !j.identity {
+				out[j.key] = p.dial(j.addr)
+			}
 		}
 		return out
 	}
-
-	var addrs []string
-	byAddr := map[string]int{}
-	for _, ti := range idx {
-		addrs = append(addrs, targets[ti].Address)
-		byAddr[targets[ti].Address] = ti
+	script := p.script(jobs)
+	var stdout string
+	var err error
+	if src.Kind == scenario.SourceExternal {
+		var b []byte
+		b, err = exec.CommandContext(ctx, "docker", "exec", p.extContainer, "sh", "-c", script).Output()
+		stdout = string(b)
+	} else {
+		stdout, err = p.kube.exec(ctx, src.Pod, src.Container, []string{"sh", "-c", script})
 	}
-	secs := max(1, int(p.timeout.Seconds()))
-	// Batches of probeParallelism: every agnhost process lives in the
-	// source pod's cgroup, and scenario pods often have tight memory limits
-	// (33 concurrent connects OOM-killed a 64Mi pod).
-	var script strings.Builder
-	for i := 0; i < len(addrs); i += probeParallelism {
-		for _, a := range addrs[i:min(i+probeParallelism, len(addrs))] {
-			fmt.Fprintf(&script, `( r=$(/agnhost connect %s --timeout=%ds 2>&1); if [ $? -eq 0 ]; then echo "%s OPEN"; else echo "%s $(echo $r)"; fi ) & `, a, secs, a, a)
-		}
-		script.WriteString("wait\n")
-	}
-	stdout, err := p.kube.exec(ctx, src.Pod, src.Container, []string{"sh", "-c", script.String()})
 	if err != nil {
 		logf("exec from %s failed: %v", src.Name, err)
 		p.mu.Lock()
@@ -93,19 +90,35 @@ func (p *prober) probeFrom(ctx context.Context, src source, targets []target, id
 		p.mu.Unlock()
 	}
 	for _, line := range strings.Split(stdout, "\n") {
-		addr, rest, ok := strings.Cut(strings.TrimSpace(line), " ")
-		if ti, known := byAddr[addr]; ok && known {
-			out[ti] = classifyOutput(rest)
-		}
-	}
-	for _, ti := range idx {
-		if _, ok := out[ti]; !ok {
-			out[ti] = scenario.EffectiveError
+		if key, rest, ok := strings.Cut(strings.TrimSpace(line), " "); ok {
+			out[key] = rest
 		}
 	}
 	return out
 }
 
+// script runs the jobs in batches of p.parallelism. A connect that times out
+// is retried once before it counts: one lost SYN must not become a verdict.
+func (p *prober) script(jobs []job) string {
+	secs := max(1, int(p.timeout.Seconds()))
+	var b strings.Builder
+	for i := 0; i < len(jobs); i += p.parallelism {
+		for _, j := range jobs[i:min(i+p.parallelism, len(jobs))] {
+			if j.identity {
+				fmt.Fprintf(&b, `( echo "%s $(wget -q -O- -T %d http://%s/clientip 2>/dev/null || echo FAIL)" ) & `, j.key, secs, j.addr)
+				continue
+			}
+			fmt.Fprintf(&b, `( c() { /agnhost connect %s --timeout=%ds 2>&1; }; r=$(c); rc=$?; `+
+				`if [ $rc -ne 0 ] && echo "$r" | grep -q TIMEOUT; then r=$(c); rc=$?; fi; `+
+				`if [ $rc -eq 0 ]; then echo "%s OPEN"; else echo "%s $(echo $r)"; fi ) & `,
+				j.addr, secs, j.key, j.key)
+		}
+		b.WriteString("wait\n")
+	}
+	return b.String()
+}
+
+// classifyOutput maps agnhost connect output to an Effective* constant.
 func classifyOutput(s string) string {
 	switch {
 	case strings.Contains(s, "OPEN"):
@@ -117,6 +130,19 @@ func classifyOutput(s string) string {
 	default:
 		return scenario.EffectiveError
 	}
+}
+
+// parseClientIP extracts the address from a /clientip answer ("ip:port").
+func parseClientIP(s string) (string, bool) {
+	s = strings.TrimSpace(s)
+	if s == "" || s == "FAIL" {
+		return "", false
+	}
+	host, _, ok := cutHostPort(s)
+	if !ok || net.ParseIP(strings.Trim(host, "[]")) == nil {
+		return "", false
+	}
+	return strings.Trim(host, "[]"), true
 }
 
 // dial probes from the machine running the oracle ("external").

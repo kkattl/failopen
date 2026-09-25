@@ -9,8 +9,8 @@
 # Every namespace starts from default-deny (ingress AND egress); each allowed flow is an
 # explicit NetworkPolicy below. See README.md for the flow table.
 #
-# LAB PARAMETER: the "plant network" CIDR is 172.18.0.1/32 (the kind docker bridge gateway
-# that simulates the factory floor). In production replace it with the real sensor /
+# LAB PARAMETER: the "plant network" is the lab external client 10.250.0.10/32 (hack/lab/external.sh)
+# (simulates the factory floor). In production replace it with the real sensor /
 # engineer subnets. It MUST NOT overlap node IPs: Calico natOutgoing masquerades
 # pod -> node-IP traffic to the source node IP, so an ipBlock covering node IPs would let
 # every pod in the cluster into the device-facing ports.
@@ -135,7 +135,7 @@ spec:
   ingress:
   # sensors on the plant network -> :8883 (via hostPort on edge node IP)
   - from:
-    - ipBlock: {cidr: 172.18.0.1/32}   # LAB plant network; see header
+    - ipBlock: {cidr: 10.250.0.10/32}   # LAB (hack/lab/external.sh) plant network; see header
     ports: [{protocol: TCP, port: 8883}]
   # stream-processor pulls telemetry from the internal consumer endpoint
   - from:
@@ -157,7 +157,7 @@ spec:
   policyTypes: [Ingress, Egress]
   ingress:
   - from:
-    - ipBlock: {cidr: 172.18.0.1/32}   # LAB plant/engineering network; see header
+    - ipBlock: {cidr: 10.250.0.10/32}   # LAB (hack/lab/external.sh) plant/engineering network; see header
     ports: [{protocol: TCP, port: 8080}]
   egress:
   - to:

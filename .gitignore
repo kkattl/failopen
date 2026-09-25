@@ -2,4 +2,5 @@ bin/
 *.log
 hack/demo/kubeconfig
 hack/oracle/.deps/
-hack/lab/kubeconfig
+hack/lab/kubeconfig*
+hack/.bin/

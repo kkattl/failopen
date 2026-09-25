@@ -39,6 +39,27 @@ type target struct {
 	Address  string
 	Owner    *corev1.Pod // pod behind pod-ip/hostport/hostnetwork targets
 	Backends []backend
+
+	// Service targets only.
+	Service     *corev1.Service
+	ServicePort int32  // spec.ports[].port this target exercises
+	Node        string // nodeport: the node whose IP is dialled
+	ETPLocal    bool   // nodeport with externalTrafficPolicy: Local
+}
+
+// backendNodes reports how many backends run on node, out of how many.
+func (t target) backendNodes(node string) (local, total int) {
+	for _, b := range t.Backends {
+		if b.Pod.Spec.NodeName == node {
+			local++
+		}
+	}
+	return local, len(t.Backends)
+}
+
+// isService reports whether the target is load-balanced over backends.
+func (t target) isService() bool {
+	return t.Kind == scenario.TargetClusterIP || t.Kind == scenario.TargetNodePort
 }
 
 type backend struct {
@@ -181,16 +202,18 @@ func buildTargets(s *collector.Snapshot) []target {
 		}
 	}
 
-	var nodeIPs []string
+	type nodeAddr struct{ name, ip string }
+	var nodeIPs []nodeAddr
 	for _, n := range s.Nodes {
 		for _, a := range n.Status.Addresses {
 			if a.Type == corev1.NodeInternalIP {
-				nodeIPs = append(nodeIPs, a.Address)
+				nodeIPs = append(nodeIPs, nodeAddr{n.Name, a.Address})
 			}
 		}
 	}
 
-	for _, svc := range s.Services {
+	for i := range s.Services {
+		svc := &s.Services[i]
 		if systemNamespaces.MatchString(svc.Namespace) || len(svc.Spec.Selector) == 0 {
 			continue // selector-less: no backends we can reason about
 		}
@@ -214,11 +237,14 @@ func buildTargets(s *collector.Snapshot) []target {
 				podTargets(p, port, portName) // pods may not declare containerPorts
 			}
 			if svc.Spec.ClusterIP != "" && svc.Spec.ClusterIP != corev1.ClusterIPNone {
-				add(target{Name: name, Kind: scenario.TargetClusterIP, Address: hostPort(svc.Spec.ClusterIP, int(sp.Port)), Backends: backends})
+				add(target{Name: name, Kind: scenario.TargetClusterIP, Address: hostPort(svc.Spec.ClusterIP, int(sp.Port)),
+					Backends: backends, Service: svc, ServicePort: sp.Port})
 			}
 			if sp.NodePort > 0 {
-				for _, ip := range nodeIPs {
-					add(target{Name: name, Kind: scenario.TargetNodePort, Address: hostPort(ip, int(sp.NodePort)), Backends: backends})
+				etpLocal := svc.Spec.ExternalTrafficPolicy == corev1.ServiceExternalTrafficPolicyLocal
+				for _, n := range nodeIPs {
+					add(target{Name: name, Kind: scenario.TargetNodePort, Address: hostPort(n.ip, int(sp.NodePort)),
+						Backends: backends, Service: svc, ServicePort: sp.Port, Node: n.name, ETPLocal: etpLocal})
 				}
 			}
 		}
@@ -293,14 +319,16 @@ func printSummary(r *scenario.Reachability) {
 	for _, p := range r.Probes {
 		counts[p.Verdict]++
 	}
-	fmt.Printf("\n%s: %d probes — match %d, bypass %d, overblock %d, unreachable %d, unknown %d\n",
-		r.CNI, len(r.Probes), counts[scenario.VerdictMatch], counts[scenario.VerdictBypass],
-		counts[scenario.VerdictOverblock], counts[scenario.VerdictUnreachable], counts[scenario.VerdictUnknown])
+	fmt.Printf("\n%s: %d probes — match %d, bypass %d, spec-exception %d, overblock %d, unreachable %d, unknown %d\n",
+		r.Profile, len(r.Probes), counts[scenario.VerdictMatch], counts[scenario.VerdictBypass],
+		counts[scenario.VerdictSpecException], counts[scenario.VerdictOverblock],
+		counts[scenario.VerdictUnreachable], counts[scenario.VerdictUnknown])
 	for _, verdict := range []string{scenario.VerdictBypass, scenario.VerdictOverblock} {
 		for _, p := range r.Probes {
 			if p.Verdict == verdict {
-				fmt.Printf("  %-9s %-40s -> %-40s %-11s %s (declared %s, got %s)\n",
-					verdict, p.Source, p.Target, p.TargetKind, p.Address, p.Declared, p.Effective)
+				fmt.Printf("  %-9s %-40s -> %-40s %-11s %s (declared %s, got %s %s, basis %s, seen %v -> %s)\n",
+					verdict, p.Source, p.Target, p.TargetKind, p.Address, p.Declared, p.Effective, p.Hits,
+					p.Basis, p.ObservedSources, p.DeclaredObserved)
 			}
 		}
 	}

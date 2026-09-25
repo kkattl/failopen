@@ -2,10 +2,14 @@ package collector
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"slices"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -13,7 +17,8 @@ import (
 
 // k8sCollector is the client-go backed implementation of Collector.
 type k8sCollector struct {
-	client kubernetes.Interface
+	client  kubernetes.Interface
+	dynamic dynamic.Interface // CNI CRDs (Calico IPPools)
 }
 
 // NewK8sCollector builds a client using the standard kubeconfig chain:
@@ -27,7 +32,11 @@ func NewK8sCollector(explicitPath string) (Collector, error) {
 	if err != nil {
 		return nil, fmt.Errorf("create clientset: %w", err)
 	}
-	return &k8sCollector{client: client}, nil
+	dyn, err := dynamic.NewForConfig(config)
+	if err != nil {
+		return nil, fmt.Errorf("create dynamic client: %w", err)
+	}
+	return &k8sCollector{client: client, dynamic: dyn}, nil
 }
 
 // buildConfig resolves the kubeconfig, falling back to in-cluster config
@@ -95,6 +104,10 @@ func (c *k8sCollector) Collect(ctx context.Context) (*Snapshot, error) {
 	if err != nil {
 		return nil, fmt.Errorf("detect cni: %w", err)
 	}
+	if cni.Name == "unknown" {
+		cni = classifyEmbeddedCNI(s.Nodes)
+	}
+	c.detectPodNetwork(ctx, &cni, s.Nodes)
 	s.CNI = cni
 
 	return s, nil
@@ -123,6 +136,9 @@ var cniRules = []struct {
 	{[]string{"calico-node"}, CNIInfo{Name: "calico", EnforcesPolicy: true}},
 	// Canal = flannel networking + calico policy enforcement.
 	{[]string{"canal"}, CNIInfo{Name: "canal", EnforcesPolicy: true}},
+	// kind's default CNI; enforces NetworkPolicy since it bundled
+	// kube-network-policies (kind v0.24+). Older kindnet did not.
+	{[]string{"kindnet"}, CNIInfo{Name: "kindnet", EnforcesPolicy: true}},
 	{[]string{"kube-flannel-ds", "kube-flannel"}, CNIInfo{Name: "flannel", EnforcesPolicy: false}},
 }
 
@@ -142,4 +158,34 @@ func classifyCNI(daemonSets []appsv1.DaemonSet) CNIInfo {
 		}
 	}
 	return CNIInfo{Name: "unknown", EnforcesPolicy: false}
+}
+
+// Node annotations left by distributions that embed the CNI in their own
+// binary, so there is no CNI DaemonSet to find.
+const (
+	annotationK3sNodeArgs      = "k3s.io/node-args"
+	annotationFlannelBackend   = "flannel.alpha.coreos.com/backend-type"
+	k3sDisableNetworkPolicyArg = "--disable-network-policy"
+)
+
+// classifyEmbeddedCNI recognises k3s: flannel for networking plus an
+// embedded kube-router NetworkPolicy controller, which is on unless a
+// server was started with --disable-network-policy.
+func classifyEmbeddedCNI(nodes []corev1.Node) CNIInfo {
+	k3s, enforces := false, true
+	for _, n := range nodes {
+		args, ok := n.Annotations[annotationK3sNodeArgs]
+		if !ok {
+			continue
+		}
+		k3s = true
+		var argv []string
+		if err := json.Unmarshal([]byte(args), &argv); err == nil && slices.Contains(argv, k3sDisableNetworkPolicyArg) {
+			enforces = false
+		}
+	}
+	if !k3s {
+		return CNIInfo{Name: "unknown", EnforcesPolicy: false}
+	}
+	return CNIInfo{Name: "k3s", EnforcesPolicy: enforces}
 }

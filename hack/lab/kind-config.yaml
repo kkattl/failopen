@@ -4,10 +4,12 @@
 # decided by pools, taints/tolerations and topology, not by node count.
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-name: failopen-lab
+#
+# Template: hack/lab/lab.sh fills in the cluster name and the networking
+# section from the chosen profile (hack/lab/profiles/<profile>.sh).
+name: __NAME__
 networking:
-  disableDefaultCNI: true # Calico is installed by `make lab`
-  podSubnet: "192.168.0.0/16"
+__NETWORKING__
 nodes:
   - role: control-plane
 

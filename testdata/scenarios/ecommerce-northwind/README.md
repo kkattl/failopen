@@ -116,3 +116,12 @@ Last run: **59 passed, 0 failed**.
 - **The shared `session-cache` has no per-tenant isolation.** Storefront and cart share one redis. Separate ACL users or key prefixes per team would be the next step.
 - **Deny checks are mostly enforced on the source's egress side.** Every forbidden source here also lacks an egress rule. The destination ingress rules are present, but they are not tested in isolation, because doing that would need a test pod with open egress, meaning an extra, unapproved workload.
 - Monitoring and logging flows (Prometheus scraping, log shipping) are not modelled. Each would need its own explicit ingress rule from the monitoring namespace.
+
+---
+**Corpus note (not from the original author).** The agent that designed this
+scenario had to use the kind docker network (172.18.0.0/16) as the stand-in
+for the external network, which overlaps the node IPs and made SNAT'd pod
+traffic look "external". The ipBlock was rewritten to the lab's dedicated
+external network (10.250.0.0/24, client 10.250.0.10 — see
+`hack/lab/external.sh`). `smoke.sh` is kept as the author wrote it; its
+host-side external checks predate that change.

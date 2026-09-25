@@ -14,12 +14,12 @@ import (
 type Case struct {
 	Name string
 	Dir  string
-	Runs []Run // one per CNI, sorted by CNI name
+	Runs []Run // one per lab profile, sorted by profile name
 }
 
-// Run is a scenario measured on one CNI.
+// Run is a scenario measured on one lab profile.
 type Run struct {
-	CNI          string
+	Profile      string
 	Snapshot     *collector.Snapshot
 	Reachability *Reachability
 }
@@ -76,12 +76,12 @@ func Load(dir string) (Case, error) {
 		}
 		c.Runs = append(c.Runs, run)
 	}
-	sort.Slice(c.Runs, func(i, j int) bool { return c.Runs[i].CNI < c.Runs[j].CNI })
+	sort.Slice(c.Runs, func(i, j int) bool { return c.Runs[i].Profile < c.Runs[j].Profile })
 	return c, nil
 }
 
 func loadRun(dir string) (Run, error) {
-	run := Run{CNI: filepath.Base(dir)}
+	run := Run{Profile: filepath.Base(dir)}
 
 	f, err := os.Open(filepath.Join(dir, "snapshot.json"))
 	if err != nil {
@@ -100,9 +100,9 @@ func loadRun(dir string) (Run, error) {
 	if err := json.Unmarshal(data, run.Reachability); err != nil {
 		return run, fmt.Errorf("decode reachability: %w", err)
 	}
-	if run.Snapshot.CNI.Name != run.CNI || run.Reachability.CNI != run.CNI {
-		return run, fmt.Errorf("directory says CNI %q, snapshot %q, reachability %q",
-			run.CNI, run.Snapshot.CNI.Name, run.Reachability.CNI)
+	if run.Reachability.Profile != run.Profile {
+		return run, fmt.Errorf("directory is profile %q, reachability.json says %q",
+			run.Profile, run.Reachability.Profile)
 	}
 	return run, nil
 }

@@ -805,7 +805,7 @@ spec:
   - from:
     # F5 self-IP / SNAT network. In this kind lab the "F5" is the docker
     # bridge 172.18.0.0/16; replace with the real F5 SNAT pool CIDR.
-    - ipBlock: {cidr: 172.18.0.0/16}
+    - ipBlock: {cidr: 10.250.0.0/24}   # lab external network (hack/lab/external.sh)
     ports: [{protocol: TCP, port: 8080}]
 ---
 apiVersion: networking.k8s.io/v1
