@@ -107,6 +107,12 @@ func run(ctx context.Context, cfg config) error {
 		return fmt.Errorf("restore policies (re-apply manifests!): %w", err)
 	}
 
+	// A failed exec turns every probe of that source into "error", which
+	// would silently classify as unreachable. Refuse to write such results.
+	if len(p.failures) > 0 {
+		return fmt.Errorf("probing failed from %d source(s): %v", len(p.failures), p.failures)
+	}
+
 	dc := newDeclaredCalc(snap, cfg.externalIP)
 	reach := &scenario.Reachability{CNI: snap.CNI.Name}
 	for si, src := range sources {

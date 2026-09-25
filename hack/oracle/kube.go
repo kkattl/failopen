@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strconv"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -23,10 +24,14 @@ import (
 )
 
 const (
-	oracleNS       = "failopen-oracle"
-	probeContainer = "failopen-oracle" // ephemeral container name in scenario pods
-	agnhostImage   = "registry.k8s.io/e2e-test-images/agnhost:2.53"
+	oracleNS     = "failopen-oracle"
+	agnhostImage = "registry.k8s.io/e2e-test-images/agnhost:2.53"
 )
+
+// probeContainer is this run's ephemeral container name. Unique per run:
+// ephemeral containers can't be restarted or removed, so a container that
+// died in an earlier run (e.g. OOM) must not be reused.
+var probeContainer = "failopen-oracle-" + strconv.FormatInt(time.Now().Unix(), 36)
 
 type kube struct {
 	cs  kubernetes.Interface

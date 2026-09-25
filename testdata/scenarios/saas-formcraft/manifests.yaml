@@ -1,0 +1,2023 @@
+# Formcraft lab deployment. See README.md for the architecture and flow matrix.
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: saas-edge
+  labels:
+    app.kubernetes.io/part-of: formcraft
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+    formcraft.io/zone: edge
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: saas-platform
+  labels:
+    app.kubernetes.io/part-of: formcraft
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+    formcraft.io/zone: platform
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: saas-tenant-acme
+  labels:
+    app.kubernetes.io/part-of: formcraft
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+    formcraft.io/zone: tenant
+    formcraft.io/tenant: acme
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: saas-tenant-globex
+  labels:
+    app.kubernetes.io/part-of: formcraft
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+    formcraft.io/zone: tenant
+    formcraft.io/tenant: globex
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: saas-tenant-initech
+  labels:
+    app.kubernetes.io/part-of: formcraft
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+    formcraft.io/zone: tenant
+    formcraft.io/tenant: initech
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: saas-edge
+  labels:
+    app.kubernetes.io/name: gateway
+    app.kubernetes.io/part-of: formcraft
+data:
+  nginx.conf: "pid /tmp/nginx.pid;\nworker_processes 1;\nevents { worker_connections 1024; }\nhttp {\n  client_body_temp_path /tmp/client_temp;\n  proxy_temp_path /tmp/proxy_temp;\n  fastcgi_temp_path /tmp/fastcgi_temp;\n\
+    \  uwsgi_temp_path /tmp/uwsgi_temp;\n  scgi_temp_path /tmp/scgi_temp;\n  access_log /dev/stdout;\n  error_log /dev/stderr warn;\n  server_tokens off;\n  # Re-resolve tenant Services at request time\
+    \ so the gateway starts even if a tenant is down.\n  resolver kube-dns.kube-system.svc.cluster.local valid=30s ipv6=off;\n  # Unknown Host -> 404. Never fall through to a tenant.\n  server {\n    listen\
+    \ 8080 default_server;\n    location = /healthz { access_log off; return 200 \"ok\\n\"; }\n    location / { return 404; }\n  }\n  server {\n    listen 8080;\n    server_name acme.formcraft.example;\n\
+    \    location / {\n      set $upstream http://app.saas-tenant-acme.svc.cluster.local:8080;\n      proxy_pass $upstream;\n      proxy_set_header Host $host;\n      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
+    \      proxy_set_header X-Formcraft-Tenant acme;\n    }\n  }\n  server {\n    listen 8080;\n    server_name globex.formcraft.example;\n    location / {\n      set $upstream http://app.saas-tenant-globex.svc.cluster.local:8080;\n\
+    \      proxy_pass $upstream;\n      proxy_set_header Host $host;\n      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n      proxy_set_header X-Formcraft-Tenant globex;\n    }\n  }\n\
+    \  server {\n    listen 8080;\n    server_name initech.formcraft.example;\n    location / {\n      set $upstream http://app.saas-tenant-initech.svc.cluster.local:8080;\n      proxy_pass $upstream;\n\
+    \      proxy_set_header Host $host;\n      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n      proxy_set_header X-Formcraft-Tenant initech;\n    }\n  }\n}\n"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: saas-edge
+  labels: &id001
+    app.kubernetes.io/name: gateway
+    app.kubernetes.io/part-of: formcraft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gateway
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: edge
+      containers:
+      - name: nginx
+        image: nginxinc/nginx-unprivileged:1.27-alpine
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 20m
+            memory: 32Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+        - name: config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+          readOnly: true
+        - name: tmp
+          mountPath: /tmp
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          periodSeconds: 10
+          initialDelaySeconds: 5
+      terminationGracePeriodSeconds: 10
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: edge
+        effect: NoSchedule
+      volumes:
+      - name: config
+        configMap:
+          name: gateway-config
+      - name: tmp
+        emptyDir:
+          sizeLimit: 64Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: saas-edge
+  labels:
+    app.kubernetes.io/name: gateway
+    app.kubernetes.io/part-of: formcraft
+spec:
+  selector:
+    app.kubernetes.io/name: gateway
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    nodePort: 31480
+    protocol: TCP
+  type: NodePort
+  externalTrafficPolicy: Local
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: saas-edge
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress: []
+  egress: []
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: saas-edge
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gateway-ingress-from-outside-cluster
+  namespace: saas-edge
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: gateway
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 192.168.0.0/16
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gateway-egress-to-tenant-apps
+  namespace: saas-edge
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: gateway
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-tenant-acme
+          - saas-tenant-globex
+          - saas-tenant-initech
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: app
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  namespace: saas-platform
+  labels: &id001
+    app.kubernetes.io/name: auth
+    app.kubernetes.io/part-of: formcraft
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: auth
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: auth
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - netexec
+        - --http-port=8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 10
+          initialDelaySeconds: 5
+      terminationGracePeriodSeconds: 10
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: auth
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: auth
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+  namespace: saas-platform
+  labels:
+    app.kubernetes.io/name: auth
+    app.kubernetes.io/part-of: formcraft
+spec:
+  selector:
+    app.kubernetes.io/name: auth
+  ports:
+  - name: tcp
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: auth
+  namespace: saas-platform
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: auth
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: billing
+  namespace: saas-platform
+  labels: &id001
+    app.kubernetes.io/name: billing
+    app.kubernetes.io/part-of: formcraft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: billing
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: billing
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - netexec
+        - --http-port=8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 10
+          initialDelaySeconds: 5
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailer
+  namespace: saas-platform
+  labels: &id001
+    app.kubernetes.io/name: mailer
+    app.kubernetes.io/part-of: formcraft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mailer
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: mailer
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - netexec
+        - --http-port=2525
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        ports:
+        - name: http
+          containerPort: 2525
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 2525
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 2525
+          periodSeconds: 10
+          initialDelaySeconds: 5
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailer
+  namespace: saas-platform
+  labels:
+    app.kubernetes.io/name: mailer
+    app.kubernetes.io/part-of: formcraft
+spec:
+  selector:
+    app.kubernetes.io/name: mailer
+  ports:
+  - name: tcp
+    port: 2525
+    targetPort: 2525
+    protocol: TCP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: saas-platform
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress: []
+  egress: []
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: saas-platform
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: auth-ingress-from-tenant-apps
+  namespace: saas-platform
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: auth
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-tenant-acme
+          - saas-tenant-globex
+          - saas-tenant-initech
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: app
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: billing-egress-to-tenant-apps
+  namespace: saas-platform
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: billing
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-tenant-acme
+          - saas-tenant-globex
+          - saas-tenant-initech
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: app
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mailer-ingress-from-tenant-workers
+  namespace: saas-platform
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: mailer
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-tenant-acme
+          - saas-tenant-globex
+          - saas-tenant-initech
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: worker
+    ports:
+    - protocol: TCP
+      port: 2525
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mailer-egress-to-external-smtp
+  namespace: saas-platform
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: mailer
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        - 100.64.0.0/10
+        - 169.254.0.0/16
+        - 127.0.0.0/8
+    ports:
+    - protocol: TCP
+      port: 25
+    - protocol: TCP
+      port: 587
+    - protocol: TCP
+      port: 465
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+  namespace: saas-tenant-acme
+  labels:
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: acme
+type: Opaque
+stringData:
+  POSTGRES_USER: formcraft
+  POSTGRES_DB: formcraft
+  POSTGRES_PASSWORD: CHANGE-ME-acme-lab-only
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: saas-tenant-acme
+  labels: &id001
+    app.kubernetes.io/name: app
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: acme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - netexec
+        - --http-port=8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 10
+          initialDelaySeconds: 5
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  namespace: saas-tenant-acme
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: acme
+spec:
+  selector:
+    app.kubernetes.io/name: app
+  ports:
+  - name: tcp
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: saas-tenant-acme
+  labels: &id001
+    app.kubernetes.io/name: worker
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: acme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: worker
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - pause
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+  namespace: saas-tenant-acme
+  labels: &id001
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: acme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: db
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: postgres
+        image: postgres:16.4-alpine
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        envFrom:
+        - secretRef:
+            name: db-credentials
+        env:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - name: postgres
+          containerPort: 5432
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+        - name: run
+          mountPath: /var/run/postgresql
+        - name: tmp
+          mountPath: /tmp
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -h
+            - 127.0.0.1
+            - -U
+            - formcraft
+          periodSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -h
+            - 127.0.0.1
+            - -U
+            - formcraft
+          periodSeconds: 10
+          initialDelaySeconds: 20
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: data
+        emptyDir:
+          sizeLimit: 512Mi
+      - name: run
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+  serviceName: db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: saas-tenant-acme
+  labels:
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: acme
+spec:
+  selector:
+    app.kubernetes.io/name: db
+  ports:
+  - name: tcp
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+  clusterIP: None
+
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-quota
+  namespace: saas-tenant-acme
+spec:
+  hard:
+    pods: '6'
+    requests.cpu: 500m
+    requests.memory: 512Mi
+    services.nodeports: '0'
+    services.loadbalancers: '0'
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: saas-tenant-acme
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress: []
+  egress: []
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: saas-tenant-acme
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-ingress
+  namespace: saas-tenant-acme
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-edge
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: gateway
+    ports:
+    - protocol: TCP
+      port: 8080
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: billing
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-egress
+  namespace: saas-tenant-acme
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: db
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: auth
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: worker-egress
+  namespace: saas-tenant-acme
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: db
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: mailer
+    ports:
+    - protocol: TCP
+      port: 2525
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-ingress
+  namespace: saas-tenant-acme
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: db
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: app
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: worker
+    ports:
+    - protocol: TCP
+      port: 5432
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+  namespace: saas-tenant-globex
+  labels:
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: globex
+type: Opaque
+stringData:
+  POSTGRES_USER: formcraft
+  POSTGRES_DB: formcraft
+  POSTGRES_PASSWORD: CHANGE-ME-globex-lab-only
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: saas-tenant-globex
+  labels: &id001
+    app.kubernetes.io/name: app
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: globex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - netexec
+        - --http-port=8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 10
+          initialDelaySeconds: 5
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  namespace: saas-tenant-globex
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: globex
+spec:
+  selector:
+    app.kubernetes.io/name: app
+  ports:
+  - name: tcp
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: saas-tenant-globex
+  labels: &id001
+    app.kubernetes.io/name: worker
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: globex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: worker
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - pause
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+  namespace: saas-tenant-globex
+  labels: &id001
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: globex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: db
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: postgres
+        image: postgres:16.4-alpine
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        envFrom:
+        - secretRef:
+            name: db-credentials
+        env:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - name: postgres
+          containerPort: 5432
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+        - name: run
+          mountPath: /var/run/postgresql
+        - name: tmp
+          mountPath: /tmp
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -h
+            - 127.0.0.1
+            - -U
+            - formcraft
+          periodSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -h
+            - 127.0.0.1
+            - -U
+            - formcraft
+          periodSeconds: 10
+          initialDelaySeconds: 20
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: data
+        emptyDir:
+          sizeLimit: 512Mi
+      - name: run
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+  serviceName: db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: saas-tenant-globex
+  labels:
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: globex
+spec:
+  selector:
+    app.kubernetes.io/name: db
+  ports:
+  - name: tcp
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+  clusterIP: None
+
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-quota
+  namespace: saas-tenant-globex
+spec:
+  hard:
+    pods: '6'
+    requests.cpu: 500m
+    requests.memory: 512Mi
+    services.nodeports: '0'
+    services.loadbalancers: '0'
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: saas-tenant-globex
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress: []
+  egress: []
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: saas-tenant-globex
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-ingress
+  namespace: saas-tenant-globex
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-edge
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: gateway
+    ports:
+    - protocol: TCP
+      port: 8080
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: billing
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-egress
+  namespace: saas-tenant-globex
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: db
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: auth
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: worker-egress
+  namespace: saas-tenant-globex
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: db
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: mailer
+    ports:
+    - protocol: TCP
+      port: 2525
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-ingress
+  namespace: saas-tenant-globex
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: db
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: app
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: worker
+    ports:
+    - protocol: TCP
+      port: 5432
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+  namespace: saas-tenant-initech
+  labels:
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: initech
+type: Opaque
+stringData:
+  POSTGRES_USER: formcraft
+  POSTGRES_DB: formcraft
+  POSTGRES_PASSWORD: CHANGE-ME-initech-lab-only
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: saas-tenant-initech
+  labels: &id001
+    app.kubernetes.io/name: app
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: initech
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - netexec
+        - --http-port=8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 10
+          initialDelaySeconds: 5
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  namespace: saas-tenant-initech
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: initech
+spec:
+  selector:
+    app.kubernetes.io/name: app
+  ports:
+  - name: tcp
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: saas-tenant-initech
+  labels: &id001
+    app.kubernetes.io/name: worker
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: initech
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: worker
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args:
+        - pause
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+  namespace: saas-tenant-initech
+  labels: &id001
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: initech
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: db
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        pool: general
+      containers:
+      - name: postgres
+        image: postgres:16.4-alpine
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        envFrom:
+        - secretRef:
+            name: db-credentials
+        env:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - name: postgres
+          containerPort: 5432
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+        - name: run
+          mountPath: /var/run/postgresql
+        - name: tmp
+          mountPath: /tmp
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -h
+            - 127.0.0.1
+            - -U
+            - formcraft
+          periodSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -h
+            - 127.0.0.1
+            - -U
+            - formcraft
+          periodSeconds: 10
+          initialDelaySeconds: 20
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: data
+        emptyDir:
+          sizeLimit: 512Mi
+      - name: run
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+  serviceName: db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: saas-tenant-initech
+  labels:
+    app.kubernetes.io/name: db
+    app.kubernetes.io/part-of: formcraft
+    formcraft.io/tenant: initech
+spec:
+  selector:
+    app.kubernetes.io/name: db
+  ports:
+  - name: tcp
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+  clusterIP: None
+
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-quota
+  namespace: saas-tenant-initech
+spec:
+  hard:
+    pods: '6'
+    requests.cpu: 500m
+    requests.memory: 512Mi
+    services.nodeports: '0'
+    services.loadbalancers: '0'
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: saas-tenant-initech
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress: []
+  egress: []
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: saas-tenant-initech
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-ingress
+  namespace: saas-tenant-initech
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-edge
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: gateway
+    ports:
+    - protocol: TCP
+      port: 8080
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: billing
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-egress
+  namespace: saas-tenant-initech
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: db
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: auth
+    ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: worker-egress
+  namespace: saas-tenant-initech
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: db
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - saas-platform
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: mailer
+    ports:
+    - protocol: TCP
+      port: 2525
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-ingress
+  namespace: saas-tenant-initech
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: db
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: app
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: worker
+    ports:
+    - protocol: TCP
+      port: 5432

@@ -1,0 +1,1029 @@
+# Northwind Retail - online store (lab)
+# Namespaces (one per owning team + platform-owned edge + shared cache):
+#   ecom-edge        platform team : edge-proxy (nginx) - the only thing the F5 talks to
+#   ecom-storefront  storefront    : web, bff
+#   ecom-catalog     catalog       : catalog-api, search, catalog-db
+#   ecom-orders      orders        : cart, checkout (PCI), orders-db (PCI)
+#   ecom-shared      platform team : session-cache (redis)
+# See README.md for the flow matrix. Every namespace is default-deny (ingress+egress).
+# ---------------------------------------------------------------------------
+# Namespaces
+# ---------------------------------------------------------------------------
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecom-edge
+  labels:
+    app.kubernetes.io/part-of: northwind-store
+    northwind.io/team: platform
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecom-storefront
+  labels:
+    app.kubernetes.io/part-of: northwind-store
+    northwind.io/team: storefront
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecom-catalog
+  labels:
+    app.kubernetes.io/part-of: northwind-store
+    northwind.io/team: catalog
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecom-orders
+  labels:
+    app.kubernetes.io/part-of: northwind-store
+    northwind.io/team: orders
+    northwind.io/compliance: pci
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecom-shared
+  labels:
+    app.kubernetes.io/part-of: northwind-store
+    northwind.io/team: platform
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+---
+# ---------------------------------------------------------------------------
+# Resource guardrails (per namespace)
+# ---------------------------------------------------------------------------
+apiVersion: v1
+kind: ResourceQuota
+metadata: {name: quota, namespace: ecom-edge}
+spec:
+  hard: {pods: "3", requests.cpu: "300m", requests.memory: 256Mi, limits.memory: 512Mi}
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata: {name: quota, namespace: ecom-storefront}
+spec:
+  hard: {pods: "6", requests.cpu: "300m", requests.memory: 256Mi, limits.memory: 512Mi}
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata: {name: quota, namespace: ecom-catalog}
+spec:
+  hard: {pods: "7", requests.cpu: "500m", requests.memory: 512Mi, limits.memory: 1Gi}
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata: {name: quota, namespace: ecom-orders}
+spec:
+  hard: {pods: "7", requests.cpu: "500m", requests.memory: 512Mi, limits.memory: 1Gi}
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata: {name: quota, namespace: ecom-shared}
+spec:
+  hard: {pods: "2", requests.cpu: "200m", requests.memory: 128Mi, limits.memory: 256Mi}
+---
+# ---------------------------------------------------------------------------
+# Secrets (LAB ONLY - in production these come from the secret manager,
+# e.g. Vault / External Secrets, never from a manifest in git)
+# ---------------------------------------------------------------------------
+apiVersion: v1
+kind: Secret
+metadata: {name: catalog-db-credentials, namespace: ecom-catalog}
+type: Opaque
+stringData:
+  POSTGRES_USER: catalog
+  POSTGRES_PASSWORD: lab-only-change-me-catalog
+  POSTGRES_DB: catalog
+---
+apiVersion: v1
+kind: Secret
+metadata: {name: orders-db-credentials, namespace: ecom-orders}
+type: Opaque
+stringData:
+  POSTGRES_USER: orders
+  POSTGRES_PASSWORD: lab-only-change-me-orders
+  POSTGRES_DB: orders
+---
+apiVersion: v1
+kind: Secret
+metadata: {name: session-cache-credentials, namespace: ecom-shared}
+type: Opaque
+stringData:
+  REDIS_PASSWORD: lab-only-change-me-redis
+---
+# ===========================================================================
+# ecom-edge : edge-proxy
+# F5 -> <edge node IP>:30080 (NodePort, externalTrafficPolicy=Local) -> nginx
+# on the edge pool -> web / bff ClusterIP services.
+# ===========================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: edge-proxy-config, namespace: ecom-edge}
+data:
+  default.conf: |
+    # TLS is terminated on the F5 in this lab; in production re-encrypt to here.
+    server {
+      listen 8080;
+      server_name _;
+      location = /healthz { access_log off; return 200 "ok\n"; }
+      location /api/ {
+        proxy_pass http://bff.ecom-storefront.svc.cluster.local:8080/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_connect_timeout 3s;
+      }
+      location / {
+        proxy_pass http://web.ecom-storefront.svc.cluster.local:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_connect_timeout 3s;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: edge-proxy
+  namespace: ecom-edge
+  labels: {app: edge-proxy, northwind.io/team: platform}
+spec:
+  selector:
+    matchLabels: {app: edge-proxy}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 1, maxUnavailable: 0}   # no gap on the single edge node
+  template:
+    metadata:
+      labels: {app: edge-proxy, northwind.io/team: platform}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: edge}
+      tolerations:
+      - {key: dedicated, operator: Equal, value: edge, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: nginx
+        image: nginxinc/nginx-unprivileged:1.27-alpine
+        ports: [{name: http, containerPort: 8080}]
+        readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 20m, memory: 32Mi}
+          limits: {memory: 128Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: conf, mountPath: /etc/nginx/conf.d, readOnly: true}
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      - name: conf
+        configMap: {name: edge-proxy-config}
+      - name: tmp
+        emptyDir: {sizeLimit: 64Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: edge-proxy
+  namespace: ecom-edge
+  annotations:
+    northwind.io/f5-pool: "edge node IPs, port 30080"
+spec:
+  type: NodePort
+  # Local: only nodes that run an edge-proxy pod (the edge pool) answer on 30080,
+  # no second hop to another node, and the F5 source IP is preserved so the
+  # NetworkPolicy below can pin ingress to the F5 network.
+  externalTrafficPolicy: Local
+  selector: {app: edge-proxy}
+  ports:
+  - {name: http, port: 8080, targetPort: http, nodePort: 30080}
+---
+# ===========================================================================
+# ecom-storefront : web, bff
+# ===========================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: ecom-storefront
+  labels: {app: web, northwind.io/team: storefront}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: web}
+  template:
+    metadata:
+      labels: {app: web, northwind.io/team: storefront}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+      - {maxSkew: 1, topologyKey: topology.kubernetes.io/zone, whenUnsatisfiable: DoNotSchedule, labelSelector: {matchLabels: {app: web}}}
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, runAsGroup: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8080"]
+        ports: [{name: http, containerPort: 8080}]
+        readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: web, namespace: ecom-storefront}
+spec:
+  selector: {app: web}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: web, namespace: ecom-storefront}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: web}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bff
+  namespace: ecom-storefront
+  labels: {app: bff, northwind.io/team: storefront}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: bff}
+  template:
+    metadata:
+      labels: {app: bff, northwind.io/team: storefront}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+      - {maxSkew: 1, topologyKey: topology.kubernetes.io/zone, whenUnsatisfiable: DoNotSchedule, labelSelector: {matchLabels: {app: bff}}}
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, runAsGroup: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8080"]
+        ports: [{name: http, containerPort: 8080}]
+        readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: bff, namespace: ecom-storefront}
+spec:
+  selector: {app: bff}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: bff, namespace: ecom-storefront}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: bff}
+---
+# ===========================================================================
+# ecom-catalog : catalog-api, search, catalog-db
+# ===========================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-api
+  namespace: ecom-catalog
+  labels: {app: catalog-api, northwind.io/team: catalog}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: catalog-api}
+  template:
+    metadata:
+      labels: {app: catalog-api, northwind.io/team: catalog}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+      - {maxSkew: 1, topologyKey: topology.kubernetes.io/zone, whenUnsatisfiable: DoNotSchedule, labelSelector: {matchLabels: {app: catalog-api}}}
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, runAsGroup: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8080"]
+        ports: [{name: http, containerPort: 8080}]
+        readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: catalog-api, namespace: ecom-catalog}
+spec:
+  selector: {app: catalog-api}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: catalog-api, namespace: ecom-catalog}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: catalog-api}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search
+  namespace: ecom-catalog
+  labels: {app: search, northwind.io/team: catalog}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: search}
+  template:
+    metadata:
+      labels: {app: search, northwind.io/team: catalog}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+      - {maxSkew: 1, topologyKey: topology.kubernetes.io/zone, whenUnsatisfiable: DoNotSchedule, labelSelector: {matchLabels: {app: search}}}
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, runAsGroup: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8080"]
+        ports: [{name: http, containerPort: 8080}]
+        readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: search, namespace: ecom-catalog}
+spec:
+  selector: {app: search}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: search, namespace: ecom-catalog}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: search}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: catalog-db
+  namespace: ecom-catalog
+  labels: {app: catalog-db, northwind.io/team: catalog}
+spec:
+  serviceName: catalog-db
+  replicas: 1
+  selector:
+    matchLabels: {app: catalog-db}
+  template:
+    metadata:
+      labels: {app: catalog-db, northwind.io/team: catalog}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70        # postgres user in the alpine image
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: postgres
+        image: postgres:17-alpine
+        envFrom: [{secretRef: {name: catalog-db-credentials}}]
+        env: [{name: PGDATA, value: /var/lib/postgresql/data/pgdata}]
+        ports: [{name: postgres, containerPort: 5432}]
+        readinessProbe:
+          exec: {command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\" -h 127.0.0.1"]}
+          periodSeconds: 5
+        livenessProbe: {tcpSocket: {port: postgres}, initialDelaySeconds: 20, periodSeconds: 10}
+        resources:
+          requests: {cpu: 50m, memory: 64Mi}
+          limits: {memory: 256Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: data, mountPath: /var/lib/postgresql/data}
+        - {name: run, mountPath: /var/run/postgresql}
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      # LAB COMPROMISE: emptyDir. Production = volumeClaimTemplates on a
+      # replicated storage class (or a managed Postgres) + backups.
+      - {name: data, emptyDir: {sizeLimit: 1Gi}}
+      - {name: run, emptyDir: {}}
+      - {name: tmp, emptyDir: {}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: catalog-db, namespace: ecom-catalog}
+spec:
+  selector: {app: catalog-db}
+  ports: [{name: postgres, port: 5432, targetPort: postgres}]
+---
+# ===========================================================================
+# ecom-orders : cart (general pool), checkout + orders-db (restricted / PCI)
+# ===========================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+  namespace: ecom-orders
+  labels: {app: cart, northwind.io/team: orders}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: cart}
+  template:
+    metadata:
+      labels: {app: cart, northwind.io/team: orders}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+      - {maxSkew: 1, topologyKey: topology.kubernetes.io/zone, whenUnsatisfiable: DoNotSchedule, labelSelector: {matchLabels: {app: cart}}}
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, runAsGroup: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8080"]
+        ports: [{name: http, containerPort: 8080}]
+        readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: cart, namespace: ecom-orders}
+spec:
+  selector: {app: cart}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: cart, namespace: ecom-orders}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: cart}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+  namespace: ecom-orders
+  labels: {app: checkout, northwind.io/team: orders, northwind.io/compliance: pci}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: checkout}
+  template:
+    metadata:
+      labels: {app: checkout, northwind.io/team: orders, northwind.io/compliance: pci}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: restricted}
+      tolerations:
+      - {key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}
+      topologySpreadConstraints:
+      - {maxSkew: 1, topologyKey: topology.kubernetes.io/zone, whenUnsatisfiable: DoNotSchedule, labelSelector: {matchLabels: {app: checkout}}}
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, runAsGroup: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: app
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8080"]
+        ports: [{name: http, containerPort: 8080}]
+        readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: checkout, namespace: ecom-orders}
+spec:
+  selector: {app: checkout}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: checkout, namespace: ecom-orders}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: checkout}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: orders-db
+  namespace: ecom-orders
+  labels: {app: orders-db, northwind.io/team: orders, northwind.io/compliance: pci}
+spec:
+  serviceName: orders-db
+  replicas: 1
+  selector:
+    matchLabels: {app: orders-db}
+  template:
+    metadata:
+      labels: {app: orders-db, northwind.io/team: orders, northwind.io/compliance: pci}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: restricted}
+      tolerations:
+      - {key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: postgres
+        image: postgres:17-alpine
+        envFrom: [{secretRef: {name: orders-db-credentials}}]
+        env: [{name: PGDATA, value: /var/lib/postgresql/data/pgdata}]
+        ports: [{name: postgres, containerPort: 5432}]
+        readinessProbe:
+          exec: {command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\" -h 127.0.0.1"]}
+          periodSeconds: 5
+        livenessProbe: {tcpSocket: {port: postgres}, initialDelaySeconds: 20, periodSeconds: 10}
+        resources:
+          requests: {cpu: 50m, memory: 64Mi}
+          limits: {memory: 256Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: data, mountPath: /var/lib/postgresql/data}
+        - {name: run, mountPath: /var/run/postgresql}
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      # LAB COMPROMISE: emptyDir (see catalog-db). Production = encrypted PVC
+      # on the restricted pool's storage, or a managed PCI-scoped database.
+      - {name: data, emptyDir: {sizeLimit: 1Gi}}
+      - {name: run, emptyDir: {}}
+      - {name: tmp, emptyDir: {}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: orders-db, namespace: ecom-orders}
+spec:
+  selector: {app: orders-db}
+  ports: [{name: postgres, port: 5432, targetPort: postgres}]
+---
+# ===========================================================================
+# ecom-shared : session-cache (redis)
+# ===========================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-cache
+  namespace: ecom-shared
+  labels: {app: session-cache, northwind.io/team: platform}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: session-cache}
+  template:
+    metadata:
+      labels: {app: session-cache, northwind.io/team: platform}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: redis
+        image: redis:7.4-alpine
+        command: ["sh", "-c", "exec redis-server --requirepass \"$REDIS_PASSWORD\" --save '' --appendonly no --maxmemory 48mb --maxmemory-policy allkeys-lru"]
+        envFrom: [{secretRef: {name: session-cache-credentials}}]
+        ports: [{name: redis, containerPort: 6379}]
+        readinessProbe: {tcpSocket: {port: redis}, periodSeconds: 5}
+        livenessProbe: {tcpSocket: {port: redis}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 20m, memory: 32Mi}
+          limits: {memory: 96Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: data, mountPath: /data}
+      volumes:
+      - {name: data, emptyDir: {sizeLimit: 64Mi}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: session-cache, namespace: ecom-shared}
+spec:
+  selector: {app: session-cache}
+  ports: [{name: redis, port: 6379, targetPort: redis}]
+---
+# ===========================================================================
+# NetworkPolicy
+# Pattern per namespace: default-deny all ingress+egress, allow DNS egress,
+# then one ingress policy per destination and one egress policy per source.
+# A flow works only if BOTH the source's egress and the destination's ingress
+# allow it, so each team controls who may call it.
+# ===========================================================================
+# ---- baseline: default deny + DNS, for every namespace ----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: ecom-edge}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: ecom-storefront}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: ecom-catalog}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: ecom-orders}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: ecom-shared}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: ecom-edge}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      podSelector: {matchLabels: {k8s-app: kube-dns}}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: ecom-storefront}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      podSelector: {matchLabels: {k8s-app: kube-dns}}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: ecom-catalog}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      podSelector: {matchLabels: {k8s-app: kube-dns}}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: ecom-orders}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      podSelector: {matchLabels: {k8s-app: kube-dns}}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: ecom-shared}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      podSelector: {matchLabels: {k8s-app: kube-dns}}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+# ---- ecom-edge ----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: edge-proxy-ingress-from-f5, namespace: ecom-edge}
+spec:
+  podSelector: {matchLabels: {app: edge-proxy}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    # F5 self-IP / SNAT network. In this kind lab the "F5" is the docker
+    # bridge 172.18.0.0/16; replace with the real F5 SNAT pool CIDR.
+    - ipBlock: {cidr: 172.18.0.0/16}
+    ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: edge-proxy-egress, namespace: ecom-edge}
+spec:
+  podSelector: {matchLabels: {app: edge-proxy}}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-storefront}}
+      podSelector: {matchExpressions: [{key: app, operator: In, values: [web, bff]}]}
+    ports: [{protocol: TCP, port: 8080}]
+---
+# ---- ecom-storefront ----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: web-ingress, namespace: ecom-storefront}
+spec:
+  podSelector: {matchLabels: {app: web}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-edge}}
+      podSelector: {matchLabels: {app: edge-proxy}}
+    ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: bff-ingress, namespace: ecom-storefront}
+spec:
+  podSelector: {matchLabels: {app: bff}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-edge}}
+      podSelector: {matchLabels: {app: edge-proxy}}
+    - podSelector: {matchLabels: {app: web}}
+    ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: web-egress, namespace: ecom-storefront}
+spec:
+  podSelector: {matchLabels: {app: web}}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - podSelector: {matchLabels: {app: bff}}
+    ports: [{protocol: TCP, port: 8080}]
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-shared}}
+      podSelector: {matchLabels: {app: session-cache}}
+    ports: [{protocol: TCP, port: 6379}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: bff-egress, namespace: ecom-storefront}
+spec:
+  podSelector: {matchLabels: {app: bff}}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-catalog}}
+      podSelector: {matchLabels: {app: catalog-api}}
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-orders}}
+      podSelector: {matchExpressions: [{key: app, operator: In, values: [cart, checkout]}]}
+    ports: [{protocol: TCP, port: 8080}]
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-shared}}
+      podSelector: {matchLabels: {app: session-cache}}
+    ports: [{protocol: TCP, port: 6379}]
+---
+# ---- ecom-catalog ----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: catalog-api-ingress, namespace: ecom-catalog}
+spec:
+  podSelector: {matchLabels: {app: catalog-api}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-storefront}}
+      podSelector: {matchLabels: {app: bff}}
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-orders}}
+      podSelector: {matchExpressions: [{key: app, operator: In, values: [cart, checkout]}]}
+    ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: search-ingress, namespace: ecom-catalog}
+spec:
+  podSelector: {matchLabels: {app: search}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - podSelector: {matchLabels: {app: catalog-api}}
+    ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: catalog-db-ingress, namespace: ecom-catalog}
+spec:
+  podSelector: {matchLabels: {app: catalog-db}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:   # owning team only
+    - podSelector: {matchExpressions: [{key: app, operator: In, values: [catalog-api, search]}]}
+    ports: [{protocol: TCP, port: 5432}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: catalog-api-egress, namespace: ecom-catalog}
+spec:
+  podSelector: {matchLabels: {app: catalog-api}}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - podSelector: {matchLabels: {app: search}}
+    ports: [{protocol: TCP, port: 8080}]
+  - to:
+    - podSelector: {matchLabels: {app: catalog-db}}
+    ports: [{protocol: TCP, port: 5432}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: search-egress, namespace: ecom-catalog}
+spec:
+  podSelector: {matchLabels: {app: search}}
+  policyTypes: [Egress]
+  egress:
+  - to:   # indexer reads the catalog
+    - podSelector: {matchLabels: {app: catalog-db}}
+    ports: [{protocol: TCP, port: 5432}]
+---
+# ---- ecom-orders ----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: cart-ingress, namespace: ecom-orders}
+spec:
+  podSelector: {matchLabels: {app: cart}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-storefront}}
+      podSelector: {matchLabels: {app: bff}}
+    - podSelector: {matchLabels: {app: checkout}}
+    ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: checkout-ingress, namespace: ecom-orders}
+spec:
+  podSelector: {matchLabels: {app: checkout}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-storefront}}
+      podSelector: {matchLabels: {app: bff}}
+    ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: orders-db-ingress, namespace: ecom-orders}
+spec:
+  podSelector: {matchLabels: {app: orders-db}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:   # owning team only
+    - podSelector: {matchExpressions: [{key: app, operator: In, values: [cart, checkout]}]}
+    ports: [{protocol: TCP, port: 5432}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: cart-egress, namespace: ecom-orders}
+spec:
+  podSelector: {matchLabels: {app: cart}}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - podSelector: {matchLabels: {app: orders-db}}
+    ports: [{protocol: TCP, port: 5432}]
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-catalog}}
+      podSelector: {matchLabels: {app: catalog-api}}
+    ports: [{protocol: TCP, port: 8080}]
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-shared}}
+      podSelector: {matchLabels: {app: session-cache}}
+    ports: [{protocol: TCP, port: 6379}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: checkout-egress, namespace: ecom-orders}
+spec:
+  podSelector: {matchLabels: {app: checkout}}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - podSelector: {matchLabels: {app: orders-db}}
+    ports: [{protocol: TCP, port: 5432}]
+  - to:
+    - podSelector: {matchLabels: {app: cart}}
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-catalog}}
+      podSelector: {matchLabels: {app: catalog-api}}
+    ports: [{protocol: TCP, port: 8080}]
+---
+# ---- ecom-shared ----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: session-cache-ingress, namespace: ecom-shared}
+spec:
+  podSelector: {matchLabels: {app: session-cache}}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-storefront}}
+      podSelector: {matchExpressions: [{key: app, operator: In, values: [web, bff]}]}
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ecom-orders}}
+      podSelector: {matchLabels: {app: cart}}
+    ports: [{protocol: TCP, port: 6379}]

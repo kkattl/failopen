@@ -1,0 +1,1066 @@
+# Voltgrid telemetry platform - lab deployment
+#
+# Namespaces (tiers):
+#   iot-edge  device-facing tier : ingest-gateway (MQTT-TLS :8883 on edge node IPs), dashboard-proxy
+#   iot-app   application tier   : stream-processor, device-registry, alerting, dashboard
+#   iot-data  data tier          : tsdb, registry-db (postgres)
+#   iot-ops   node operations    : node-agent DaemonSet (hw-diag vendor agent + node-exporter), prometheus
+#
+# Every namespace starts from default-deny (ingress AND egress); each allowed flow is an
+# explicit NetworkPolicy below. See README.md for the flow table.
+#
+# LAB PARAMETER: the "plant network" CIDR is 172.18.0.1/32 (the kind docker bridge gateway
+# that simulates the factory floor). In production replace it with the real sensor /
+# engineer subnets. It MUST NOT overlap node IPs: Calico natOutgoing masquerades
+# pod -> node-IP traffic to the source node IP, so an ipBlock covering node IPs would let
+# every pod in the cluster into the device-facing ports.
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: iot-edge
+  labels:
+    app.kubernetes.io/part-of: voltgrid-telemetry
+    voltgrid.io/tier: device-facing
+    # hostPort (fixed sensor IP:port) is not allowed by the baseline profile.
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: iot-app
+  labels:
+    app.kubernetes.io/part-of: voltgrid-telemetry
+    voltgrid.io/tier: app
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: iot-data
+  labels:
+    app.kubernetes.io/part-of: voltgrid-telemetry
+    voltgrid.io/tier: data
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: iot-ops
+  labels:
+    app.kubernetes.io/part-of: voltgrid-telemetry
+    voltgrid.io/tier: ops
+    # node-exporter / hw-diag need read-only hostPath mounts (not allowed by baseline).
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+
+# =====================================================================================
+# NetworkPolicies (declared BEFORE any workload so no pod ever runs un-segmented)
+# =====================================================================================
+# ---- default deny (ingress + egress) in every namespace ----
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: iot-edge}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: iot-app}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: iot-data}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: iot-ops}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+
+# ---- DNS egress, only for pods that resolve service names ----
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: iot-edge}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      podSelector: {matchLabels: {k8s-app: kube-dns}}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: iot-app}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      podSelector: {matchLabels: {k8s-app: kube-dns}}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: iot-ops}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: prometheus}}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      podSelector: {matchLabels: {k8s-app: kube-dns}}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+
+# ---- iot-edge ----
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: ingest-gateway, namespace: iot-edge}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: ingest-gateway}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  # sensors on the plant network -> :8883 (via hostPort on edge node IP)
+  - from:
+    - ipBlock: {cidr: 172.18.0.1/32}   # LAB plant network; see header
+    ports: [{protocol: TCP, port: 8883}]
+  # stream-processor pulls telemetry from the internal consumer endpoint
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-app}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: stream-processor}}
+    ports: [{protocol: TCP, port: 9000}]
+  egress:
+  # authenticate devices against device-registry. Nothing else (no data tier, no internet).
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-app}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: device-registry}}
+    ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: dashboard-proxy, namespace: iot-edge}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: dashboard-proxy}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - ipBlock: {cidr: 172.18.0.1/32}   # LAB plant/engineering network; see header
+    ports: [{protocol: TCP, port: 8080}]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-app}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: dashboard}}
+    ports: [{protocol: TCP, port: 3000}]
+
+# ---- iot-app ----
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: device-registry, namespace: iot-app}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: device-registry}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-edge}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: ingest-gateway}}
+    ports: [{protocol: TCP, port: 8080}]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-data}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: registry-db}}
+    ports: [{protocol: TCP, port: 5432}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: stream-processor, namespace: iot-app}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: stream-processor}}
+  policyTypes: [Ingress, Egress]
+  ingress: []
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-edge}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: ingest-gateway}}
+    ports: [{protocol: TCP, port: 9000}]
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-data}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: tsdb}}
+    ports: [{protocol: TCP, port: 8428}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: alerting, namespace: iot-app}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: alerting}}
+  policyTypes: [Ingress, Egress]
+  ingress: []
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-data}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: tsdb}}
+    ports: [{protocol: TCP, port: 8428}]
+  # on-call paging provider: public internet, HTTPS only, never internal ranges.
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10, 169.254.0.0/16, 127.0.0.0/8]
+    ports: [{protocol: TCP, port: 443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: dashboard, namespace: iot-app}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: dashboard}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-edge}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: dashboard-proxy}}
+    ports: [{protocol: TCP, port: 3000}]
+  egress:
+  - to:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-data}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: tsdb}}
+    ports: [{protocol: TCP, port: 8428}]
+
+# ---- iot-data (ingress only; data stores have NO egress at all) ----
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: tsdb, namespace: iot-data}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: tsdb}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-app}}
+      podSelector:
+        matchExpressions:
+        - {key: app.kubernetes.io/name, operator: In, values: [stream-processor, alerting, dashboard]}
+    ports: [{protocol: TCP, port: 8428}]
+  egress: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: registry-db, namespace: iot-data}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: registry-db}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: iot-app}}
+      podSelector: {matchLabels: {app.kubernetes.io/name: device-registry}}
+    ports: [{protocol: TCP, port: 5432}]
+  egress: []
+
+# ---- iot-ops ----
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: node-agent, namespace: iot-ops}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: node-agent}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - podSelector: {matchLabels: {app.kubernetes.io/name: prometheus}}
+    ports: [{protocol: TCP, port: 9100}, {protocol: TCP, port: 9200}]
+  egress: []   # vendor agent gets no network egress (no phone-home, no lateral movement)
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: prometheus, namespace: iot-ops}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: prometheus}}
+  policyTypes: [Ingress, Egress]
+  ingress: []
+  egress:
+  - to:
+    - podSelector: {matchLabels: {app.kubernetes.io/name: node-agent}}
+    ports: [{protocol: TCP, port: 9100}, {protocol: TCP, port: 9200}]
+
+# =====================================================================================
+# iot-data : tsdb + registry-db
+# =====================================================================================
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tsdb
+  namespace: iot-data
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tsdb
+  namespace: iot-data
+  labels: {app.kubernetes.io/name: tsdb}
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/name: tsdb}
+  ports:
+  - {name: http, port: 8428, targetPort: http, protocol: TCP}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tsdb
+  namespace: iot-data
+  labels: {app.kubernetes.io/name: tsdb, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  serviceName: tsdb
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: tsdb}
+  persistentVolumeClaimRetentionPolicy: {whenDeleted: Delete, whenScaled: Retain}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: tsdb, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: data}
+    spec:
+      serviceAccountName: tsdb
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: tsdb
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8428", "--udp-port=-1"]
+        ports: [{name: http, containerPort: 8428, protocol: TCP}]
+        readinessProbe: {tcpSocket: {port: http}, periodSeconds: 5}
+        livenessProbe: {tcpSocket: {port: http}, periodSeconds: 20}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: data, mountPath: /data}
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      - name: tmp
+        emptyDir: {sizeLimit: 16Mi}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources: {requests: {storage: 1Gi}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: registry-db-credentials
+  namespace: iot-data
+type: Opaque
+stringData:
+  # Lab-only value. Production: inject from the secret manager, never commit.
+  POSTGRES_USER: registry
+  POSTGRES_DB: registry
+  POSTGRES_PASSWORD: lab-only-5f1c9e2a7b
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: registry-db
+  namespace: iot-data
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry-db
+  namespace: iot-data
+  labels: {app.kubernetes.io/name: registry-db}
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/name: registry-db}
+  ports:
+  - {name: postgres, port: 5432, targetPort: postgres, protocol: TCP}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: registry-db
+  namespace: iot-data
+  labels: {app.kubernetes.io/name: registry-db, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  serviceName: registry-db
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: registry-db}
+  persistentVolumeClaimRetentionPolicy: {whenDeleted: Delete, whenScaled: Retain}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: registry-db, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: data}
+    spec:
+      serviceAccountName: registry-db
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70        # postgres user in the alpine image
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: postgres
+        image: docker.io/library/postgres:16.4-alpine
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - secretRef: {name: registry-db-credentials}
+        env:
+        - {name: PGDATA, value: /var/lib/postgresql/data/pgdata}
+        ports: [{name: postgres, containerPort: 5432, protocol: TCP}]
+        readinessProbe:
+          exec: {command: ["sh", "-c", "pg_isready -h 127.0.0.1 -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]}
+          periodSeconds: 5
+        livenessProbe:
+          exec: {command: ["sh", "-c", "pg_isready -h 127.0.0.1 -U \"$POSTGRES_USER\""]}
+          periodSeconds: 20
+          initialDelaySeconds: 30
+        resources:
+          requests: {cpu: 50m, memory: 64Mi}
+          limits: {memory: 256Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: data, mountPath: /var/lib/postgresql/data}
+        - {name: run, mountPath: /var/run/postgresql}
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      - name: run
+        emptyDir: {sizeLimit: 8Mi}
+      - name: tmp
+        emptyDir: {sizeLimit: 64Mi}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources: {requests: {storage: 1Gi}}
+
+# =====================================================================================
+# iot-app : device-registry, stream-processor, alerting, dashboard
+# =====================================================================================
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: device-registry
+  namespace: iot-app
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: stream-processor
+  namespace: iot-app
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alerting
+  namespace: iot-app
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dashboard
+  namespace: iot-app
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: device-registry
+  namespace: iot-app
+  labels: {app.kubernetes.io/name: device-registry}
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/name: device-registry}
+  ports:
+  - {name: http, port: 8080, targetPort: http, protocol: TCP}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-registry
+  namespace: iot-app
+  labels: {app.kubernetes.io/name: device-registry, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app.kubernetes.io/name: device-registry}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 1, maxUnavailable: 0}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: device-registry, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: app}
+    spec:
+      serviceAccountName: device-registry
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels: {app.kubernetes.io/name: device-registry}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: device-registry
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8080", "--udp-port=-1"]
+        env:
+        - {name: DB_HOST, value: registry-db.iot-data.svc.cluster.local}
+        - {name: DB_PORT, value: "5432"}
+        ports: [{name: http, containerPort: 8080, protocol: TCP}]
+        readinessProbe: {tcpSocket: {port: http}, periodSeconds: 5}
+        livenessProbe: {tcpSocket: {port: http}, periodSeconds: 20}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts: [{name: tmp, mountPath: /tmp}]
+      volumes:
+      - name: tmp
+        emptyDir: {sizeLimit: 16Mi}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: device-registry
+  namespace: iot-app
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: device-registry}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stream-processor
+  namespace: iot-app
+  labels: {app.kubernetes.io/name: stream-processor, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app.kubernetes.io/name: stream-processor}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 1, maxUnavailable: 0}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: stream-processor, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: app}
+    spec:
+      serviceAccountName: stream-processor
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels: {app.kubernetes.io/name: stream-processor}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: stream-processor
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        # Worker: no listening port needed; consumes ingest-gateway:9000, writes tsdb:8428.
+        args: ["pause"]
+        env:
+        - {name: SOURCE_ADDR, value: ingest-gateway.iot-edge.svc.cluster.local:9000}
+        - {name: TSDB_ADDR, value: tsdb.iot-data.svc.cluster.local:8428}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: stream-processor
+  namespace: iot-app
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: stream-processor}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alerting
+  namespace: iot-app
+  labels: {app.kubernetes.io/name: alerting, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: alerting}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: alerting, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: app}
+    spec:
+      serviceAccountName: alerting
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: alerting
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["pause"]
+        env:
+        - {name: TSDB_ADDR, value: tsdb.iot-data.svc.cluster.local:8428}
+        - {name: PAGING_URL, value: "https://events.pagerduty.com/v2/enqueue"}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard
+  namespace: iot-app
+  labels: {app.kubernetes.io/name: dashboard}
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/name: dashboard}
+  ports:
+  - {name: http, port: 3000, targetPort: http, protocol: TCP}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+  namespace: iot-app
+  labels: {app.kubernetes.io/name: dashboard, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: dashboard}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: dashboard, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: app}
+    spec:
+      serviceAccountName: dashboard
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: dashboard
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=3000", "--udp-port=-1"]
+        env:
+        - {name: TSDB_ADDR, value: tsdb.iot-data.svc.cluster.local:8428}
+        ports: [{name: http, containerPort: 3000, protocol: TCP}]
+        readinessProbe: {tcpSocket: {port: http}, periodSeconds: 5}
+        livenessProbe: {tcpSocket: {port: http}, periodSeconds: 20}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts: [{name: tmp, mountPath: /tmp}]
+      volumes:
+      - name: tmp
+        emptyDir: {sizeLimit: 16Mi}
+
+# =====================================================================================
+# iot-edge : ingest-gateway (sensors) + dashboard-proxy (plant engineers)
+# Pinned to pool=edge (the only pool the plant network is routed to), exposed with
+# hostPort on the edge node IP. No NodePort (range 30000-32767 cannot give :8883, and a
+# NodePort would open the port on EVERY node incl. restricted ones), no hostNetwork
+# (hostNetwork pods are not subject to NetworkPolicy).
+# =====================================================================================
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ingest-gateway
+  namespace: iot-edge
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dashboard-proxy
+  namespace: iot-edge
+automountServiceAccountToken: false
+---
+# Internal consumer endpoint only (stream-processor). Devices never use this Service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingest-gateway
+  namespace: iot-edge
+  labels: {app.kubernetes.io/name: ingest-gateway}
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/name: ingest-gateway}
+  ports:
+  - {name: consumer, port: 9000, targetPort: consumer, protocol: TCP}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ingest-gateway
+  namespace: iot-edge
+  labels: {app.kubernetes.io/name: ingest-gateway, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  selector:
+    matchLabels: {app.kubernetes.io/name: ingest-gateway}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate: {maxUnavailable: 1}   # hostPort => cannot surge on the same node
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: ingest-gateway, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: device-facing}
+    spec:
+      serviceAccountName: ingest-gateway
+      automountServiceAccountToken: false
+      nodeSelector: {pool: edge}
+      tolerations:
+      - {key: dedicated, operator: Equal, value: edge, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: device-listener      # stand-in for the MQTT/TLS listener sensors connect to
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=8883", "--udp-port=-1"]
+        env:
+        - {name: REGISTRY_URL, value: http://device-registry.iot-app.svc.cluster.local:8080}
+        ports:
+        - {name: mqtts, containerPort: 8883, hostPort: 8883, protocol: TCP}
+        readinessProbe: {tcpSocket: {port: mqtts}, periodSeconds: 5}
+        livenessProbe: {tcpSocket: {port: mqtts}, periodSeconds: 20}
+        resources:
+          requests: {cpu: 20m, memory: 32Mi}
+          limits: {memory: 128Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts: [{name: tmp, mountPath: /tmp}]
+      - name: consumer-api         # stand-in for the internal stream endpoint stream-processor pulls from
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=9000", "--udp-port=-1"]
+        ports:
+        - {name: consumer, containerPort: 9000, protocol: TCP}
+        readinessProbe: {tcpSocket: {port: consumer}, periodSeconds: 5}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts: [{name: tmp2, mountPath: /tmp}]
+      volumes:
+      - name: tmp
+        emptyDir: {sizeLimit: 16Mi}
+      - name: tmp2
+        emptyDir: {sizeLimit: 16Mi}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboard-proxy
+  namespace: iot-edge
+data:
+  default.conf: |
+    server {
+      listen 8080;
+      server_tokens off;
+      location = /nginx-healthz { access_log off; return 200 "ok\n"; }
+      location / {
+        proxy_pass http://dashboard.iot-app.svc.cluster.local:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $remote_addr;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dashboard-proxy
+  namespace: iot-edge
+  labels: {app.kubernetes.io/name: dashboard-proxy, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  selector:
+    matchLabels: {app.kubernetes.io/name: dashboard-proxy}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate: {maxUnavailable: 1}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: dashboard-proxy, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: device-facing}
+    spec:
+      serviceAccountName: dashboard-proxy
+      automountServiceAccountToken: false
+      nodeSelector: {pool: edge}
+      tolerations:
+      - {key: dedicated, operator: Equal, value: edge, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: nginx
+        image: docker.io/nginxinc/nginx-unprivileged:1.27-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - {name: http, containerPort: 8080, hostPort: 8080, protocol: TCP}
+        readinessProbe: {httpGet: {path: /nginx-healthz, port: http}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /nginx-healthz, port: http}, periodSeconds: 20}
+        resources:
+          requests: {cpu: 10m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: conf, mountPath: /etc/nginx/conf.d, readOnly: true}
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      - name: conf
+        configMap: {name: dashboard-proxy}
+      - name: tmp
+        emptyDir: {sizeLimit: 32Mi}
+
+# =====================================================================================
+# iot-ops : node-agent DaemonSet on EVERY node + prometheus collector
+# hw-diag and node-exporter share one pod per node to stay within the 20-pod budget
+# (2 separate DaemonSets on 7 nodes = 14 pods). Both run in the POD network (no
+# hostNetwork): their endpoints stay behind NetworkPolicy and are NOT exposed on the
+# edge node's plant-facing IP.
+# =====================================================================================
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-agent
+  namespace: iot-ops
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: iot-ops
+automountServiceAccountToken: false
+---
+# Headless: prometheus discovers one A record per node-agent pod (DNS SD, no API access / RBAC needed).
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-agent
+  namespace: iot-ops
+  labels: {app.kubernetes.io/name: node-agent}
+spec:
+  clusterIP: None
+  selector: {app.kubernetes.io/name: node-agent}
+  ports:
+  - {name: node-metrics, port: 9100, targetPort: node-metrics, protocol: TCP}
+  - {name: hw-diag, port: 9200, targetPort: hw-diag, protocol: TCP}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-agent
+  namespace: iot-ops
+  labels: {app.kubernetes.io/name: node-agent, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  selector:
+    matchLabels: {app.kubernetes.io/name: node-agent}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate: {maxUnavailable: 1}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: node-agent, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: ops}
+    spec:
+      serviceAccountName: node-agent
+      automountServiceAccountToken: false
+      # Every node: tolerate edge, restricted, control-plane and any future taint.
+      tolerations:
+      - operator: Exists
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: hw-diag              # stand-in for the vendor hardware-diagnostics agent
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["netexec", "--http-port=9200", "--udp-port=-1"]
+        env:
+        - name: NODE_NAME
+          valueFrom: {fieldRef: {fieldPath: spec.nodeName}}
+        ports: [{name: hw-diag, containerPort: 9200, protocol: TCP}]
+        readinessProbe: {tcpSocket: {port: hw-diag}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 5m, memory: 16Mi}
+          limits: {memory: 64Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: sys, mountPath: /host/sys, readOnly: true}
+        - {name: tmp, mountPath: /tmp}
+      - name: node-exporter
+        image: quay.io/prometheus/node-exporter:v1.9.1
+        imagePullPolicy: IfNotPresent
+        args:
+        - --path.procfs=/host/proc
+        - --path.sysfs=/host/sys
+        - --path.rootfs=/host/root
+        - --web.listen-address=:9100
+        - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+|run/containerd/.+)($|/)
+        ports: [{name: node-metrics, containerPort: 9100, protocol: TCP}]
+        readinessProbe: {httpGet: {path: /, port: node-metrics}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 10m, memory: 24Mi}
+          limits: {memory: 96Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: proc, mountPath: /host/proc, readOnly: true}
+        - {name: sys, mountPath: /host/sys, readOnly: true}
+        - {name: root, mountPath: /host/root, readOnly: true, mountPropagation: HostToContainer}
+      volumes:
+      - {name: proc, hostPath: {path: /proc}}
+      - {name: sys, hostPath: {path: /sys}}
+      - {name: root, hostPath: {path: /}}
+      - {name: tmp, emptyDir: {sizeLimit: 16Mi}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+  namespace: iot-ops
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    scrape_configs:
+    - job_name: node
+      dns_sd_configs:
+      - names: [node-agent.iot-ops.svc.cluster.local]
+        type: A
+        port: 9100
+        refresh_interval: 30s
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: iot-ops
+  labels: {app.kubernetes.io/name: prometheus, app.kubernetes.io/part-of: voltgrid-telemetry}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app.kubernetes.io/name: prometheus}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: prometheus, app.kubernetes.io/part-of: voltgrid-telemetry, voltgrid.io/tier: ops}
+    spec:
+      serviceAccountName: prometheus
+      automountServiceAccountToken: false
+      nodeSelector: {pool: general}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: prometheus
+        image: quay.io/prometheus/prometheus:v3.5.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - --config.file=/etc/prometheus/prometheus.yml
+        - --storage.tsdb.path=/prometheus
+        - --storage.tsdb.retention.time=2d
+        - --web.listen-address=:9090
+        ports: [{name: http, containerPort: 9090, protocol: TCP}]
+        readinessProbe: {httpGet: {path: /-/ready, port: http}, periodSeconds: 10}
+        livenessProbe: {httpGet: {path: /-/healthy, port: http}, periodSeconds: 30}
+        resources:
+          requests: {cpu: 50m, memory: 128Mi}
+          limits: {memory: 512Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: ["ALL"]}
+        volumeMounts:
+        - {name: config, mountPath: /etc/prometheus, readOnly: true}
+        - {name: data, mountPath: /prometheus}
+      volumes:
+      - name: config
+        configMap: {name: prometheus}
+      - name: data
+        emptyDir: {sizeLimit: 1Gi}
+

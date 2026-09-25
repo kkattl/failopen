@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net"
-	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -13,9 +13,15 @@ import (
 	"github.com/kkattl/failopen/internal/scenario"
 )
 
+// probeParallelism caps concurrent connects inside one source pod.
+const probeParallelism = 4
+
 type prober struct {
 	kube    *kube
 	timeout time.Duration
+
+	mu       sync.Mutex
+	failures []string // sources whose exec failed; results would be garbage
 }
 
 // probeAll runs every applicable probe; one exec per source fans out all
@@ -69,13 +75,22 @@ func (p *prober) probeFrom(ctx context.Context, src source, targets []target, id
 		byAddr[targets[ti].Address] = ti
 	}
 	secs := max(1, int(p.timeout.Seconds()))
-	script := `for t in ` + strings.Join(addrs, " ") + `; do (
-  r=$(/agnhost connect "$t" --timeout=` + strconv.Itoa(secs) + `s 2>&1)
-  if [ $? -eq 0 ]; then echo "$t OPEN"; else echo "$t $(echo $r)"; fi
-) & done; wait`
-	stdout, err := p.kube.exec(ctx, src.Pod, src.Container, []string{"sh", "-c", script})
+	// Batches of probeParallelism: every agnhost process lives in the
+	// source pod's cgroup, and scenario pods often have tight memory limits
+	// (33 concurrent connects OOM-killed a 64Mi pod).
+	var script strings.Builder
+	for i := 0; i < len(addrs); i += probeParallelism {
+		for _, a := range addrs[i:min(i+probeParallelism, len(addrs))] {
+			fmt.Fprintf(&script, `( r=$(/agnhost connect %s --timeout=%ds 2>&1); if [ $? -eq 0 ]; then echo "%s OPEN"; else echo "%s $(echo $r)"; fi ) & `, a, secs, a, a)
+		}
+		script.WriteString("wait\n")
+	}
+	stdout, err := p.kube.exec(ctx, src.Pod, src.Container, []string{"sh", "-c", script.String()})
 	if err != nil {
 		logf("exec from %s failed: %v", src.Name, err)
+		p.mu.Lock()
+		p.failures = append(p.failures, src.Name)
+		p.mu.Unlock()
 	}
 	for _, line := range strings.Split(stdout, "\n") {
 		addr, rest, ok := strings.Cut(strings.TrimSpace(line), " ")
