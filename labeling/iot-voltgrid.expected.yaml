@@ -1,0 +1,74 @@
+# Blind labels for scenario: iot-voltgrid
+# Source: testdata/scenarios/iot-voltgrid/manifests.yaml (+ README.md)
+#
+# Rules (labeling/README.md): label from the manifests and the Kubernetes
+# docs ONLY. Do not open testdata/scenarios/iot-voltgrid/*/reachability.json
+# before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
+# node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
+# general/edge/restricted (edge and restricted are tainted).
+#
+# ---------------------------------------------------------------- inventory
+# Namespaces: iot-app, iot-data, iot-edge, iot-ops
+#
+# Workloads:
+#   StatefulSet iot-data/tsdb x1 labels={'app.kubernetes.io/name': 'tsdb', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'data'} ports=[8428] nodeSelector pool=general
+#   StatefulSet iot-data/registry-db x1 labels={'app.kubernetes.io/name': 'registry-db', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'data'} ports=[5432] nodeSelector pool=general
+#   Deployment iot-app/device-registry x2 labels={'app.kubernetes.io/name': 'device-registry', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'app'} ports=[8080] nodeSelector pool=general
+#   Deployment iot-app/stream-processor x2 labels={'app.kubernetes.io/name': 'stream-processor', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'app'} ports=[] nodeSelector pool=general
+#   Deployment iot-app/alerting x1 labels={'app.kubernetes.io/name': 'alerting', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'app'} ports=[] nodeSelector pool=general
+#   Deployment iot-app/dashboard x1 labels={'app.kubernetes.io/name': 'dashboard', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'app'} ports=[3000] nodeSelector pool=general
+#   DaemonSet iot-edge/ingest-gateway labels={'app.kubernetes.io/name': 'ingest-gateway', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'device-facing'} ports=[8883->hostPort 8883, 9000] hostPort tolerates edge nodeSelector pool=edge
+#   DaemonSet iot-edge/dashboard-proxy labels={'app.kubernetes.io/name': 'dashboard-proxy', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'device-facing'} ports=[8080->hostPort 8080] hostPort tolerates edge nodeSelector pool=edge
+#   DaemonSet iot-ops/node-agent labels={'app.kubernetes.io/name': 'node-agent', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'ops'} ports=[9200, 9100] tolerates-everything
+#   Deployment iot-ops/prometheus x1 labels={'app.kubernetes.io/name': 'prometheus', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'ops'} ports=[9090] nodeSelector pool=general
+#
+# Services:
+#   Service iot-data/tsdb type=ClusterIP selector={'app.kubernetes.io/name': 'tsdb'} ports=[8428->http]
+#   Service iot-data/registry-db type=ClusterIP selector={'app.kubernetes.io/name': 'registry-db'} ports=[5432->postgres]
+#   Service iot-app/device-registry type=ClusterIP selector={'app.kubernetes.io/name': 'device-registry'} ports=[8080->http]
+#   Service iot-app/dashboard type=ClusterIP selector={'app.kubernetes.io/name': 'dashboard'} ports=[3000->http]
+#   Service iot-edge/ingest-gateway type=ClusterIP selector={'app.kubernetes.io/name': 'ingest-gateway'} ports=[9000->consumer]
+#   Service iot-ops/node-agent type=ClusterIP selector={'app.kubernetes.io/name': 'node-agent'} ports=[9100->node-metrics, 9200->hw-diag]
+#
+# NetworkPolicies:
+#   NetworkPolicy iot-edge/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy iot-app/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy iot-data/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy iot-ops/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy iot-edge/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy iot-app/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy iot-ops/allow-dns-egress selects={'app.kubernetes.io/name': 'prometheus'} types=['Egress']
+#   NetworkPolicy iot-edge/ingest-gateway selects={'app.kubernetes.io/name': 'ingest-gateway'} types=['Ingress', 'Egress']
+#       ingress ipBlock 10.250.0.10/32 ports=8883
+#   NetworkPolicy iot-edge/dashboard-proxy selects={'app.kubernetes.io/name': 'dashboard-proxy'} types=['Ingress', 'Egress']
+#       ingress ipBlock 10.250.0.10/32 ports=8080
+#   NetworkPolicy iot-app/device-registry selects={'app.kubernetes.io/name': 'device-registry'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-app/stream-processor selects={'app.kubernetes.io/name': 'stream-processor'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-app/alerting selects={'app.kubernetes.io/name': 'alerting'} types=['Ingress', 'Egress']
+#       egress ipBlock 0.0.0.0/0 except ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '100.64.0.0/10', '169.254.0.0/16', '127.0.0.0/8'] ports=443
+#   NetworkPolicy iot-app/dashboard selects={'app.kubernetes.io/name': 'dashboard'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-data/tsdb selects={'app.kubernetes.io/name': 'tsdb'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-data/registry-db selects={'app.kubernetes.io/name': 'registry-db'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-ops/node-agent selects={'app.kubernetes.io/name': 'node-agent'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-ops/prometheus selects={'app.kubernetes.io/name': 'prometheus'} types=['Ingress', 'Egress']
+# --------------------------------------------------------------------------
+
+scenario: iot-voltgrid
+labeler: ""          # your name/handle
+labeled_at: ""       # YYYY-MM-DD
+blind: true          # set false if you saw oracle output for this scenario first
+
+findings: []
+# One entry per finding a detector SHOULD (must), MAY (may) or must NOT
+# (must-not) report. Example:
+#
+#  - id: f1
+#    class: ipblock-admits-node-ips      # see labeling/README.md
+#    subject: {kind: Service, namespace: ns, name: svc, port: 80}
+#    mechanism: snat                     # snat | hostnetwork | node-local | cni
+#    applies_to_cni: [any]               # or e.g. [calico, cilium]
+#    label: must                         # must | may | must-not
+#    severity: critical                  # critical | warning | info (for must/may)
+#    rationale: >
+#      Why, citing the spec/docs where it matters.
+#    evidence: []                        # filled at reconciliation: oracle probe refs

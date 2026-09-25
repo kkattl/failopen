@@ -1,0 +1,90 @@
+# Blind labels for scenario: saas-formcraft
+# Source: testdata/scenarios/saas-formcraft/manifests.yaml (+ README.md)
+#
+# Rules (labeling/README.md): label from the manifests and the Kubernetes
+# docs ONLY. Do not open testdata/scenarios/saas-formcraft/*/reachability.json
+# before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
+# node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
+# general/edge/restricted (edge and restricted are tainted).
+#
+# ---------------------------------------------------------------- inventory
+# Namespaces: saas-edge, saas-platform, saas-tenant-acme, saas-tenant-globex, saas-tenant-initech
+#
+# Workloads:
+#   Deployment saas-edge/gateway x1 labels={'app.kubernetes.io/name': 'gateway', 'app.kubernetes.io/part-of': 'formcraft'} ports=[8080] tolerates edge nodeSelector pool=edge
+#   Deployment saas-platform/auth x2 labels={'app.kubernetes.io/name': 'auth', 'app.kubernetes.io/part-of': 'formcraft'} ports=[8080] nodeSelector pool=general
+#   Deployment saas-platform/billing x1 labels={'app.kubernetes.io/name': 'billing', 'app.kubernetes.io/part-of': 'formcraft'} ports=[8080] nodeSelector pool=general
+#   Deployment saas-platform/mailer x1 labels={'app.kubernetes.io/name': 'mailer', 'app.kubernetes.io/part-of': 'formcraft'} ports=[2525] nodeSelector pool=general
+#   Deployment saas-tenant-acme/app x1 labels={'app.kubernetes.io/name': 'app', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'acme'} ports=[8080] nodeSelector pool=general
+#   Deployment saas-tenant-acme/worker x1 labels={'app.kubernetes.io/name': 'worker', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'acme'} ports=[] nodeSelector pool=general
+#   StatefulSet saas-tenant-acme/db x1 labels={'app.kubernetes.io/name': 'db', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'acme'} ports=[5432] nodeSelector pool=general
+#   Deployment saas-tenant-globex/app x1 labels={'app.kubernetes.io/name': 'app', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'globex'} ports=[8080] nodeSelector pool=general
+#   Deployment saas-tenant-globex/worker x1 labels={'app.kubernetes.io/name': 'worker', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'globex'} ports=[] nodeSelector pool=general
+#   StatefulSet saas-tenant-globex/db x1 labels={'app.kubernetes.io/name': 'db', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'globex'} ports=[5432] nodeSelector pool=general
+#   Deployment saas-tenant-initech/app x1 labels={'app.kubernetes.io/name': 'app', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'initech'} ports=[8080] nodeSelector pool=general
+#   Deployment saas-tenant-initech/worker x1 labels={'app.kubernetes.io/name': 'worker', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'initech'} ports=[] nodeSelector pool=general
+#   StatefulSet saas-tenant-initech/db x1 labels={'app.kubernetes.io/name': 'db', 'app.kubernetes.io/part-of': 'formcraft', 'formcraft.io/tenant': 'initech'} ports=[5432] nodeSelector pool=general
+#
+# Services:
+#   Service saas-edge/gateway type=NodePort externalTrafficPolicy=Local selector={'app.kubernetes.io/name': 'gateway'} ports=[8080->8080 nodePort 31480]
+#   Service saas-platform/auth type=ClusterIP selector={'app.kubernetes.io/name': 'auth'} ports=[8080->8080]
+#   Service saas-platform/mailer type=ClusterIP selector={'app.kubernetes.io/name': 'mailer'} ports=[2525->2525]
+#   Service saas-tenant-acme/app type=ClusterIP selector={'app.kubernetes.io/name': 'app'} ports=[8080->8080]
+#   Service saas-tenant-acme/db type=ClusterIP selector={'app.kubernetes.io/name': 'db'} ports=[5432->5432]
+#   Service saas-tenant-globex/app type=ClusterIP selector={'app.kubernetes.io/name': 'app'} ports=[8080->8080]
+#   Service saas-tenant-globex/db type=ClusterIP selector={'app.kubernetes.io/name': 'db'} ports=[5432->5432]
+#   Service saas-tenant-initech/app type=ClusterIP selector={'app.kubernetes.io/name': 'app'} ports=[8080->8080]
+#   Service saas-tenant-initech/db type=ClusterIP selector={'app.kubernetes.io/name': 'db'} ports=[5432->5432]
+#
+# NetworkPolicies:
+#   NetworkPolicy saas-edge/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy saas-edge/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy saas-edge/gateway-ingress-from-outside-cluster selects={'app.kubernetes.io/name': 'gateway'} types=['Ingress']
+#       ingress ipBlock 0.0.0.0/0 except ['192.168.0.0/16'] ports=8080
+#   NetworkPolicy saas-edge/gateway-egress-to-tenant-apps selects={'app.kubernetes.io/name': 'gateway'} types=['Egress']
+#   NetworkPolicy saas-platform/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy saas-platform/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy saas-platform/auth-ingress-from-tenant-apps selects={'app.kubernetes.io/name': 'auth'} types=['Ingress']
+#   NetworkPolicy saas-platform/billing-egress-to-tenant-apps selects={'app.kubernetes.io/name': 'billing'} types=['Egress']
+#   NetworkPolicy saas-platform/mailer-ingress-from-tenant-workers selects={'app.kubernetes.io/name': 'mailer'} types=['Ingress']
+#   NetworkPolicy saas-platform/mailer-egress-to-external-smtp selects={'app.kubernetes.io/name': 'mailer'} types=['Egress']
+#       egress ipBlock 0.0.0.0/0 except ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '100.64.0.0/10', '169.254.0.0/16', '127.0.0.0/8'] ports=25,587,465
+#   NetworkPolicy saas-tenant-acme/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy saas-tenant-acme/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy saas-tenant-acme/app-ingress selects={'app.kubernetes.io/name': 'app'} types=['Ingress']
+#   NetworkPolicy saas-tenant-acme/app-egress selects={'app.kubernetes.io/name': 'app'} types=['Egress']
+#   NetworkPolicy saas-tenant-acme/worker-egress selects={'app.kubernetes.io/name': 'worker'} types=['Egress']
+#   NetworkPolicy saas-tenant-acme/db-ingress selects={'app.kubernetes.io/name': 'db'} types=['Ingress']
+#   NetworkPolicy saas-tenant-globex/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy saas-tenant-globex/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy saas-tenant-globex/app-ingress selects={'app.kubernetes.io/name': 'app'} types=['Ingress']
+#   NetworkPolicy saas-tenant-globex/app-egress selects={'app.kubernetes.io/name': 'app'} types=['Egress']
+#   NetworkPolicy saas-tenant-globex/worker-egress selects={'app.kubernetes.io/name': 'worker'} types=['Egress']
+#   NetworkPolicy saas-tenant-globex/db-ingress selects={'app.kubernetes.io/name': 'db'} types=['Ingress']
+#   NetworkPolicy saas-tenant-initech/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy saas-tenant-initech/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy saas-tenant-initech/app-ingress selects={'app.kubernetes.io/name': 'app'} types=['Ingress']
+#   NetworkPolicy saas-tenant-initech/app-egress selects={'app.kubernetes.io/name': 'app'} types=['Egress']
+#   NetworkPolicy saas-tenant-initech/worker-egress selects={'app.kubernetes.io/name': 'worker'} types=['Egress']
+#   NetworkPolicy saas-tenant-initech/db-ingress selects={'app.kubernetes.io/name': 'db'} types=['Ingress']
+# --------------------------------------------------------------------------
+
+scenario: saas-formcraft
+labeler: ""          # your name/handle
+labeled_at: ""       # YYYY-MM-DD
+blind: true          # set false if you saw oracle output for this scenario first
+
+findings: []
+# One entry per finding a detector SHOULD (must), MAY (may) or must NOT
+# (must-not) report. Example:
+#
+#  - id: f1
+#    class: ipblock-admits-node-ips      # see labeling/README.md
+#    subject: {kind: Service, namespace: ns, name: svc, port: 80}
+#    mechanism: snat                     # snat | hostnetwork | node-local | cni
+#    applies_to_cni: [any]               # or e.g. [calico, cilium]
+#    label: must                         # must | may | must-not
+#    severity: critical                  # critical | warning | info (for must/may)
+#    rationale: >
+#      Why, citing the spec/docs where it matters.
+#    evidence: []                        # filled at reconciliation: oracle probe refs

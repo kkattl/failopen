@@ -1,0 +1,43 @@
+# Blind labels for scenario: demo-payments
+# Source: testdata/scenarios/demo-payments/manifests.yaml (+ README.md)
+#
+# Rules (labeling/README.md): label from the manifests and the Kubernetes
+# docs ONLY. Do not open testdata/scenarios/demo-payments/*/reachability.json
+# before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
+# node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
+# general/edge/restricted (edge and restricted are tainted).
+#
+# ---------------------------------------------------------------- inventory
+# Namespaces: monitoring, payments
+#
+# Workloads:
+#   Pod payments/api-server labels={'app': 'api-server'} ports=[80]
+#   Pod payments/host-probe labels={'app': 'host-probe'} ports=[8080] hostNetwork
+#   Pod monitoring/node-agent labels={} ports=[] hostNetwork
+#
+# Services:
+#   Service payments/api-nodeport type=NodePort externalTrafficPolicy=Cluster selector={'app': 'api-server'} ports=[80->80 nodePort 31080]
+#
+# NetworkPolicies:
+#   NetworkPolicy payments/default-deny-all selects=ALL pods types=['Ingress']
+# --------------------------------------------------------------------------
+
+scenario: demo-payments
+labeler: ""          # your name/handle
+labeled_at: ""       # YYYY-MM-DD
+blind: true          # set false if you saw oracle output for this scenario first
+
+findings: []
+# One entry per finding a detector SHOULD (must), MAY (may) or must NOT
+# (must-not) report. Example:
+#
+#  - id: f1
+#    class: ipblock-admits-node-ips      # see labeling/README.md
+#    subject: {kind: Service, namespace: ns, name: svc, port: 80}
+#    mechanism: snat                     # snat | hostnetwork | node-local | cni
+#    applies_to_cni: [any]               # or e.g. [calico, cilium]
+#    label: must                         # must | may | must-not
+#    severity: critical                  # critical | warning | info (for must/may)
+#    rationale: >
+#      Why, citing the spec/docs where it matters.
+#    evidence: []                        # filled at reconciliation: oracle probe refs
