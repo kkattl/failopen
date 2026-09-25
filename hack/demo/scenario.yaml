@@ -25,7 +25,12 @@ metadata:
 spec:
   containers:
     - name: app
-      image: registry.k8s.io/pause:3.9
+      # agnhost netexec actually listens on :80, so reachability can be
+      # verified with curl (pause listens on nothing).
+      image: registry.k8s.io/e2e-test-images/agnhost:2.53
+      args: ["netexec", "--http-port=80"]
+      ports:
+        - containerPort: 80
 ---
 # HOLE #1: hostNetwork pod — lives on the node's network,
 # so the NetworkPolicy above simply does not apply to it.
@@ -40,10 +45,15 @@ spec:
   hostNetwork: true
   containers:
     - name: app
-      image: registry.k8s.io/pause:3.9
+      image: registry.k8s.io/e2e-test-images/agnhost:2.53
+      args: ["netexec", "--http-port=8080"]
+      ports:
+        - containerPort: 8080
 ---
-# HOLE #2: NodePort exposes a payments pod on every node's IP,
-# bypassing namespace isolation from outside the cluster.
+# NOT a hole on Calico (verified by `make verify`): NodePort traffic is
+# DNAT'd to the pod IP and default-deny-all still blocks it. It stays in the
+# scenario as a WARNING case: exposed on every node, enforcement is
+# CNI-dependent, and SNAT hides the client IP from ipBlock rules.
 apiVersion: v1
 kind: Service
 metadata:
@@ -57,3 +67,32 @@ spec:
     - port: 80
       targetPort: 80
       nodePort: 31080
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+# HOLE #2: hostNetwork pod in ANOTHER namespace, co-located with a
+# payments pod. Calico allows node -> local-workload traffic (so kubelet
+# probes work), and a hostNetwork pod IS the node — so it reaches
+# api-server despite default-deny-all. Looks like a harmless node agent.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: node-agent
+  namespace: monitoring
+spec:
+  hostNetwork: true
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app: api-server
+          namespaces: ["payments"]
+          topologyKey: kubernetes.io/hostname
+  containers:
+    - name: app
+      image: registry.k8s.io/e2e-test-images/agnhost:2.53
+      args: ["pause"]
