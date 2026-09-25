@@ -1,9 +1,9 @@
 CLUSTER    := failopen-demo
-KUBECONFIG := $(PWD)/hack/demo/kubeconfig
+KUBECONFIG := $(CURDIR)/hack/demo/kubeconfig
 KCTL       := kubectl --kubeconfig=$(KUBECONFIG)
 CALICO_VER := v3.28.0
 
-.PHONY: demo audit demo-down build
+.PHONY: demo audit demo-down build verify
 
 demo:
 	kind create cluster --name $(CLUSTER) \
@@ -22,3 +22,7 @@ build:
 
 demo-down:
 	kind delete cluster --name $(CLUSTER)
+
+# Reachability matrix: which declared-DENY paths are actually open on this CNI.
+verify:
+	hack/demo/verify/verify.sh

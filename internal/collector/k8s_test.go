@@ -8,8 +8,12 @@ import (
 )
 
 func ds(name string) appsv1.DaemonSet {
+	return dsIn("kube-system", name)
+}
+
+func dsIn(namespace, name string) appsv1.DaemonSet {
 	return appsv1.DaemonSet{
-		ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: "kube-system"},
+		ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: namespace},
 	}
 }
 
@@ -36,6 +40,30 @@ func TestClassifyCNI(t *testing.T) {
 			name:         "cilium enforces policy",
 			daemonSets:   []appsv1.DaemonSet{ds("cilium")},
 			wantName:     "cilium",
+			wantEnforces: true,
+		},
+		{
+			name:         "flannel from official manifest (kube-flannel namespace)",
+			daemonSets:   []appsv1.DaemonSet{dsIn("kube-flannel", "kube-flannel-ds")},
+			wantName:     "flannel",
+			wantEnforces: false,
+		},
+		{
+			name:         "operator-installed calico (calico-system namespace)",
+			daemonSets:   []appsv1.DaemonSet{dsIn("calico-system", "calico-node")},
+			wantName:     "calico",
+			wantEnforces: true,
+		},
+		{
+			name:         "canal enforces policy",
+			daemonSets:   []appsv1.DaemonSet{ds("canal")},
+			wantName:     "canal",
+			wantEnforces: true,
+		},
+		{
+			name:         "enforcing CNI wins over flannel regardless of order",
+			daemonSets:   []appsv1.DaemonSet{dsIn("kube-flannel", "kube-flannel-ds"), ds("calico-node")},
+			wantName:     "calico",
 			wantEnforces: true,
 		},
 		{

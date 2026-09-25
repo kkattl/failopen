@@ -45,11 +45,19 @@ func buildConfig(explicitPath string) (*rest.Config, error) {
 	if err == nil {
 		return restCfg, nil
 	}
+	// An explicit --kubeconfig that fails to load is a user error; don't
+	// mask it with an unrelated in-cluster message.
+	if explicitPath != "" {
+		return nil, err
+	}
 	// Fallback: in-cluster config (when the tool runs as a pod itself).
-	return rest.InClusterConfig()
+	if inCluster, icErr := rest.InClusterConfig(); icErr == nil {
+		return inCluster, nil
+	}
+	return nil, err
 }
 
-// Collect performs the five List calls and determines the CNI.
+// Collect performs the List calls and determines the CNI.
 func (c *k8sCollector) Collect(ctx context.Context) (*Snapshot, error) {
 	s := &Snapshot{}
 
@@ -92,27 +100,45 @@ func (c *k8sCollector) Collect(ctx context.Context) (*Snapshot, error) {
 	return s, nil
 }
 
-// detectCNI applies the v1 heuristic: inspect DaemonSet names in kube-system.
+// detectCNI applies the v1 heuristic: inspect DaemonSet names across all
+// namespaces. Modern installs don't live in kube-system: the official flannel
+// manifest uses "kube-flannel", tigera-operator puts calico-node in
+// "calico-system".
 func (c *k8sCollector) detectCNI(ctx context.Context) (CNIInfo, error) {
-	dsList, err := c.client.AppsV1().DaemonSets("kube-system").List(ctx, metav1.ListOptions{})
+	dsList, err := c.client.AppsV1().DaemonSets("").List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return CNIInfo{}, err
 	}
 	return classifyCNI(dsList.Items), nil
 }
 
+// cniRules maps DaemonSet names to a CNI, in priority order. Enforcing CNIs
+// come first: if a cluster runs both calico and flannel DaemonSets (e.g. a
+// half-finished migration), policy IS enforced and we must not report flannel.
+var cniRules = []struct {
+	dsNames []string
+	info    CNIInfo
+}{
+	{[]string{"cilium"}, CNIInfo{Name: "cilium", EnforcesPolicy: true}},
+	{[]string{"calico-node"}, CNIInfo{Name: "calico", EnforcesPolicy: true}},
+	// Canal = flannel networking + calico policy enforcement.
+	{[]string{"canal"}, CNIInfo{Name: "canal", EnforcesPolicy: true}},
+	{[]string{"kube-flannel-ds", "kube-flannel"}, CNIInfo{Name: "flannel", EnforcesPolicy: false}},
+}
+
 // classifyCNI is a pure function mapping a set of DaemonSets to a CNI.
 // Kept separate from detectCNI so it can be tested without a cluster
-// using fake DaemonSets.
+// using fake DaemonSets. The result does not depend on DaemonSet order.
 func classifyCNI(daemonSets []appsv1.DaemonSet) CNIInfo {
+	present := make(map[string]bool, len(daemonSets))
 	for _, ds := range daemonSets {
-		switch ds.Name {
-		case "calico-node":
-			return CNIInfo{Name: "calico", EnforcesPolicy: true}
-		case "cilium":
-			return CNIInfo{Name: "cilium", EnforcesPolicy: true}
-		case "kube-flannel-ds", "kube-flannel":
-			return CNIInfo{Name: "flannel", EnforcesPolicy: false}
+		present[ds.Name] = true
+	}
+	for _, rule := range cniRules {
+		for _, name := range rule.dsNames {
+			if present[name] {
+				return rule.info
+			}
 		}
 	}
 	return CNIInfo{Name: "unknown", EnforcesPolicy: false}
