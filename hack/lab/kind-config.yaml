@@ -1,0 +1,45 @@
+# Lab cluster for the scenario corpus: shaped like a production cluster —
+# node pools with taints and zones — rather than N identical nodes.
+# What matters for failopen is WHO ends up co-located with whom, and that is
+# decided by pools, taints/tolerations and topology, not by node count.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: failopen-lab
+networking:
+  disableDefaultCNI: true # Calico is installed by `make lab`
+  podSubnet: "192.168.0.0/16"
+nodes:
+  - role: control-plane
+
+  # general pool: default home for workloads, spread across zones
+  - role: worker
+    labels: {pool: general, topology.kubernetes.io/zone: zone-a}
+  - role: worker
+    labels: {pool: general, topology.kubernetes.io/zone: zone-b}
+  - role: worker
+    labels: {pool: general, topology.kubernetes.io/zone: zone-c}
+
+  # edge pool: internet/LB-facing; only workloads that tolerate it
+  - role: worker
+    labels: {pool: edge, topology.kubernetes.io/zone: zone-a}
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          taints: [{key: dedicated, value: edge, effect: NoSchedule}]
+
+  # restricted pool: regulated workloads (PCI, PHI, ...)
+  - role: worker
+    labels: {pool: restricted, topology.kubernetes.io/zone: zone-a}
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          taints: [{key: dedicated, value: restricted, effect: NoSchedule}]
+  - role: worker
+    labels: {pool: restricted, topology.kubernetes.io/zone: zone-b}
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          taints: [{key: dedicated, value: restricted, effect: NoSchedule}]
