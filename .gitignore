@@ -1,3 +1,4 @@
 bin/
 *.log
 hack/demo/kubeconfig
+hack/oracle/.deps/
