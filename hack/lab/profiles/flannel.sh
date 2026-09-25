@@ -5,6 +5,12 @@ FLANNEL_VERSION=v0.28.9
 CNI_PLUGINS_VERSION=v1.9.1
 
 install() {
+  # flannel refuses to run without br_netfilter; the module is per host
+  # kernel and doesn't survive a reboot. Fail fast instead of timing out.
+  if [[ ! -e /proc/sys/net/bridge/bridge-nf-call-iptables ]]; then
+    echo "flannel needs the br_netfilter kernel module on this host: sudo modprobe br_netfilter" >&2
+    return 1
+  fi
   # flannel delegates to the "bridge" plugin, which kind node images lack.
   local tgz; tgz=$(fetch "https://github.com/containernetworking/plugins/releases/download/$CNI_PLUGINS_VERSION/cni-plugins-linux-amd64-$CNI_PLUGINS_VERSION.tgz")
   for node in $(kind get nodes --name "$CLUSTER"); do

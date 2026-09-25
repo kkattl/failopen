@@ -40,6 +40,13 @@ type exposure struct {
 }
 
 func (*IPBlockNodeIPs) Detect(s *collector.Snapshot) []Finding {
+	// Cilium applies CIDR rules to the "world" identity only: SNAT'd pod
+	// traffic arrives as a cluster identity and the ipBlock never admits it.
+	// Measured on the corpus: no SNAT bypass on cilium in any scenario (the
+	// same rules over-block instead — a different finding, not this one).
+	if s.CNI.Name == "cilium" {
+		return nil
+	}
 	nodeIPs := internalIPs(s.Nodes)
 	if len(nodeIPs) == 0 {
 		return nil

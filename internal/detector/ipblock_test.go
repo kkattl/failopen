@@ -105,6 +105,16 @@ func TestIPBlockNodeIPs(t *testing.T) {
 	}
 }
 
+// Cilium doesn't match ipBlocks against cluster identities, so the SNAT'd
+// traffic never passes the rule: no bypass, no finding.
+func TestIPBlockNodeIPsNotOnCilium(t *testing.T) {
+	s := edgeSnapshot(from(nil, block("172.18.0.0/16")), "192.168.0.0/16")
+	s.CNI = collector.CNIInfo{Name: "cilium", EnforcesPolicy: true, PodCIDRs: []string{"192.168.0.0/16"}}
+	if got := (&IPBlockNodeIPs{}).Detect(s); len(got) != 0 {
+		t.Errorf("got %+v on cilium, want none", got)
+	}
+}
+
 func TestIPBlockNodeIPsFindingText(t *testing.T) {
 	got := (&IPBlockNodeIPs{}).Detect(edgeSnapshot(from(nil, block("0.0.0.0/0", "192.168.0.0/16")), "192.168.0.0/16"))
 	if len(got) != 1 {

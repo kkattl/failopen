@@ -27,7 +27,7 @@ Snapshot: 9 namespaces · 36 pods · 10 services · 28 policies · CNI calico (e
 | Detector | Severity | What it means |
 |---|---|---|
 | `cni` | critical | NetworkPolicies exist, but the CNI doesn't implement them (e.g. flannel). Every policy is decoration. |
-| `ipblock-node-ips` | critical | A pod exposed through a NodePort/LoadBalancer or hostPort has an ingress `ipBlock` that admits node IPs but not pods ("internet, but not pods", or an external range overlapping the nodes). Pod traffic to that port gets SNAT'd to a node IP and passes the rule meant to keep pods out. |
+| `ipblock-node-ips` | critical / warning | A pod exposed through a NodePort/LoadBalancer or hostPort has an ingress `ipBlock` that admits node IPs but not pods ("internet, but not pods", or an external range overlapping the nodes). Pod traffic to that port gets SNAT'd to a node IP and passes the rule meant to keep pods out. Critical for a closed allowlist overlapping the nodes, warning for an internet-wide "anything but pods". Not reported on Cilium, which doesn't match ipBlocks against cluster traffic (measured). |
 
 Every finding says what it **assumes** (CNI, NAT behaviour) and gives a
 **verify** command that demonstrates it on your cluster. If failopen can't
