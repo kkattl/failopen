@@ -21,8 +21,16 @@ const (
 
 var severityRank = map[Severity]int{SeverityCritical: 0, SeverityWarning: 1, SeverityInfo: 2}
 
+// ObjectRef is what a finding is about, in machine-readable form.
+type ObjectRef struct {
+	Kind      string // "Cluster", "Service", "Workload", "Namespace", ...
+	Namespace string
+	Name      string
+}
+
 type Finding struct {
 	Detector  string // "cni", "ipblock-node-ips"
+	Object    ObjectRef
 	Severity  Severity
 	Namespace string   // "" for cluster-scope findings
 	Subject   string   // "ecom-edge/svc/edge-proxy:30080"

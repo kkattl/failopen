@@ -30,6 +30,7 @@ func (*IPBlockNodeIPs) Name() string { return "ipblock-node-ips" }
 
 // exposure is one way a pod is reachable at a node address.
 type exposure struct {
+	object   ObjectRef
 	subject  string // what a human fixes: the Service, or the workload
 	how      string // "NodePort 30080", "hostPort 8883"
 	pod      *corev1.Pod
@@ -68,6 +69,7 @@ func finding(s *collector.Snapshot, e exposure, pol *networkingv1.NetworkPolicy,
 	}
 	f := Finding{
 		Detector:  "ipblock-node-ips",
+		Object:    e.object,
 		Severity:  SeverityCritical,
 		Namespace: e.pod.Namespace,
 		Subject:   e.subject,
@@ -171,6 +173,7 @@ func exposures(s *collector.Snapshot) []exposure {
 					continue
 				}
 				out = append(out, exposure{
+					object:  ObjectRef{Kind: "Service", Namespace: svc.Namespace, Name: svc.Name},
 					subject: fmt.Sprintf("%s/svc/%s:%d", svc.Namespace, svc.Name, sp.NodePort),
 					how:     fmt.Sprintf("NodePort %d", sp.NodePort),
 					pod:     p, podPort: port, portName: name,
@@ -190,6 +193,7 @@ func exposures(s *collector.Snapshot) []exposure {
 					continue
 				}
 				out = append(out, exposure{
+					object:  ObjectRef{Kind: "Workload", Namespace: p.Namespace, Name: workloadName(p)},
 					subject: fmt.Sprintf("%s/%s:%d", p.Namespace, workloadName(p), cp.HostPort),
 					how:     fmt.Sprintf("hostPort %d", cp.HostPort),
 					pod:     p, podPort: cp.ContainerPort, portName: cp.Name,

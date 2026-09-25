@@ -30,6 +30,7 @@ func (*CNIEnforcement) Detect(s *collector.Snapshot) []Finding {
 	case s.CNI.Name == "unknown":
 		return []Finding{{
 			Detector:  "cni",
+			Object:    ObjectRef{Kind: "Cluster"},
 			Severity:  SeverityWarning,
 			Subject:   "cluster",
 			Declared:  declared,
@@ -41,6 +42,7 @@ func (*CNIEnforcement) Detect(s *collector.Snapshot) []Finding {
 	case !s.CNI.EnforcesPolicy:
 		return []Finding{{
 			Detector:  "cni",
+			Object:    ObjectRef{Kind: "Cluster"},
 			Severity:  SeverityCritical,
 			Subject:   "cluster",
 			Declared:  declared,
