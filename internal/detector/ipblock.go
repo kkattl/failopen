@@ -47,6 +47,11 @@ func (*IPBlockNodeIPs) Detect(s *collector.Snapshot) []Finding {
 	if s.CNI.Name == "cilium" {
 		return nil
 	}
+	// Policies that aren't enforced at all can't be bypassed; the cni
+	// detector already says everything there is to say.
+	if !s.CNI.EnforcesPolicy {
+		return nil
+	}
 	nodeIPs := internalIPs(s.Nodes)
 	if len(nodeIPs) == 0 {
 		return nil

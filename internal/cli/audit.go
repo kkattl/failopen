@@ -27,7 +27,8 @@ Exit codes: 0 no critical findings, 1 critical findings, 2 the audit could not r
 			return err
 		}
 		findings := detector.Run(snap)
-		report.Terminal(os.Stdout, findings, snap, report.UseColor(os.Stdout))
+		color := colorMode == "always" || colorMode == "auto" && report.UseColor(os.Stdout)
+		report.Terminal(os.Stdout, findings, snap, report.Options{Color: color, Width: report.Width()})
 		for _, f := range findings {
 			if f.Severity == detector.SeverityCritical {
 				return ErrCriticalFindings

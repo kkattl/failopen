@@ -6,7 +6,7 @@ CALICO_VER := v3.28.0
 NPA_SHA    := 318a5176525c3dff6e5c406cb8f745506b73194e
 NPA_DIR    := hack/oracle/.deps/network-policy-api
 
-.PHONY: demo audit demo-down build lab lab-down matrix oracle-deps oracle scenario corpus-summary score
+.PHONY: demo audit demo-down build lab lab-down matrix oracle-deps oracle scenario corpus-summary score screenshot
 
 demo:
 	kind create cluster --name $(CLUSTER) \
@@ -60,6 +60,12 @@ scenario: oracle
 
 corpus-summary: oracle
 	bin/oracle summary testdata/scenarios
+
+# README screenshot: audit of a measured lab snapshot, rendered to PNG.
+SCREENSHOT_SNAPSHOT ?= testdata/scenarios/ecommerce-northwind-overlap/calico
+screenshot: build
+	cd $(SCREENSHOT_SNAPSHOT) && COLUMNS=100 $(CURDIR)/bin/failopen audit --snapshot snapshot.json --color=always \
+		| python3 $(CURDIR)/hack/screenshot/render.py --prompt '$$ failopen audit --snapshot snapshot.json' --out $(CURDIR)/docs/img/audit.png
 
 # Detectors vs blind labels (hold-out excluded), labels vs oracle.
 score:

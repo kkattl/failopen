@@ -17,7 +17,7 @@ func TestTerminal(t *testing.T) {
 			Effective: "ALLOW from any pod", Assumes: []string{"SNAT"}},
 	}
 	var buf bytes.Buffer
-	Terminal(&buf, findings, &collector.Snapshot{CNI: collector.CNIInfo{Name: "flannel"}}, false)
+	Terminal(&buf, findings, &collector.Snapshot{CNI: collector.CNIInfo{Name: "flannel"}}, Options{Width: 200})
 	out := buf.String()
 	for _, want := range []string{
 		"failopen audit — 2 findings (1 critical, 1 warning)",
@@ -33,5 +33,32 @@ func TestTerminal(t *testing.T) {
 	}
 	if strings.Contains(out, "\033[") {
 		t.Error("color=false must not emit ANSI codes")
+	}
+}
+
+func TestTerminalStacksLongFindings(t *testing.T) {
+	f := detector.Finding{Severity: detector.SeverityCritical, Subject: "ecom-edge/svc/edge-proxy:30080",
+		Declared:  "ALLOW only 172.18.0.0/16 (edge-proxy-ingress-from-f5)",
+		Effective: "ALLOW from any pod via NodePort 30080 (SNAT to node IP)",
+		Detail:    strings.Repeat("word ", 40),
+		Verify:    "kubectl run fo-verify --rm -i --restart=Never --image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- connect 172.18.0.6:30080",
+	}
+	var buf bytes.Buffer
+	Terminal(&buf, []detector.Finding{f}, &collector.Snapshot{}, Options{Width: 80})
+	out := buf.String()
+	for _, want := range []string{
+		"  ✗ ecom-edge/svc/edge-proxy:30080\n",
+		"      declared:  ALLOW only 172.18.0.0/16 (edge-proxy-ingress-from-f5)\n",
+		"      effective: ALLOW from any pod via NodePort 30080 (SNAT to node IP)\n",
+		"      verify:  " + f.Verify + "\n", // never wrapped
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("output lacks %q:\n%s", want, out)
+		}
+	}
+	for _, line := range strings.Split(out, "\n") {
+		if strings.HasPrefix(line, "      word") && len(line) > 80 {
+			t.Errorf("detail line exceeds width: %q", line)
+		}
 	}
 }

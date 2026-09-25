@@ -8,17 +8,31 @@ Kubernetes docs leave several of those interactions *undefined*. failopen
 reads your cluster (read-only, like `kubectl get`) and reports where the
 policy you wrote does not mean what it looks like it means.
 
+![failopen audit output](docs/img/audit.png)
+
+<sub>Audit of the `ecommerce-northwind-overlap` lab cluster (Calico) from its
+saved snapshot — the same output as a live `failopen audit` against it.</sub>
+
+<details><summary>Text version</summary>
+
 ```
 failopen audit — 1 finding (1 critical)
 
-  ✗ saas-edge/svc/gateway:31480   ALLOW only 0.0.0.0/0 except 192.168.0.0/16 (gateway-ingress) → ALLOW from any pod via NodePort 31480 (SNAT to node IP)
-      Pod traffic to the NodePort 31480 is source-NATed to a node IP, and node IPs fall inside
-      0.0.0.0/0 except 192.168.0.0/16, so the rule meant to keep pods out lets them in.
-      assumes: pod -> node-IP traffic is SNAT'd to a node address before policy evaluation ...
+  ✗ ecom-edge/svc/edge-proxy:30080
+      declared:  ALLOW only 172.18.0.0/16 (edge-proxy-ingress-from-f5)
+      effective: ALLOW from any pod via NodePort 30080 (SNAT to node IP)
+      Pod traffic to the NodePort 30080 is source-NATed to a node IP, and node IPs fall inside
+      172.18.0.0/16, so the rule meant to keep pods out lets them in.
+      assumes: pod -> node-IP traffic is SNAT'd to a node address before policy evaluation
+               (kube-proxy masquerade with externalTrafficPolicy: Cluster, or CNI outgoing NAT) —
+               undefined by the spec, CNI-dependent
+      assumes: CNI calico; the source pod has egress to node IPs
       verify:  kubectl run fo-verify -n <ns-without-egress-policy> --rm -i --restart=Never ...
 
-Snapshot: 9 namespaces · 36 pods · 10 services · 28 policies · CNI calico (enforces: true)
+Snapshot: 9 namespaces · 38 pods · 11 services · 27 policies · CNI calico (enforces: true)
 ```
+
+</details>
 
 > **Status:** pre-release, working towards v0.1. Output and flags may change.
 

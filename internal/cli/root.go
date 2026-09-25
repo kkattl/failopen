@@ -16,6 +16,7 @@ var ErrCriticalFindings = errors.New("critical findings")
 var (
 	kubeconfigPath string
 	outputFormat   string
+	colorMode      string
 )
 
 // rootCmd is the base command; subcommands attach to it in init().
@@ -29,6 +30,9 @@ var rootCmd = &cobra.Command{
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if colorMode != "auto" && colorMode != "always" && colorMode != "never" {
+			return fmt.Errorf("unknown --color %q (auto|always|never)", colorMode)
+		}
 		return validateOutputFormat(outputFormat)
 	},
 }
@@ -47,6 +51,7 @@ func validateOutputFormat(f string) error {
 func init() {
 	rootCmd.PersistentFlags().StringVar(&kubeconfigPath, "kubeconfig", "",
 		"path to kubeconfig (defaults to $KUBECONFIG, then ~/.kube/config)")
+	rootCmd.PersistentFlags().StringVar(&colorMode, "color", "auto", "color output: auto|always|never (auto: only on a terminal, off with NO_COLOR)")
 	rootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "terminal",
 		"output format: terminal (json comes in M2)")
 }
