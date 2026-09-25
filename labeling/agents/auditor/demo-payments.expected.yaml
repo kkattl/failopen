@@ -1,0 +1,123 @@
+# Blind labels for scenario: demo-payments
+# Source: testdata/scenarios/demo-payments/manifests.yaml (+ README.md)
+#
+# Rules (labeling/README.md): label from the manifests and the Kubernetes
+# docs ONLY. Do not open testdata/scenarios/demo-payments/*/reachability.json
+# before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
+# node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
+# general/edge/restricted (edge and restricted are tainted).
+#
+# ---------------------------------------------------------------- inventory
+# Namespaces: monitoring, payments
+#
+# Workloads:
+#   Pod payments/api-server labels={'app': 'api-server'} ports=[80]
+#   Pod payments/host-probe labels={'app': 'host-probe'} ports=[8080] hostNetwork
+#   Pod monitoring/node-agent labels={} ports=[] hostNetwork
+#
+# Services:
+#   Service payments/api-nodeport type=NodePort externalTrafficPolicy=Cluster selector={'app': 'api-server'} ports=[80->80 nodePort 31080]
+#
+# NetworkPolicies:
+#   NetworkPolicy payments/default-deny-all selects=ALL pods types=['Ingress']
+# --------------------------------------------------------------------------
+
+scenario: demo-payments
+labeler: agent-auditor
+labeled_at: 2026-09-24
+blind: true
+
+findings:
+  - id: f1
+    class: hostnetwork-under-policy
+    subject: {kind: Pod, namespace: payments, name: host-probe, port: 8080}
+    mechanism: hostnetwork
+    applies_to_cni: [calico, cilium]
+    label: must
+    severity: critical
+    rationale: >
+      payments/default-deny-all (podSelector {}) selects host-probe, which is
+      hostNetwork. The NetworkPolicy docs say behaviour for hostNetwork pods is
+      undefined and in practice (Calico and Cilium without host policies) it
+      has no effect: :8080 answers on the node IP to every pod, every node and
+      any external client that can route to node IPs. The payments segment's
+      stated intent ("nothing may talk to pods in this namespace") is plainly
+      not met for this pod. An auditor would flag it as a workload in the
+      protected segment that has no segmentation at all.
+    evidence: []
+  - id: f2
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: payments, name: payments}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: must
+    severity: critical
+    rationale: >
+      monitoring/node-agent is a non-system hostNetwork pod pinned by
+      podAffinity onto the node running payments/api-server. The spec always
+      allows traffic from the node to its local pods (kubelet probes), and
+      Calico (default) and Cilium (allow-localhost) implement that as "host
+      identity is allowed". So a pod in another namespace reaches
+      api-server:80 despite default-deny-all. That is a segmentation failure
+      of the payments namespace from monitoring. host-probe (hostNetwork, in
+      payments) is the same exposure whenever it lands on api-server's node.
+    evidence: []
+  - id: f3
+    class: ipblock-admits-node-ips
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    rationale: >
+      There is no ipBlock anywhere. default-deny-all admits nothing, so
+      kube-proxy masquerade (ETP=Cluster) turning clients into node IPs
+      matches no allow rule. The manifest itself records "NOT a hole on
+      Calico".
+    evidence: []
+  - id: f4
+    class: other
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [cilium]
+    label: may
+    severity: warning
+    rationale: >
+      Arguable and CNI-specific. With kube-proxy kept and ETP=Cluster, NodePort
+      traffic that lands on api-server's node is masqueraded to that node's
+      IP. Cilium assigns traffic from a local node IP the "host" identity,
+      which is allowed by default (allow-localhost), so clients hitting
+      <api-server node>:31080 might get past default-deny-all. On Calico the
+      forwarded packet is still policed (FORWARD path), so the flag does not
+      apply there. It stays a may until measured.
+    evidence: []
+  - id: f5
+    class: other
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [calico]
+    label: must-not
+    rationale: >
+      On Calico, NodePort traffic is DNAT'd (and SNAT'd) to api-server's pod
+      IP and still goes through the pod's ingress policy, so default-deny-all
+      holds. Being exposed on every node is not a segmentation failure in
+      itself.
+    evidence: []
+  - id: f6
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [flannel]
+    label: must
+    severity: critical
+    rationale: >
+      flannel does not implement NetworkPolicy. payments/default-deny-all is
+      ignored and api-server is open to every pod in the cluster.
+    evidence: []
+  - id: f7
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [calico, cilium]
+    label: must-not
+    rationale: Both CNIs enforce NetworkPolicy.
+    evidence: []

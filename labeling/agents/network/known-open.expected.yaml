@@ -1,0 +1,83 @@
+# Blind labels for scenario: known-open
+# Source: testdata/scenarios/known-open/manifests.yaml (+ README.md)
+#
+# Rules (labeling/README.md): label from the manifests and the Kubernetes
+# docs ONLY. Do not open testdata/scenarios/known-open/*/reachability.json
+# before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
+# node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
+# general/edge/restricted (edge and restricted are tainted).
+#
+# ---------------------------------------------------------------- inventory
+# Namespaces: known-open
+#
+# Workloads:
+#   Deployment known-open/web x2 labels={'app': 'web'} ports=[8080] nodeSelector pool=general
+#   Pod known-open/client labels={'app': 'client'} ports=[] nodeSelector pool=general
+#   Pod known-open/hostport labels={'app': 'hostport'} ports=[8080->hostPort 30901] hostPort nodeSelector pool=general
+#   Pod known-open/hostnet labels={'app': 'hostnet'} ports=[30902] hostNetwork nodeSelector pool=general
+#
+# Services:
+#   Service known-open/web-cluster type=NodePort externalTrafficPolicy=Cluster selector={'app': 'web'} ports=[80->http]
+#   Service known-open/web-local type=NodePort externalTrafficPolicy=Local selector={'app': 'web'} ports=[80->http]
+#
+# NetworkPolicies:
+# --------------------------------------------------------------------------
+
+scenario: known-open
+labeler: agent-network
+labeled_at: 2026-09-24
+blind: true
+
+findings:
+  - id: n1
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [any]
+    label: must-not
+    rationale: >
+      No NetworkPolicy exists, so there is nothing for flannel to ignore: declared
+      = allow everywhere, and flannel's non-enforcement changes nothing. Even on
+      flannel this must not be reported.
+    evidence: []
+  - id: n2
+    class: hostnetwork-under-policy
+    subject: {kind: Pod, namespace: known-open, name: hostnet, port: 30902}
+    mechanism: hostnetwork
+    applies_to_cni: [any]
+    label: must-not
+    rationale: >
+      hostNetwork pod, but no policy selects it (there are none). Being reachable on
+      the node IP is the declared state.
+    evidence: []
+  - id: n3
+    class: ipblock-admits-node-ips
+    subject: {kind: Pod, namespace: known-open, name: hostport, port: 30901}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    rationale: >
+      hostPort 30901 via portmap and NodePorts web-cluster/web-local exist, but
+      there is no ipBlock (no policy at all). SNAT on these paths (portmap hairpin,
+      ETP Cluster masquerade, natOutgoing) is irrelevant when everything is allowed.
+    evidence: []
+  - id: n4
+    class: ipblock-admits-node-ips
+    subject: {kind: Service, namespace: known-open, name: web-cluster, port: 80}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    rationale: >
+      externalTrafficPolicy Cluster masquerades clients, but with no policies no
+      rule can be defeated by it. A tool must not warn on ETP Cluster alone.
+    evidence: []
+  - id: n5
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: known-open, name: known-open}
+    mechanism: node-local
+    applies_to_cni: [any]
+    label: must-not
+    rationale: >
+      hostnet shares general nodes with web/client, but no namespace is under a
+      restrictive policy, so there is no segment to break.
+    evidence: []

@@ -54,7 +54,7 @@
 # --------------------------------------------------------------------------
 
 scenario: iot-voltgrid
-labeler: consensus(network,auditor,skeptic)
+labeler: agent-auditor
 labeled_at: 2026-09-24
 blind: true
 
@@ -65,12 +65,12 @@ findings:
     mechanism: snat
     applies_to_cni: [any]
     label: must-not
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      hostPort 8883 locked to ipBlock 10.250.0.10/32, one external host. A pod SNAT'd to a
-      node IP (natOutgoing, or portmap hairpin) does not match; portmap DNAT keeps the
-      external client IP. The README's canonical 'hostPort locked to one external /32'
-      negative.
+      hostPort 8883 is locked to ipBlock 10.250.0.10/32, a single external
+      host outside the node subnet. A pod SNAT'd to a node IP (natOutgoing)
+      does not match, and the portmap DNAT keeps the external client IP. This
+      is the README's canonical negative: "a hostPort locked to one external
+      /32".
     evidence: []
   - id: f2
     class: ipblock-admits-node-ips
@@ -78,10 +78,9 @@ findings:
     mechanism: snat
     applies_to_cni: [any]
     label: must-not
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      Same as ingest-gateway: hostPort 8080 restricted to 10.250.0.10/32; node IPs are not
-      admitted.
+      hostPort 8080 is locked to ipBlock 10.250.0.10/32, the same as f1. The
+      rule admits no node or pod IPs.
     evidence: []
   - id: f3
     class: node-exception-segment
@@ -89,129 +88,51 @@ findings:
     mechanism: node-local
     applies_to_cni: [calico, cilium]
     label: must-not
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      iot-ops/node-agent tolerates every taint but runs on the pod network under default-deny
-      with egress: []. No non-system hostNetwork pod shares nodes with tsdb/registry-db; the
-      data tier is kept off the edge node.
+      node-agent tolerates every taint but runs on the pod network, under
+      iot-ops/node-agent (egress: []). The data tier is kept off the edge
+      node on purpose. No non-system hostNetwork pod exists, so node-local
+      traffic is limited to the kubelet/system exception.
     evidence: []
   - id: f4
     class: hostnetwork-under-policy
-    subject: {kind: Workload, namespace: iot-ops, name: node-agent}
+    subject: {kind: Workload, namespace: iot-ops, name: node-agent, port: 9200}
     mechanism: hostnetwork
     applies_to_cni: [any]
     label: must-not
-    agreed_by: [auditor, skeptic]
     rationale: >
-      Looks like the classic vendor agent on every node, but it is not hostNetwork; its policy
-      (ingress from prometheus only, no egress) is enforceable.
+      This looks like the classic vendor agent on every node, but it is not
+      hostNetwork. Its policy (ingress from prometheus only, no egress) is
+      enforceable.
     evidence: []
   - id: f5
-    class: hostnetwork-under-policy
-    subject: {kind: Workload, namespace: iot-edge, name: ingest-gateway, port: 8883}
-    mechanism: hostnetwork
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [network]
-    rationale: >
-      hostPort is not hostNetwork: the pod keeps its own netns and veth, so policy is enforced
-      after the portmap DNAT. A tool must not treat hostPort as hostNetwork. (Single-labeller
-      negative, kept.)
-    evidence: []
-  - id: f6
-    class: other
-    subject: {kind: Pod, namespace: iot-edge, name: ingest-gateway, port: 9000}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [auditor, skeptic]
-    rationale: >
-      The internal consumer API :9000 has no hostPort, so it is not published on the plant-
-      facing node IP; reachable only from stream-processor over the pod network, as declared.
-    evidence: []
-  - id: f7
-    class: other
-    subject: {kind: Pod, namespace: iot-edge, name: ingest-gateway, port: 8883}
-    mechanism: other
-    applies_to_cni: [calico, flannel]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      Using hostPort is not itself a finding: the pod stays on the pod network and under
-      policy, and the only admitted source is the external /32. (Skeptic wrote [any]; narrowed
-      by the adjudicator so it does not contradict the Cilium-specific may below.)
-    evidence: []
-  - id: f8
-    class: other
-    subject: {kind: Pod, namespace: iot-edge, name: ingest-gateway, port: 8883}
-    mechanism: cni
-    applies_to_cni: [cilium]
-    label: may
-    severity: info
-    agreed_by: [network]
-    rationale: >
-      Cilium without kube-proxy replacement supports hostPort only with portmap chaining (or
-      BPF hostPort). If the lab profile lacks it, the declared plant flows (10.250.0.10 ->
-      edge:8883/:8080) are dropped: an overblock from CNI configuration, not policy. Depends
-      on the install. (Single-labeller, kept as may.)
-    evidence: []
-  - id: f9
-    class: cilium-ipblock-cluster-addrs
-    subject: {kind: NetworkPolicy, namespace: iot-edge, name: ingest-gateway, port: 8883}
-    mechanism: cni
-    applies_to_cni: [cilium]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      The ipBlock names one external address; world-only matching is exactly what is wanted.
-      (Single-labeller negative, kept.)
-    evidence: []
-  - id: f10
-    class: other
-    subject: {kind: NetworkPolicy, namespace: iot-app, name: alerting, port: 443}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      Internet egress on 443 excluding every private, CGNAT, link-local and loopback range
-      cannot reach pods, nodes or the apiserver. Intended. (Single-labeller negative, kept.)
-    evidence: []
-  - id: f11
-    class: node-exception-segment
-    subject: {kind: Workload, namespace: kube-system, name: kube-proxy}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      kube-proxy, the CNI agent and other kube-system hostNetwork DaemonSets run on every
-      node, including the nodes of iot-data / iot-edge. The spec always allows node-local
-      traffic (kubelet probes) and these are cluster infrastructure; the class targets NON-
-      system hostNetwork pods. (Single-labeller negative, kept: consistent with the class
-      definition in labeling/README.md. Subject is not in the scenario inventory; see cross-
-      cutting question.)
-    evidence: []
-  - id: f12
     class: cni-not-enforcing
     subject: {kind: Cluster}
     mechanism: cni
     applies_to_cni: [flannel]
     label: must
     severity: critical
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      NetworkPolicies exist but flannel has no policy engine; the API server accepts them
-      anyway (docs: posting a NetworkPolicy has no effect unless the network plugin supports
-      it). Every declared deny is open.
+      flannel ignores NetworkPolicy. The device-facing tier reaches the data
+      tier (D1), the third-party node-agent has egress (D7), and every pod
+      reaches registry-db/tsdb. The OT/IT tiering intent is void.
     evidence: []
-  - id: f13
+  - id: f6
     class: cni-not-enforcing
     subject: {kind: Cluster}
     mechanism: cni
     applies_to_cni: [calico, cilium]
     label: must-not
-    agreed_by: [network, auditor, skeptic]
+    rationale: Both CNIs enforce NetworkPolicy.
+    evidence: []
+  - id: f7
+    class: other
+    subject: {kind: Pod, namespace: iot-edge, name: ingest-gateway, port: 9000}
+    mechanism: other
+    applies_to_cni: [any]
+    label: must-not
     rationale: >
-      Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy.
+      The internal consumer API :9000 is not a hostPort, so it is not
+      published on the plant-facing node IP. It is reachable only from
+      stream-processor via the pod network, as declared.
     evidence: []

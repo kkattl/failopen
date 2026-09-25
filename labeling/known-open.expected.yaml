@@ -24,21 +24,96 @@
 # --------------------------------------------------------------------------
 
 scenario: known-open
-labeler: ""          # your name/handle
-labeled_at: ""       # YYYY-MM-DD
-blind: true          # set false if you saw oracle output for this scenario first
+labeler: consensus(network,auditor,skeptic)
+labeled_at: 2026-09-24
+blind: true
 
-findings: []
-# One entry per finding a detector SHOULD (must), MAY (may) or must NOT
-# (must-not) report. Example:
-#
-#  - id: f1
-#    class: ipblock-admits-node-ips      # see labeling/README.md
-#    subject: {kind: Service, namespace: ns, name: svc, port: 80}
-#    mechanism: snat                     # snat | hostnetwork | node-local | cni
-#    applies_to_cni: [any]               # or e.g. [calico, cilium]
-#    label: must                         # must | may | must-not
-#    severity: critical                  # critical | warning | info (for must/may)
-#    rationale: >
-#      Why, citing the spec/docs where it matters.
-#    evidence: []                        # filled at reconciliation: oracle probe refs
+findings:
+  - id: f1
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      No NetworkPolicy exists, so there is nothing for any CNI (flannel included) to ignore:
+      declared = allow everywhere (spec: a pod not selected by any policy is non-isolated).
+    evidence: []
+  - id: f2
+    class: ipblock-admits-node-ips
+    subject: {kind: Service, namespace: known-open, name: web-cluster, port: 80}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      externalTrafficPolicy Cluster masquerades clients to node IPs, but there is no ipBlock
+      and no policy, so SNAT cannot defeat any intent. Same for web-local.
+    evidence: []
+  - id: f3
+    class: hostnetwork-under-policy
+    subject: {kind: Pod, namespace: known-open, name: hostnet, port: 30902}
+    mechanism: hostnetwork
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      hostNetwork pod, but no policy selects it (there are none). Reachable on the node IP is
+      the declared state.
+    evidence: []
+  - id: f4
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: known-open, name: known-open}
+    mechanism: node-local
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [network, skeptic]
+    rationale: >
+      hostnet shares general nodes with web/client, but no namespace is under a restrictive
+      policy, so there is no segment to break.
+    evidence: []
+  - id: f5
+    class: other
+    subject: {kind: Pod, namespace: known-open, name: hostport, port: 30901}
+    mechanism: other
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [auditor, skeptic]
+    rationale: >
+      hostPort 30901 publishes the pod on its node IP; with no policy, reachability from
+      anywhere is exactly what is declared.
+    evidence: []
+  - id: f6
+    class: ipblock-admits-node-ips
+    subject: {kind: Pod, namespace: known-open, name: hostport, port: 30901}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [network]
+    rationale: >
+      hostPort via portmap can SNAT (hairpin), but there is no ipBlock (no policy at all), so
+      the class cannot apply. (Single-labeller negative, kept: correct by construction.)
+    evidence: []
+  - id: f7
+    class: other
+    subject: {kind: Service, namespace: known-open, name: web-cluster, port: 80}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [skeptic]
+    rationale: >
+      A NodePort with ETP Cluster exposed on every node is exactly what the (empty) policy
+      allows; flagging NodePorts per se is noise. (Single-labeller negative, kept.)
+    evidence: []
+  - id: f8
+    class: other
+    subject: {kind: Service, namespace: known-open, name: web-local, port: 80}
+    mechanism: node-local
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [skeptic]
+    rationale: >
+      ETP Local NodePort: nodes without a web pod drop traffic. Standard kube-proxy behaviour,
+      not a policy divergence. (Single-labeller negative, kept.)
+    evidence: []

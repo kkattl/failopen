@@ -70,9 +70,11 @@ func TestIPBlockNodeIPs(t *testing.T) {
 		snap *collector.Snapshot
 		want []Severity
 	}{
-		// saas/health: "internet but not pods" — node IPs are inside, pods are out.
-		{"anything but pods", edgeSnapshot(from(p8080, block("0.0.0.0/0", pods)), pods), []Severity{SeverityCritical}},
-		// ecommerce original: the F5 range overlaps the node network.
+		// saas/health: "internet but not pods" — node IPs are inside, pods are
+		// out. Internet-facing, so a warning (labelling decision Q1).
+		{"anything but pods", edgeSnapshot(from(p8080, block("0.0.0.0/0", pods)), pods), []Severity{SeverityWarning}},
+		// ecommerce original: a closed allowlist (the F5 range) that overlaps
+		// the node network. Critical.
 		{"external range overlapping nodes", edgeSnapshot(from(pHTTP, block("172.18.0.0/16")), pods), []Severity{SeverityCritical}},
 		// fintech: 0.0.0.0/0 admits pods on purpose; SNAT changes nothing.
 		{"everything incl. pods", edgeSnapshot(from(p8080, block("0.0.0.0/0")), pods), nil},
@@ -124,7 +126,7 @@ func TestIPBlockNodeIPsFindingText(t *testing.T) {
 }
 
 func TestHostPortExposureNamedByWorkload(t *testing.T) {
-	s := edgeSnapshot(from(nil, block("0.0.0.0/0", "192.168.0.0/16")), "192.168.0.0/16")
+	s := edgeSnapshot(from(nil, block("172.16.0.0/12")), "192.168.0.0/16")
 	s.Services = nil
 	s.Pods[0].Spec.Containers[0].Ports[0].HostPort = 8883
 	got := (&IPBlockNodeIPs{}).Detect(s)

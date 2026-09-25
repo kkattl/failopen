@@ -1,0 +1,211 @@
+# Blind labels for scenario: fintech-paylane
+# Source: testdata/scenarios/fintech-paylane/manifests.yaml (+ README.md)
+#
+# Rules (labeling/README.md): label from the manifests and the Kubernetes
+# docs ONLY. Do not open testdata/scenarios/fintech-paylane/*/reachability.json
+# before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
+# node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
+# general/edge/restricted (edge and restricted are tainted).
+#
+# ---------------------------------------------------------------- inventory
+# Namespaces: fintech-app, fintech-cde, fintech-edge, fintech-ops
+#
+# Workloads:
+#   Deployment fintech-edge/edge-proxy x1 labels={'app': 'edge-proxy'} ports=[8080] tolerates edge nodeSelector pool=edge
+#   Deployment fintech-app/checkout-api x2 labels={'app': 'checkout-api'} ports=[8080] nodeSelector pool=general
+#   Deployment fintech-app/redis x1 labels={'app': 'redis'} ports=[6379] nodeSelector pool=general
+#   Deployment fintech-app/admin-panel x1 labels={'app': 'admin-panel'} ports=[8080] nodeSelector pool=general
+#   Deployment fintech-cde/payments-core x2 labels={'app': 'payments-core'} ports=[8080] tolerates restricted nodeSelector pool=restricted
+#   Deployment fintech-cde/card-gateway x2 labels={'app': 'card-gateway'} ports=[8080] tolerates restricted nodeSelector pool=restricted
+#   Deployment fintech-cde/ledger x1 labels={'app': 'ledger'} ports=[8080] tolerates restricted nodeSelector pool=restricted
+#   StatefulSet fintech-cde/postgres x1 labels={'app': 'postgres'} ports=[5432] tolerates restricted nodeSelector pool=restricted
+#   DaemonSet fintech-ops/node-agent labels={'app': 'node-agent'} ports=[9100, 2020] tolerates-everything
+#   Deployment fintech-ops/prometheus x1 labels={'app': 'prometheus'} ports=[9090] nodeSelector pool=general
+#
+# Services:
+#   Service fintech-edge/edge-proxy type=NodePort externalTrafficPolicy=Local selector={'app': 'edge-proxy'} ports=[8080->http nodePort 30880]
+#   Service fintech-app/checkout-api type=ClusterIP selector={'app': 'checkout-api'} ports=[8080->http]
+#   Service fintech-app/redis type=ClusterIP selector={'app': 'redis'} ports=[6379->redis]
+#   Service fintech-app/admin-panel type=ClusterIP selector={'app': 'admin-panel'} ports=[8080->http]
+#   Service fintech-cde/payments-core type=ClusterIP selector={'app': 'payments-core'} ports=[8080->http]
+#   Service fintech-cde/card-gateway type=ClusterIP selector={'app': 'card-gateway'} ports=[8080->http]
+#   Service fintech-cde/ledger type=ClusterIP selector={'app': 'ledger'} ports=[8080->http]
+#   Service fintech-cde/postgres type=ClusterIP selector={'app': 'postgres'} ports=[5432->postgres]
+#   Service fintech-ops/node-agent type=ClusterIP selector={'app': 'node-agent'} ports=[9100->metrics]
+#
+# NetworkPolicies:
+#   NetworkPolicy fintech-edge/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-app/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-cde/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-ops/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-edge/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy fintech-app/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy fintech-cde/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy fintech-ops/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy fintech-edge/edge-proxy selects={'app': 'edge-proxy'} types=['Ingress', 'Egress']
+#       ingress ipBlock 0.0.0.0/0 ports=8080
+#   NetworkPolicy fintech-app/checkout-api selects={'app': 'checkout-api'} types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-app/redis selects={'app': 'redis'} types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-app/admin-panel selects={'app': 'admin-panel'} types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-cde/payments-core selects={'app': 'payments-core'} types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-cde/card-gateway selects={'app': 'card-gateway'} types=['Ingress', 'Egress']
+#       egress ipBlock 0.0.0.0/0 except ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '100.64.0.0/10', '169.254.0.0/16', '127.0.0.0/8'] ports=443
+#   NetworkPolicy fintech-cde/ledger selects={'app': 'ledger'} types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-cde/postgres selects={'app': 'postgres'} types=['Ingress', 'Egress']
+#   NetworkPolicy fintech-ops/node-agent selects={'app': 'node-agent'} types=['Ingress', 'Egress']
+#       egress ipBlock 0.0.0.0/0 except ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '100.64.0.0/10', '169.254.0.0/16', '127.0.0.0/8'] ports=443
+#   NetworkPolicy fintech-ops/prometheus selects={'app': 'prometheus'} types=['Ingress', 'Egress']
+# --------------------------------------------------------------------------
+
+scenario: fintech-paylane
+labeler: agent-skeptic
+labeled_at: 2026-09-24
+blind: true
+
+findings:
+- id: f1
+  class: cni-not-enforcing
+  subject:
+    kind: Cluster
+  mechanism: cni
+  applies_to_cni:
+  - flannel
+  label: must
+  severity: critical
+  rationale: NetworkPolicies exist but flannel implements none of them, so every declared
+    deny (default-deny-all, per-workload allow lists) is a no-op. This is the single most
+    important thing to tell the operator on this profile.
+  evidence: []
+- id: f2
+  class: cni-not-enforcing
+  subject:
+    kind: Cluster
+  mechanism: cni
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy. Reporting
+    'CNI not enforcing' here would be a pure false positive.
+  evidence: []
+- id: f3
+  class: ipblock-admits-node-ips
+  subject:
+    kind: Service
+    namespace: fintech-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: snat
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: 'fintech-edge/edge-proxy ingress ipBlock is 0.0.0.0/0 with no except: it admits
+    pod IPs as well as node IPs, so SNAT gives a pod nothing it did not already have. The
+    class requires ''admits nodes while NOT admitting pods''. The broad allow is the intended
+    public entry (flow 1).'
+  evidence: []
+- id: f4
+  class: cilium-ipblock-cluster-addrs
+  subject:
+    kind: NetworkPolicy
+    namespace: fintech-edge
+    name: edge-proxy
+  mechanism: cni
+  applies_to_cni:
+  - cilium
+  label: must-not
+  rationale: On Cilium 0.0.0.0/0 matches only 'world', so pods/nodes are not admitted. The
+    intent was internet-only ingress, so Cilium is closer to intent, not further. Nothing
+    to fix.
+  evidence: []
+- id: f5
+  class: other
+  subject:
+    kind: Service
+    namespace: fintech-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: node-local
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: NodePort 30880 is allocated on every node, but eTP=Local means only the edge
+    node (the only one with an edge-proxy pod) forwards; general and restricted nodes drop.
+    Flagging 'NodePort open on CDE nodes' is noise (README gap 9 already covers the host-firewall
+    question).
+  evidence: []
+- id: f6
+  class: other
+  subject:
+    kind: NetworkPolicy
+    namespace: fintech-cde
+    name: card-gateway
+  mechanism: snat
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: Egress 0.0.0.0/0 except RFC1918/CGNAT/link-local/loopback on 443 excludes both
+    the pod CIDR (192.168/16) and node IPs (172.18/16 in 172.16/12). Egress policy is evaluated
+    before natOutgoing SNAT, so SNAT cannot widen it. Same for fintech-ops/node-agent's egress
+    rule.
+  evidence: []
+- id: f7
+  class: other
+  subject:
+    kind: Workload
+    namespace: fintech-app
+    name: admin-panel
+    port: 8080
+  mechanism: other
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: 'ingress: [] (no network ingress) is deliberate; staff use kubectl port-forward,
+    which enters the pod netns via the kubelet/CRI and is not subject to NetworkPolicy by
+    design. Not an overblock, not a bypass.'
+  evidence: []
+- id: f8
+  class: node-exception-segment
+  subject:
+    kind: Workload
+    namespace: kube-system
+    name: kube-proxy
+  mechanism: node-local
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: kube-proxy, the CNI agent (calico-node / cilium) and other kube-system hostNetwork
+    DaemonSets run on every node, including the nodes of fintech-cde (pool=restricted). The
+    spec always allows node-local traffic (kubelet probes depend on it) and these are cluster
+    infrastructure the app team cannot and should not remove. Flagging them is noise; the
+    class is about NON-system hostNetwork pods.
+  evidence: []
+- id: f9
+  class: node-exception-segment
+  subject:
+    kind: Namespace
+    name: fintech-cde
+  mechanism: node-local
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: 'The only non-system workload on the restricted nodes besides the CDE is fintech-ops/node-agent,
+    and it is deliberately NOT hostNetwork (pod network, under its own policy: ingress only
+    from prometheus on 9100, egress only 443 to non-private). README gap 1 is a hypothetical
+    (''if another team schedules a hostNetwork pod''), not something present in the manifests.'
+  evidence: []
+- id: f10
+  class: hostnetwork-under-policy
+  subject:
+    kind: Workload
+    namespace: fintech-ops
+    name: node-agent
+  mechanism: hostnetwork
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: node-agent is not hostNetwork. Tolerating every taint and landing on CDE nodes
+    is by design and fully policy-controlled on the pod network.
+  evidence: []

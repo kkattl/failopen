@@ -70,7 +70,7 @@
 # --------------------------------------------------------------------------
 
 scenario: saas-formcraft
-labeler: consensus(network,auditor,skeptic)
+labeler: agent-auditor
 labeled_at: 2026-09-24
 blind: true
 
@@ -82,16 +82,20 @@ findings:
     applies_to_cni: [calico]
     label: must
     severity: warning
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      gateway-ingress-from-outside-cluster admits 0.0.0.0/0 except 192.168.0.0/16 so that 'no
-      pod can use the gateway to hop into a tenant' (flows 1 and 11), but node IPs are
-      admitted. A pod on a non-edge node sending to <edge IP>:31480 is masqueraded by Calico
-      natOutgoing to its node IP; the edge node DNATs to the local gateway keeping that source
-      (ETP Local), which passes the except. The gateway then routes to any tenant app by Host
-      header. Tenant pods themselves are egress-locked, so the realised exposure is pods of
-      other namespaces and host processes. Warning: the gateway is public anyway, but the
-      explicit 'no pod' guarantee is false.
+      gateway-ingress-from-outside-cluster admits 0.0.0.0/0 except
+      192.168.0.0/16. It excludes pods but admits node IPs (172.18.0.0/16),
+      and gateway is behind NodePort 31480. README row 1 states the intent
+      explicitly: "no pod can use the gateway to hop into a tenant". Path: a
+      pod on a general node connects to <edge node IP>:31480. It is not
+      local to the source node, so kube-proxy does not DNAT it there.
+      Calico natOutgoing masquerades it to the source node IP. The edge
+      node's kube-proxy DNATs it to the local gateway (ETP=Local keeps that
+      node source), and the node IP passes the except. Any pod whose egress
+      is open (another team's namespace, kube-system) then gets the gateway
+      and, through Host-header routing, every tenant app. Tenant pods
+      themselves are still stopped by their own egress default-deny (row 11
+      holds), which is why this is warning, not critical.
     evidence: []
   - id: f2
     class: ipblock-admits-node-ips
@@ -100,131 +104,63 @@ findings:
     applies_to_cni: [cilium]
     label: may
     severity: warning
-    agreed_by: [network, auditor]
     rationale: >
-      Same static condition. On Cilium with ETP Local the masqueraded source is probably
-      remote-node, which CIDR peers do not match by default, so the pivot is probably denied.
-      Settle by measurement.
+      The static condition is the same as f1. On Cilium the ipBlock matches
+      only the "world" identity, so a SNAT'd source carrying the
+      remote-node/host identity would not match, and the bypass likely does
+      not occur. It is a may until measured.
     evidence: []
   - id: f3
-    class: cilium-ipblock-cluster-addrs
-    subject: {kind: NetworkPolicy, namespace: saas-edge, name: gateway-ingress-from-outside-cluster, port: 8080}
-    mechanism: cni
-    applies_to_cni: [cilium]
-    label: may
-    severity: info
-    agreed_by: [network, auditor]
-    rationale: >
-      The CIDR peer covers node IPs by plain semantics but does not match remote-node/host on
-      Cilium: an overblock of node-sourced traffic the author does not want anyway (fails
-      closed).
-    evidence: []
-  - id: f4
-    class: node-exception-segment
-    subject: {kind: Namespace, namespace: saas-tenant-acme, name: saas-tenant-acme}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      No hostNetwork workloads and no DaemonSets; tenants share general nodes only with each
-      other's pod-network pods and system components. (All three labellers wrote this for acme
-      with 'same for globex and initech'; split per tenant by the adjudicator.)
-    evidence: []
-  - id: f5
-    class: node-exception-segment
-    subject: {kind: Namespace, namespace: saas-tenant-globex, name: saas-tenant-globex}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      No hostNetwork workloads and no DaemonSets; tenants share general nodes only with each
-      other's pod-network pods and system components. (All three labellers wrote this for acme
-      with 'same for globex and initech'; split per tenant by the adjudicator.)
-    evidence: []
-  - id: f6
-    class: node-exception-segment
-    subject: {kind: Namespace, namespace: saas-tenant-initech, name: saas-tenant-initech}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      No hostNetwork workloads and no DaemonSets; tenants share general nodes only with each
-      other's pod-network pods and system components. (All three labellers wrote this for acme
-      with 'same for globex and initech'; split per tenant by the adjudicator.)
-    evidence: []
-  - id: f7
-    class: other
-    subject: {kind: Service, namespace: saas-edge, name: gateway, port: 8080}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [auditor, skeptic]
-    rationale: >
-      NodePort 31480 is allocated on every node, but with externalTrafficPolicy=Local nodes
-      without a local endpoint drop the traffic; only the edge node forwards. An allocated
-      port that forwards to nothing is not an exposure.
-    evidence: []
-  - id: f8
-    class: other
-    subject: {kind: NetworkPolicy, namespace: saas-platform, name: mailer-egress-to-external-smtp, port: 25}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [network, skeptic]
-    rationale: >
-      SMTP egress to 0.0.0.0/0 minus private/CGNAT/link-local/loopback on 25/465/587 cannot
-      reach pods, nodes or the lab external network; evaluated before SNAT. Intentional.
-    evidence: []
-  - id: f9
-    class: other
-    subject: {kind: NetworkPolicy, namespace: saas-platform, name: billing-egress-to-tenant-apps}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      billing -> every tenant app:8080 is a documented cross-tenant flow (flow 7), mirrored by
-      each tenant's app-ingress. Not a tenant-isolation break. (Single-labeller negative,
-      kept.)
-    evidence: []
-  - id: f10
-    class: node-exception-segment
-    subject: {kind: Workload, namespace: kube-system, name: kube-proxy}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      kube-proxy, the CNI agent and other kube-system hostNetwork DaemonSets run on every
-      node, including the general nodes of the saas-tenant-* namespaces. The spec always
-      allows node-local traffic (kubelet probes) and these are cluster infrastructure; the
-      class targets NON-system hostNetwork pods. (Single-labeller negative, kept: consistent
-      with the class definition in labeling/README.md. Subject is not in the scenario
-      inventory; see cross-cutting question.)
-    evidence: []
-  - id: f11
     class: cni-not-enforcing
     subject: {kind: Cluster}
     mechanism: cni
     applies_to_cni: [flannel]
     label: must
     severity: critical
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      NetworkPolicies exist but flannel has no policy engine; the API server accepts them
-      anyway (docs: posting a NetworkPolicy has no effect unless the network plugin supports
-      it). Every declared deny is open.
+      flannel ignores NetworkPolicy. Contractual tenant isolation (row 10:
+      tenant X -> tenant Y db:5432) does not exist, which is a multi-tenant
+      isolation failure.
     evidence: []
-  - id: f12
+  - id: f4
     class: cni-not-enforcing
     subject: {kind: Cluster}
     mechanism: cni
     applies_to_cni: [calico, cilium]
     label: must-not
-    agreed_by: [network, auditor, skeptic]
+    rationale: Both CNIs enforce NetworkPolicy.
+    evidence: []
+  - id: f5
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: saas-tenant-acme, name: saas-tenant-acme}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: must-not
     rationale: >
-      Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy.
+      Tenants share general-pool nodes (documented and accepted), but no
+      non-system hostNetwork pod exists. Node-local traffic is only kubelet
+      and kube-system, the spec exception. The same applies to globex and
+      initech.
+    evidence: []
+  - id: f6
+    class: other
+    subject: {kind: Service, namespace: saas-edge, name: gateway, port: 8080}
+    mechanism: other
+    applies_to_cni: [any]
+    label: must-not
+    rationale: >
+      NodePort 31480 is allocated on every node, but with ETP=Local
+      non-edge nodes drop it, as documented. It is not an exposure.
+    evidence: []
+  - id: f7
+    class: cilium-ipblock-cluster-addrs
+    subject: {kind: NetworkPolicy, namespace: saas-edge, name: gateway-ingress-from-outside-cluster, port: 8080}
+    mechanism: cni
+    applies_to_cni: [cilium]
+    label: may
+    severity: info
+    rationale: >
+      The rule declares node IPs admitted (0.0.0.0/0 minus pods), and Cilium
+      will not match node/host sources with a CIDR peer. This is overblock
+      only (fails closed), so it has no audit impact.
     evidence: []

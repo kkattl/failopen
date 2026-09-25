@@ -83,11 +83,27 @@ func finding(s *collector.Snapshot, e exposure, pol *networkingv1.NetworkPolicy,
 		Verify: fmt.Sprintf("kubectl run fo-verify -n <ns-without-egress-policy> --rm -i --restart=Never "+
 			"--image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- connect %s --timeout=3s", e.nodePort),
 	}
-	if len(podCIDRs) == 0 {
+	switch {
+	case len(podCIDRs) == 0:
 		f.Severity = SeverityWarning
 		f.Assumes = append(f.Assumes, "pod CIDR unknown: could not confirm the rule excludes pods")
+	case internetWide(block):
+		// "Anything but pods" in front of an internet-facing pod: pods could
+		// usually reach it through the public load balancer anyway, so the
+		// gap is real but rarely the path an attacker needs.
+		f.Severity = SeverityWarning
 	}
+	// Otherwise a narrow range ("only the F5 SNAT pool") that happens to
+	// cover the nodes: the stated intent is a closed allowlist, and every
+	// pod in the cluster falls inside it. Critical.
 	return f
+}
+
+// internetWide: the block starts from the whole address space (0.0.0.0/0,
+// ::/0), i.e. an internet-facing allow with carve-outs.
+func internetWide(b *networkingv1.IPBlock) bool {
+	p, err := netip.ParsePrefix(b.CIDR)
+	return err == nil && p.Bits() == 0
 }
 
 // admittingBlock returns the policy and ipBlock through which node IPs are

@@ -1,0 +1,127 @@
+# Blind labels for scenario: demo-payments
+# Source: testdata/scenarios/demo-payments/manifests.yaml (+ README.md)
+#
+# Rules (labeling/README.md): label from the manifests and the Kubernetes
+# docs ONLY. Do not open testdata/scenarios/demo-payments/*/reachability.json
+# before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
+# node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
+# general/edge/restricted (edge and restricted are tainted).
+#
+# ---------------------------------------------------------------- inventory
+# Namespaces: monitoring, payments
+#
+# Workloads:
+#   Pod payments/api-server labels={'app': 'api-server'} ports=[80]
+#   Pod payments/host-probe labels={'app': 'host-probe'} ports=[8080] hostNetwork
+#   Pod monitoring/node-agent labels={} ports=[] hostNetwork
+#
+# Services:
+#   Service payments/api-nodeport type=NodePort externalTrafficPolicy=Cluster selector={'app': 'api-server'} ports=[80->80 nodePort 31080]
+#
+# NetworkPolicies:
+#   NetworkPolicy payments/default-deny-all selects=ALL pods types=['Ingress']
+# --------------------------------------------------------------------------
+
+scenario: demo-payments
+labeler: agent-network
+labeled_at: 2026-09-24
+blind: true
+
+findings:
+  - id: f1
+    class: hostnetwork-under-policy
+    subject: {kind: Pod, namespace: payments, name: host-probe, port: 8080}
+    mechanism: hostnetwork
+    applies_to_cni: [any]
+    label: must
+    severity: critical
+    rationale: >
+      payments/default-deny-all (podSelector {}) selects host-probe, which is
+      hostNetwork: true. Its listener on :8080 is bound in the node netns, so a
+      packet to <node IP>:8080 is delivered by the host stack and never crosses a
+      pod veth where Calico/Cilium enforce workload policy. The docs say NetworkPolicy
+      behaviour for hostNetwork pods is undefined; in practice the deny has no
+      effect and host-probe:8080 is reachable from every pod, node and the external
+      network 10.250.0.0/24.
+    evidence: []
+  - id: f2
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: payments, name: payments}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: must
+    severity: critical
+    rationale: >
+      monitoring/node-agent is a non-system hostNetwork pod pinned (podAffinity,
+      topologyKey hostname) to the node of payments/api-server. Traffic from the
+      node's own netns to a local pod is always allowed (docs: "traffic to and from
+      the node where a Pod is running is always allowed"; Calico: host->local WEP
+      is not policed, Cilium: reserved:host is allowed by default). So node-agent
+      reaches api-server:80 despite default-deny-all. host-probe, also hostNetwork,
+      sits inside the same exception whenever it shares a node with api-server.
+    evidence: []
+  - id: f3
+    class: ipblock-admits-node-ips
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    rationale: >
+      No ipBlock anywhere: default-deny-all has no ingress rules. The class needs an
+      ipBlock that admits node IPs; masquerade of NodePort traffic
+      (externalTrafficPolicy Cluster) can't turn a deny-all into an allow via ipBlock.
+    evidence: []
+  - id: f4
+    class: other
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [calico]
+    label: must-not
+    rationale: >
+      Calico: NodePort 31080 (ETP Cluster) is DNAT'd in PREROUTING; if the endpoint is
+      local, the filter FORWARD chain (where Calico polices the WEP) still sees the
+      original client address (MASQUERADE happens later in POSTROUTING) -> denied;
+      if remote, the packet leaves via tunl0 and is masqueraded to the tunl0 address
+      (in the pod CIDR, no pod behind it) -> denied by default-deny on the far node.
+      The scenario comment says this was verified. Exposure on every node is not by
+      itself a policy divergence.
+    evidence: []
+  - id: f5
+    class: other
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [cilium]
+    label: may
+    severity: warning
+    rationale: >
+      Cilium with iptables kube-proxy enforces at the endpoint's lxc (tc), i.e.
+      AFTER kube-proxy's MASQUERADE. ETP Cluster marks NodePort traffic for
+      masquerade; when a client hits 31080 on the node that hosts api-server the
+      source becomes a local node address, which Cilium classifies as reserved:host
+      and allows by default (host->local endpoint exception). That would let any
+      client that can reach that node IP bypass default-deny-all. Arguable: it
+      depends on source-address selection and on Cilium's allow-localhost setting,
+      so I don't make it a must.
+    evidence: []
+  - id: cni-flannel
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [flannel]
+    label: must
+    severity: critical
+    rationale: >
+      NetworkPolicies exist in this scenario but flannel has no policy engine;
+      the API server accepts NetworkPolicy objects regardless ("Posting
+      NetworkPolicy to the API server will have no effect unless your chosen
+      networking solution supports network policy"). Every declared deny is open.
+    evidence: []
+  - id: cni-enforcing
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [calico, cilium]
+    label: must-not
+    rationale: >
+      Calico and Cilium both implement networking.k8s.io/v1 NetworkPolicy.
+    evidence: []

@@ -1,0 +1,199 @@
+# Blind labels for scenario: iot-voltgrid
+# Source: testdata/scenarios/iot-voltgrid/manifests.yaml (+ README.md)
+#
+# Rules (labeling/README.md): label from the manifests and the Kubernetes
+# docs ONLY. Do not open testdata/scenarios/iot-voltgrid/*/reachability.json
+# before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
+# node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
+# general/edge/restricted (edge and restricted are tainted).
+#
+# ---------------------------------------------------------------- inventory
+# Namespaces: iot-app, iot-data, iot-edge, iot-ops
+#
+# Workloads:
+#   StatefulSet iot-data/tsdb x1 labels={'app.kubernetes.io/name': 'tsdb', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'data'} ports=[8428] nodeSelector pool=general
+#   StatefulSet iot-data/registry-db x1 labels={'app.kubernetes.io/name': 'registry-db', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'data'} ports=[5432] nodeSelector pool=general
+#   Deployment iot-app/device-registry x2 labels={'app.kubernetes.io/name': 'device-registry', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'app'} ports=[8080] nodeSelector pool=general
+#   Deployment iot-app/stream-processor x2 labels={'app.kubernetes.io/name': 'stream-processor', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'app'} ports=[] nodeSelector pool=general
+#   Deployment iot-app/alerting x1 labels={'app.kubernetes.io/name': 'alerting', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'app'} ports=[] nodeSelector pool=general
+#   Deployment iot-app/dashboard x1 labels={'app.kubernetes.io/name': 'dashboard', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'app'} ports=[3000] nodeSelector pool=general
+#   DaemonSet iot-edge/ingest-gateway labels={'app.kubernetes.io/name': 'ingest-gateway', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'device-facing'} ports=[8883->hostPort 8883, 9000] hostPort tolerates edge nodeSelector pool=edge
+#   DaemonSet iot-edge/dashboard-proxy labels={'app.kubernetes.io/name': 'dashboard-proxy', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'device-facing'} ports=[8080->hostPort 8080] hostPort tolerates edge nodeSelector pool=edge
+#   DaemonSet iot-ops/node-agent labels={'app.kubernetes.io/name': 'node-agent', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'ops'} ports=[9200, 9100] tolerates-everything
+#   Deployment iot-ops/prometheus x1 labels={'app.kubernetes.io/name': 'prometheus', 'app.kubernetes.io/part-of': 'voltgrid-telemetry', 'voltgrid.io/tier': 'ops'} ports=[9090] nodeSelector pool=general
+#
+# Services:
+#   Service iot-data/tsdb type=ClusterIP selector={'app.kubernetes.io/name': 'tsdb'} ports=[8428->http]
+#   Service iot-data/registry-db type=ClusterIP selector={'app.kubernetes.io/name': 'registry-db'} ports=[5432->postgres]
+#   Service iot-app/device-registry type=ClusterIP selector={'app.kubernetes.io/name': 'device-registry'} ports=[8080->http]
+#   Service iot-app/dashboard type=ClusterIP selector={'app.kubernetes.io/name': 'dashboard'} ports=[3000->http]
+#   Service iot-edge/ingest-gateway type=ClusterIP selector={'app.kubernetes.io/name': 'ingest-gateway'} ports=[9000->consumer]
+#   Service iot-ops/node-agent type=ClusterIP selector={'app.kubernetes.io/name': 'node-agent'} ports=[9100->node-metrics, 9200->hw-diag]
+#
+# NetworkPolicies:
+#   NetworkPolicy iot-edge/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy iot-app/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy iot-data/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy iot-ops/default-deny-all selects=ALL pods types=['Ingress', 'Egress']
+#   NetworkPolicy iot-edge/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy iot-app/allow-dns-egress selects=ALL pods types=['Egress']
+#   NetworkPolicy iot-ops/allow-dns-egress selects={'app.kubernetes.io/name': 'prometheus'} types=['Egress']
+#   NetworkPolicy iot-edge/ingest-gateway selects={'app.kubernetes.io/name': 'ingest-gateway'} types=['Ingress', 'Egress']
+#       ingress ipBlock 10.250.0.10/32 ports=8883
+#   NetworkPolicy iot-edge/dashboard-proxy selects={'app.kubernetes.io/name': 'dashboard-proxy'} types=['Ingress', 'Egress']
+#       ingress ipBlock 10.250.0.10/32 ports=8080
+#   NetworkPolicy iot-app/device-registry selects={'app.kubernetes.io/name': 'device-registry'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-app/stream-processor selects={'app.kubernetes.io/name': 'stream-processor'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-app/alerting selects={'app.kubernetes.io/name': 'alerting'} types=['Ingress', 'Egress']
+#       egress ipBlock 0.0.0.0/0 except ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '100.64.0.0/10', '169.254.0.0/16', '127.0.0.0/8'] ports=443
+#   NetworkPolicy iot-app/dashboard selects={'app.kubernetes.io/name': 'dashboard'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-data/tsdb selects={'app.kubernetes.io/name': 'tsdb'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-data/registry-db selects={'app.kubernetes.io/name': 'registry-db'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-ops/node-agent selects={'app.kubernetes.io/name': 'node-agent'} types=['Ingress', 'Egress']
+#   NetworkPolicy iot-ops/prometheus selects={'app.kubernetes.io/name': 'prometheus'} types=['Ingress', 'Egress']
+# --------------------------------------------------------------------------
+
+scenario: iot-voltgrid
+labeler: agent-skeptic
+labeled_at: 2026-09-24
+blind: true
+
+findings:
+- id: f1
+  class: cni-not-enforcing
+  subject:
+    kind: Cluster
+  mechanism: cni
+  applies_to_cni:
+  - flannel
+  label: must
+  severity: critical
+  rationale: NetworkPolicies exist but flannel implements none of them, so every declared
+    deny (default-deny-all, per-workload allow lists) is a no-op. This is the single most
+    important thing to tell the operator on this profile.
+  evidence: []
+- id: f2
+  class: cni-not-enforcing
+  subject:
+    kind: Cluster
+  mechanism: cni
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy. Reporting
+    'CNI not enforcing' here would be a pure false positive.
+  evidence: []
+- id: f3
+  class: ipblock-admits-node-ips
+  subject:
+    kind: Pod
+    namespace: iot-edge
+    name: ingest-gateway
+    port: 8883
+  mechanism: snat
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: hostPort 8883 locked to ipBlock 10.250.0.10/32, one external client. A pod SNAT'd
+    to a node IP (natOutgoing, or portmap hairpin SNAT) shows up as 172.18.x or the node's
+    address, which the /32 does not match. Textbook tempting-but-wrong alarm.
+  evidence: []
+- id: f4
+  class: ipblock-admits-node-ips
+  subject:
+    kind: Pod
+    namespace: iot-edge
+    name: dashboard-proxy
+    port: 8080
+  mechanism: snat
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: 'Same as ingest-gateway: hostPort 8080 restricted to 10.250.0.10/32; node IPs
+    are not admitted.'
+  evidence: []
+- id: f5
+  class: other
+  subject:
+    kind: Pod
+    namespace: iot-edge
+    name: ingest-gateway
+    port: 8883
+  mechanism: other
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: 'Using hostPort is itself not a finding: the pod stays on the pod network and
+    under policy, and the only admitted source is the external /32. ingest-gateway :9000 is
+    not published on the node.'
+  evidence: []
+- id: f6
+  class: cilium-ipblock-cluster-addrs
+  subject:
+    kind: NetworkPolicy
+    namespace: iot-edge
+    name: ingest-gateway
+  mechanism: cni
+  applies_to_cni:
+  - cilium
+  label: must-not
+  rationale: The ipBlock names an external address; world-only matching is exactly what is
+    wanted.
+  evidence: []
+- id: f7
+  class: hostnetwork-under-policy
+  subject:
+    kind: Workload
+    namespace: iot-ops
+    name: node-agent
+  mechanism: hostnetwork
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: 'node-agent tolerates every taint but is pod-network (deliberately, caveat 4/5),
+    ingress only from prometheus, egress: []. Nothing to report.'
+  evidence: []
+- id: f8
+  class: node-exception-segment
+  subject:
+    kind: Namespace
+    name: iot-data
+  mechanism: node-local
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: No non-system hostNetwork pod anywhere; the data tier is on general nodes away
+    from the edge. The node-local exception exists but nobody non-system uses it.
+  evidence: []
+- id: f9
+  class: node-exception-segment
+  subject:
+    kind: Workload
+    namespace: kube-system
+    name: kube-proxy
+  mechanism: node-local
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: kube-proxy, the CNI agent (calico-node / cilium) and other kube-system hostNetwork
+    DaemonSets run on every node, including the nodes of iot-data / iot-edge. The spec always
+    allows node-local traffic (kubelet probes depend on it) and these are cluster infrastructure
+    the app team cannot and should not remove. Flagging them is noise; the class is about
+    NON-system hostNetwork pods.
+  evidence: []
+- id: f10
+  class: other
+  subject:
+    kind: NetworkPolicy
+    namespace: iot-app
+    name: alerting
+  mechanism: snat
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: 'Internet egress on 443 excluding every private, CGNAT, link-local and loopback
+    range: cannot reach pods, nodes or the apiserver. Intended.'
+  evidence: []

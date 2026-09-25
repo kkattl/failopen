@@ -58,21 +58,183 @@
 # --------------------------------------------------------------------------
 
 scenario: fintech-paylane-hostnet-agent
-labeler: ""          # your name/handle
-labeled_at: ""       # YYYY-MM-DD
-blind: true          # set false if you saw oracle output for this scenario first
+labeler: consensus(network,auditor,skeptic)
+labeled_at: 2026-09-24
+blind: true
 
-findings: []
-# One entry per finding a detector SHOULD (must), MAY (may) or must NOT
-# (must-not) report. Example:
-#
-#  - id: f1
-#    class: ipblock-admits-node-ips      # see labeling/README.md
-#    subject: {kind: Service, namespace: ns, name: svc, port: 80}
-#    mechanism: snat                     # snat | hostnetwork | node-local | cni
-#    applies_to_cni: [any]               # or e.g. [calico, cilium]
-#    label: must                         # must | may | must-not
-#    severity: critical                  # critical | warning | info (for must/may)
-#    rationale: >
-#      Why, citing the spec/docs where it matters.
-#    evidence: []                        # filled at reconciliation: oracle probe refs
+findings:
+  - id: f1
+    class: hostnetwork-under-policy
+    subject: {kind: Workload, namespace: fintech-ops, name: node-agent, port: 9100}
+    mechanism: hostnetwork
+    applies_to_cni: [calico, cilium]
+    label: must
+    severity: warning
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      fintech-ops/default-deny-all, allow-dns-egress and node-agent select the now-hostNetwork
+      DaemonSet. Behaviour for hostNetwork pods is undefined by the spec and in practice none:
+      :9100 (node-exporter) and :2020 (fluent-bit) listen on every node IP, including the
+      internet-facing edge node and the CDE nodes, reachable by any pod, node or external
+      client (flow 24 'metrics are not public' fails), and the agent's egress is unrestricted
+      (kubelet, apiserver, every node).
+    evidence: []
+  - id: f2
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: fintech-cde, name: fintech-cde}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: must
+    severity: critical
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      node-agent (hostNetwork, tolerations operator: Exists) runs on both restricted nodes.
+      Node -> local pod traffic is always allowed (docs; Calico default; Cilium allow-
+      localhost), so the third-party agent reaches payments-core, card-gateway, ledger and
+      postgres:5432 on its node despite default-deny, violating flows 15, 19 and 23. README
+      gap 1 verified this exact path. PCI CDE, so critical.
+    evidence: []
+  - id: f3
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: fintech-app, name: fintech-app}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: may
+    severity: warning
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      Same agent on the general nodes sits inside fintech-app (checkout-api, redis:6379,
+      admin-panel), against flows 16 and 25. Real, but same root cause and fix as the fintech-
+      cde finding; a tool may fold it into one report per DaemonSet.
+    evidence: []
+  - id: f4
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: fintech-edge, name: fintech-edge}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: may
+    severity: info
+    agreed_by: [network, skeptic]
+    rationale: >
+      Same agent on the edge node reaches edge-proxy, whose only listener (8080) already
+      admits 0.0.0.0/0; marginal exposure is at most non-listening ports. Low value, same root
+      cause. (Auditor: must-not, because the declared policy already admits node IPs on 8080.)
+    evidence: []
+  - id: f5
+    class: other
+    subject: {kind: NetworkPolicy, namespace: fintech-ops, name: prometheus, port: 9100}
+    mechanism: hostnetwork
+    applies_to_cni: [calico, cilium]
+    label: may
+    severity: info
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      Overblock side-effect: prometheus egress allows only podSelector app=node-agent:9100,
+      but node-agent endpoints are now node IPs; Calico/Cilium do not resolve pod selectors to
+      hostNetwork pods, so the declared scrape (flow 11) is likely dropped. Operationally
+      visible; arguably not a security finding.
+    evidence: []
+  - id: f6
+    class: ipblock-admits-node-ips
+    subject: {kind: Service, namespace: fintech-edge, name: edge-proxy, port: 8080}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      NodePort 30880 (ETP Local) to edge-proxy, ingress ipBlock 0.0.0.0/0 with no except. It
+      admits node IPs but also admits pods on purpose (public entry, flow 1), so SNAT to a
+      node IP grants nothing beyond what is declared. The README's 'broad 0.0.0.0/0 that
+      already admits pods' negative.
+    evidence: []
+  - id: f7
+    class: cilium-ipblock-cluster-addrs
+    subject: {kind: NetworkPolicy, namespace: fintech-edge, name: edge-proxy, port: 8080}
+    mechanism: cni
+    applies_to_cni: [cilium]
+    label: may
+    severity: info
+    agreed_by: [network]
+    rationale: >
+      On Cilium 0.0.0.0/0 matches only 'world'; pods and node sources declared-allowed by the
+      plain spec are denied. Overblock that does not break intent. NO MAJORITY here (network
+      may, skeptic must-not, auditor silent; in the base scenario it was may 2-1): kept as
+      may, needs-human.
+    evidence: []
+  - id: f8
+    class: other
+    subject: {kind: NetworkPolicy, namespace: fintech-cde, name: card-gateway, port: 443}
+    mechanism: other
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [network, skeptic]
+    rationale: >
+      Egress 0.0.0.0/0:443 except RFC1918/CGNAT/link-local/loopback excludes pods, nodes and
+      the lab external network; SNAT cannot widen it. NOTE: unlike the base scenario this does
+      NOT extend to fintech-ops/node-agent's identical rule, which is void now that the agent
+      is hostNetwork (both labellers' rationales carried that clause over; corrected by the
+      adjudicator).
+    evidence: []
+  - id: f9
+    class: other
+    subject: {kind: Service, namespace: fintech-edge, name: edge-proxy, port: 8080}
+    mechanism: other
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [skeptic]
+    rationale: >
+      NodePort 30880 is allocated on every node, but with externalTrafficPolicy=Local nodes
+      without a local endpoint drop the traffic; only the edge node forwards. An allocated
+      port that forwards to nothing is not an exposure. README gap 9 covers the host-firewall
+      question. (Skeptic only here; auditor labelled it in the base scenario.)
+    evidence: []
+  - id: f10
+    class: other
+    subject: {kind: Workload, namespace: fintech-app, name: admin-panel, port: 8080}
+    mechanism: other
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [skeptic]
+    rationale: >
+      ingress: [] is deliberate; staff use kubectl port-forward, which enters the pod netns
+      via the kubelet/CRI and is not subject to NetworkPolicy by design. Neither overblock nor
+      bypass. (Single-labeller negative, kept.)
+    evidence: []
+  - id: f11
+    class: node-exception-segment
+    subject: {kind: Workload, namespace: kube-system, name: kube-proxy}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: must-not
+    agreed_by: [skeptic]
+    rationale: >
+      kube-proxy, the CNI agent and other kube-system hostNetwork DaemonSets run on every
+      node, including the restricted nodes of fintech-cde. The spec always allows node-local
+      traffic (kubelet probes) and these are cluster infrastructure; the class targets NON-
+      system hostNetwork pods. (Single-labeller negative, kept: consistent with the class
+      definition in labeling/README.md. Subject is not in the scenario inventory; see cross-
+      cutting question.)
+    evidence: []
+  - id: f12
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [flannel]
+    label: must
+    severity: critical
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      NetworkPolicies exist but flannel has no policy engine; the API server accepts them
+      anyway (docs: posting a NetworkPolicy has no effect unless the network plugin supports
+      it). Every declared deny is open.
+    evidence: []
+  - id: f13
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [calico, cilium]
+    label: must-not
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy.
+    evidence: []

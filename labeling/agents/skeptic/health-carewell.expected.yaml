@@ -63,151 +63,153 @@
 # --------------------------------------------------------------------------
 
 scenario: health-carewell
-labeler: consensus(network,auditor,skeptic)
+labeler: agent-skeptic
 labeled_at: 2026-09-24
 blind: true
 
 findings:
-  - id: f1
-    class: ipblock-admits-node-ips
-    subject: {kind: Service, namespace: health-edge, name: edge-proxy, port: 8080}
-    mechanism: snat
-    applies_to_cni: [calico]
-    label: must
-    severity: warning
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      edge-proxy (NodePort, auto-allocated, ETP Local) admits ipBlock 0.0.0.0/0 except
-      192.168.0.0/16; the policy comment states the intent 'Pod CIDR excluded: in-cluster
-      workloads must not use the public entry point as a pivot'. Node IPs are still admitted.
-      A pod on a non-edge node connecting to <edge IP>:<nodePort> is masqueraded by Calico
-      natOutgoing to its node IP; the edge node DNATs locally keeping that source, which
-      passes the except. Any pod with open egress reaches edge-proxy and through it portal ->
-      records-api. README gap 9 accepts node IPs but assumes pods are kept out; SNAT breaks
-      that. Warning: edge-proxy is public anyway and PHI is behind records-api.
-    evidence: []
-  - id: f2
-    class: ipblock-admits-node-ips
-    subject: {kind: Service, namespace: health-edge, name: edge-proxy, port: 8080}
-    mechanism: snat
-    applies_to_cni: [cilium]
-    label: may
-    severity: warning
-    agreed_by: [network, auditor]
-    rationale: >
-      Same static condition. On Cilium the masqueraded source is probably identified as
-      remote-node, which a CIDR peer does not match by default, so the pod pivot is probably
-      denied. Settle by measurement.
-    evidence: []
-  - id: f3
-    class: cilium-ipblock-cluster-addrs
-    subject: {kind: NetworkPolicy, namespace: health-edge, name: edge-proxy, port: 8080}
-    mechanism: cni
-    applies_to_cni: [cilium]
-    label: may
-    severity: info
-    agreed_by: [network, auditor]
-    rationale: >
-      By plain semantics 0.0.0.0/0 except pod CIDR admits node IPs, and README gap 9 treats
-      that as intended; Cilium does not match remote-node/host with CIDR peers, so node-
-      sourced traffic is denied. Overblock, harmless for intent.
-    evidence: []
-  - id: f4
-    class: node-exception-segment
-    subject: {kind: Namespace, namespace: health-phi, name: health-phi}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      log-shipper (tolerates everything) and backup-agent (restricted pool) share nodes with
-      PHI but are on the pod network, under health-ops default-deny with egress only to fixed
-      external IPs; no PHI policy admits them. README gap 1 is about a hypothetical other
-      team's hostNetwork pod, not present here.
-    evidence: []
-  - id: f5
-    class: node-exception-segment
-    subject: {kind: Namespace, namespace: health-reporting, name: health-reporting}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [network, auditor]
-    rationale: >
-      Same as health-phi: reporting-replica and the reporting job share the restricted nodes
-      only with pod-network agents and system components. (Split out from 'same for health-
-      reporting' in the network and auditor rationales.)
-    evidence: []
-  - id: f6
-    class: other
-    subject: {kind: NetworkPolicy, namespace: health-notify, name: notifications, port: 443}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [network, skeptic]
-    rationale: >
-      Broad internet egress on 443/587 with RFC1918/CGNAT/link-local/loopback excepted cannot
-      reach pods, nodes or the lab external network; intentional (README item 6; FQDN
-      restriction is a feature request). The log-shipper /32 and backup-agent /24 TEST-NET
-      egress rules are likewise fine.
-    evidence: []
-  - id: f7
-    class: other
-    subject: {kind: Service, namespace: health-edge, name: edge-proxy, port: 8080}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [auditor, skeptic]
-    rationale: >
-      NodePort (auto-allocated) is allocated on every node, but with
-      externalTrafficPolicy=Local nodes without a local endpoint drop the traffic; only the
-      edge node forwards. An allocated port that forwards to nothing is not an exposure.
-    evidence: []
-  - id: f8
-    class: hostnetwork-under-policy
-    subject: {kind: Workload, namespace: health-ops, name: log-shipper}
-    mechanism: hostnetwork
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      Not hostNetwork. Privileged PSA and read-only hostPath mounts are outside a network-
-      divergence tool's scope. (Single-labeller negative, kept: verified in manifests.)
-    evidence: []
-  - id: f9
-    class: node-exception-segment
-    subject: {kind: Workload, namespace: kube-system, name: kube-proxy}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      kube-proxy, the CNI agent and other kube-system hostNetwork DaemonSets run on every
-      node, including the restricted nodes of health-phi / health-reporting. The spec always
-      allows node-local traffic (kubelet probes) and these are cluster infrastructure; the
-      class targets NON-system hostNetwork pods. (Single-labeller negative, kept: consistent
-      with the class definition in labeling/README.md. Subject is not in the scenario
-      inventory; see cross-cutting question.)
-    evidence: []
-  - id: f10
-    class: cni-not-enforcing
-    subject: {kind: Cluster}
-    mechanism: cni
-    applies_to_cni: [flannel]
-    label: must
-    severity: critical
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      NetworkPolicies exist but flannel has no policy engine; the API server accepts them
-      anyway (docs: posting a NetworkPolicy has no effect unless the network plugin supports
-      it). Every declared deny is open.
-    evidence: []
-  - id: f11
-    class: cni-not-enforcing
-    subject: {kind: Cluster}
-    mechanism: cni
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy.
-    evidence: []
+- id: f1
+  class: cni-not-enforcing
+  subject:
+    kind: Cluster
+  mechanism: cni
+  applies_to_cni:
+  - flannel
+  label: must
+  severity: critical
+  rationale: NetworkPolicies exist but flannel implements none of them, so every declared
+    deny (default-deny-all, per-workload allow lists) is a no-op. This is the single most
+    important thing to tell the operator on this profile.
+  evidence: []
+- id: f2
+  class: cni-not-enforcing
+  subject:
+    kind: Cluster
+  mechanism: cni
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy. Reporting
+    'CNI not enforcing' here would be a pure false positive.
+  evidence: []
+- id: f3
+  class: ipblock-admits-node-ips
+  subject:
+    kind: Service
+    namespace: health-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: snat
+  applies_to_cni:
+  - calico
+  label: must
+  severity: warning
+  rationale: 'health-edge/edge-proxy ingress: 0.0.0.0/0 except 192.168.0.0/16. The except
+    states the intent (README A1 and gap 9: ''the pod CIDR is excluded so that pods cannot
+    use the public path as a pivot''), and the NodePort is eTP=Local on the edge node. A pod
+    elsewhere connecting to <edge-node-IP>:<nodePort> is SNAT''d by Calico natOutgoing to
+    its node IP, which the ipBlock admits, so any pod with open egress reaches edge-proxy.
+    The author''s claim is false on this profile.'
+  evidence: []
+- id: f4
+  class: ipblock-admits-node-ips
+  subject:
+    kind: Service
+    namespace: health-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: snat
+  applies_to_cni:
+  - cilium
+  label: must-not
+  rationale: Cilium applies CIDR rules to 'world' only; SNAT'd pod traffic arrives as remote-node
+    (or keeps pod identity) and is not admitted. External 10.250.0.10 via eTP=Local is world
+    and admitted as intended.
+  evidence: []
+- id: f5
+  class: cilium-ipblock-cluster-addrs
+  subject:
+    kind: NetworkPolicy
+    namespace: health-edge
+    name: edge-proxy
+  mechanism: cni
+  applies_to_cni:
+  - cilium
+  label: must-not
+  rationale: Node IPs being admitted is an accepted side effect on Calico (gap 9), not a requirement.
+    On Cilium remote nodes are simply denied, the safer direction. Not worth a finding.
+  evidence: []
+- id: f6
+  class: node-exception-segment
+  subject:
+    kind: Namespace
+    name: health-phi
+  mechanism: node-local
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: log-shipper (tolerates everything) and backup-agent run on the restricted nodes
+    but are pod-network, not hostNetwork, and each is egress-limited to a single external
+    /32 or /24. 'Other teams might schedule hostNetwork pods' (gap 1/2) is hypothetical; nothing
+    in the manifests does it.
+  evidence: []
+- id: f7
+  class: hostnetwork-under-policy
+  subject:
+    kind: Workload
+    namespace: health-ops
+    name: log-shipper
+  mechanism: hostnetwork
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: Not hostNetwork. Privileged PSA and hostPath read-only mounts are outside a network-divergence
+    tool's scope.
+  evidence: []
+- id: f8
+  class: node-exception-segment
+  subject:
+    kind: Workload
+    namespace: kube-system
+    name: kube-proxy
+  mechanism: node-local
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: kube-proxy, the CNI agent (calico-node / cilium) and other kube-system hostNetwork
+    DaemonSets run on every node, including the nodes of health-phi / health-reporting (pool=restricted).
+    The spec always allows node-local traffic (kubelet probes depend on it) and these are
+    cluster infrastructure the app team cannot and should not remove. Flagging them is noise;
+    the class is about NON-system hostNetwork pods.
+  evidence: []
+- id: f9
+  class: other
+  subject:
+    kind: Service
+    namespace: health-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: node-local
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: 'Auto-allocated NodePort on every node with eTP=Local: only the edge node forwards.
+    Not a finding.'
+  evidence: []
+- id: f10
+  class: other
+  subject:
+    kind: NetworkPolicy
+    namespace: health-notify
+    name: notifications
+  mechanism: snat
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: Broad 443/587 internet egress is acknowledged (gap 6) and excludes all private,
+    CGNAT, link-local and loopback ranges, hence pods and nodes. FQDN restriction is a feature
+    request, not a divergence.
+  evidence: []

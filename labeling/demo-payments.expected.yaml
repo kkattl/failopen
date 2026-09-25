@@ -23,21 +23,127 @@
 # --------------------------------------------------------------------------
 
 scenario: demo-payments
-labeler: ""          # your name/handle
-labeled_at: ""       # YYYY-MM-DD
-blind: true          # set false if you saw oracle output for this scenario first
+labeler: consensus(network,auditor,skeptic)
+labeled_at: 2026-09-24
+blind: true
 
-findings: []
-# One entry per finding a detector SHOULD (must), MAY (may) or must NOT
-# (must-not) report. Example:
-#
-#  - id: f1
-#    class: ipblock-admits-node-ips      # see labeling/README.md
-#    subject: {kind: Service, namespace: ns, name: svc, port: 80}
-#    mechanism: snat                     # snat | hostnetwork | node-local | cni
-#    applies_to_cni: [any]               # or e.g. [calico, cilium]
-#    label: must                         # must | may | must-not
-#    severity: critical                  # critical | warning | info (for must/may)
-#    rationale: >
-#      Why, citing the spec/docs where it matters.
-#    evidence: []                        # filled at reconciliation: oracle probe refs
+findings:
+  - id: f1
+    class: hostnetwork-under-policy
+    subject: {kind: Pod, namespace: payments, name: host-probe, port: 8080}
+    mechanism: hostnetwork
+    applies_to_cni: [calico, cilium]
+    label: must
+    severity: critical
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      payments/default-deny-all (podSelector {}) selects host-probe, which is hostNetwork:
+      true. The docs leave NetworkPolicy behaviour for hostNetwork pods undefined; Calico and
+      Cilium enforce on the pod's veth, which this pod does not have, so :8080 listens on the
+      node IP and answers every pod, node and the external network despite the namespace's
+      declared default-deny.
+    evidence: []
+  - id: f2
+    class: node-exception-segment
+    subject: {kind: Namespace, namespace: payments, name: payments}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: must
+    severity: critical
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      monitoring/node-agent is a non-system hostNetwork pod pinned by podAffinity (topologyKey
+      hostname) to the node of payments/api-server. Node -> local pod traffic is always
+      allowed (docs; Calico does not police host -> local workload; Cilium allows
+      reserved:host by default), so node-agent reaches api-server:80 despite default-deny-all.
+      host-probe adds the same path whenever it is co-scheduled.
+    evidence: []
+  - id: f3
+    class: ipblock-admits-node-ips
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      There is no ipBlock anywhere: default-deny-all has no ingress rules, so SNAT of NodePort
+      traffic (externalTrafficPolicy Cluster) to a node IP matches no allow rule.
+    evidence: []
+  - id: f4
+    class: other
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [calico]
+    label: must-not
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      On Calico the NodePort is DNAT'd to the pod IP and the forwarded packet is still policed
+      at the workload (local endpoint: FORWARD sees the original source; remote endpoint:
+      arrives via tunl0 and is denied), so default-deny-all holds. The manifest comment
+      records this was verified. Being exposed on every node is not by itself a divergence.
+    evidence: []
+  - id: f5
+    class: other
+    subject: {kind: Service, namespace: payments, name: api-nodeport, port: 80}
+    mechanism: snat
+    applies_to_cni: [cilium]
+    label: may
+    severity: warning
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      Cilium with iptables kube-proxy enforces at the endpoint after kube-proxy's MASQUERADE.
+      With ETP Cluster, a client hitting :31080 on the node that hosts api-server may be
+      masqueraded to a local host address, which Cilium classifies as reserved:host and allows
+      by default, bypassing default-deny-all. Depends on source-address selection and allow-
+      localhost; settle by measurement.
+    evidence: []
+  - id: f6
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [flannel]
+    label: must
+    severity: critical
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      NetworkPolicies exist but flannel has no policy engine; the API server accepts them
+      anyway (docs: posting a NetworkPolicy has no effect unless the network plugin supports
+      it). Every declared deny is open.
+    evidence: []
+  - id: f7
+    class: cni-not-enforcing
+    subject: {kind: Cluster}
+    mechanism: cni
+    applies_to_cni: [calico, cilium]
+    label: must-not
+    agreed_by: [network, auditor, skeptic]
+    rationale: >
+      Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy.
+    evidence: []
+  - id: f8
+    class: hostnetwork-under-policy
+    subject: {kind: Pod, namespace: monitoring, name: node-agent}
+    mechanism: hostnetwork
+    applies_to_cni: [any]
+    label: must-not
+    agreed_by: [skeptic]
+    rationale: >
+      No NetworkPolicy exists in namespace monitoring, so nothing selects this hostNetwork
+      pod; the class does not apply. Its real effect is the node-exception-segment finding on
+      Namespace payments.
+    evidence: []
+  - id: f9
+    class: node-exception-segment
+    subject: {kind: Workload, namespace: kube-system, name: kube-proxy}
+    mechanism: node-local
+    applies_to_cni: [calico, cilium]
+    label: must-not
+    agreed_by: [skeptic]
+    rationale: >
+      kube-proxy, the CNI agent and other kube-system hostNetwork DaemonSets run on every
+      node, including the node of payments/api-server. The spec always allows node-local
+      traffic (kubelet probes) and these are cluster infrastructure; the class targets NON-
+      system hostNetwork pods. (Single-labeller negative, kept: consistent with the class
+      definition in labeling/README.md. Subject is not in the scenario inventory; see cross-
+      cutting question.)
+    evidence: []

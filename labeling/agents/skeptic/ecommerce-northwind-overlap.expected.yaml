@@ -1,8 +1,8 @@
-# Blind labels for scenario: ecommerce-northwind
-# Source: testdata/scenarios/ecommerce-northwind/manifests.yaml (+ README.md)
+# Blind labels for scenario: ecommerce-northwind-overlap
+# Source: testdata/scenarios/ecommerce-northwind-overlap/manifests.yaml (+ README.md)
 #
 # Rules (labeling/README.md): label from the manifests and the Kubernetes
-# docs ONLY. Do not open testdata/scenarios/ecommerce-northwind/*/reachability.json
+# docs ONLY. Do not open testdata/scenarios/ecommerce-northwind-overlap/*/reachability.json
 # before this file is done. Lab facts you may use: pod CIDR 192.168.0.0/16,
 # node IPs 172.18.0.0/16, external clients 10.250.0.0/24, pools
 # general/edge/restricted (edge and restricted are tainted).
@@ -46,7 +46,7 @@
 #   NetworkPolicy ecom-orders/allow-dns-egress selects=ALL pods types=['Egress']
 #   NetworkPolicy ecom-shared/allow-dns-egress selects=ALL pods types=['Egress']
 #   NetworkPolicy ecom-edge/edge-proxy-ingress-from-f5 selects={'app': 'edge-proxy'} types=['Ingress']
-#       ingress ipBlock 10.250.0.0/24 ports=8080
+#       ingress ipBlock 172.18.0.0/16 ports=8080
 #   NetworkPolicy ecom-edge/edge-proxy-egress selects={'app': 'edge-proxy'} types=['Egress']
 #   NetworkPolicy ecom-storefront/web-ingress selects={'app': 'web'} types=['Ingress']
 #   NetworkPolicy ecom-storefront/bff-ingress selects={'app': 'bff'} types=['Ingress']
@@ -65,107 +65,158 @@
 #   NetworkPolicy ecom-shared/session-cache-ingress selects={'app': 'session-cache'} types=['Ingress']
 # --------------------------------------------------------------------------
 
-scenario: ecommerce-northwind
-labeler: consensus(network,auditor,skeptic)
+scenario: ecommerce-northwind-overlap
+labeler: agent-skeptic
 labeled_at: 2026-09-24
 blind: true
 
 findings:
-  - id: f1
-    class: cni-not-enforcing
-    subject: {kind: Cluster}
-    mechanism: cni
-    applies_to_cni: [flannel]
-    label: must
-    severity: critical
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      NetworkPolicies exist but flannel has no policy engine; the API server accepts them
-      anyway (docs: posting a NetworkPolicy has no effect unless the network plugin supports
-      it). Every declared deny is open.
-    evidence: []
-  - id: f2
-    class: cni-not-enforcing
-    subject: {kind: Cluster}
-    mechanism: cni
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy.
-    evidence: []
-  - id: f3
-    class: ipblock-admits-node-ips
-    subject: {kind: Service, namespace: ecom-edge, name: edge-proxy, port: 8080}
-    mechanism: snat
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      NodePort 30080 (ETP Local) to edge-proxy; ingress ipBlock is 10.250.0.0/24 (lab external
-      network), disjoint from node IPs (172.18.0.0/16) and pods (192.168.0.0/16). A pod SNAT'd
-      to its node IP by natOutgoing does not match; ETP Local keeps the real client IP. Clean
-      control for the -overlap mutation.
-    evidence: []
-  - id: f4
-    class: cilium-ipblock-cluster-addrs
-    subject: {kind: NetworkPolicy, namespace: ecom-edge, name: edge-proxy-ingress-from-f5, port: 8080}
-    mechanism: cni
-    applies_to_cni: [cilium]
-    label: must-not
-    agreed_by: [network, skeptic]
-    rationale: >
-      The ipBlock targets an external range only; Cilium's world-only CIDR matching gives the
-      same result as the spec.
-    evidence: []
-  - id: f5
-    class: other
-    subject: {kind: Service, namespace: ecom-edge, name: edge-proxy, port: 8080}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [auditor, skeptic]
-    rationale: >
-      NodePort 30080 is allocated on every node, but with externalTrafficPolicy=Local nodes
-      without a local endpoint drop the traffic; only the edge node forwards. An allocated
-      port that forwards to nothing is not an exposure.
-    evidence: []
-  - id: f6
-    class: node-exception-segment
-    subject: {kind: Namespace, namespace: ecom-orders, name: ecom-orders}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      checkout and orders-db (PCI) run on pool=restricted. No non-system hostNetwork pod
-      exists in the scenario; only kubelet and kube-system agents share those nodes, which the
-      class excludes.
-    evidence: []
-  - id: f7
-    class: node-exception-segment
-    subject: {kind: Workload, namespace: kube-system, name: kube-proxy}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      kube-proxy, the CNI agent and other kube-system hostNetwork DaemonSets run on every
-      node, including the restricted nodes of ecom-orders/checkout and orders-db. The spec
-      always allows node-local traffic (kubelet probes) and these are cluster infrastructure;
-      the class targets NON-system hostNetwork pods. (Single-labeller negative, kept:
-      consistent with the class definition in labeling/README.md. Subject is not in the
-      scenario inventory; see cross-cutting question.)
-    evidence: []
-  - id: f8
-    class: other
-    subject: {kind: NetworkPolicy, namespace: ecom-storefront, name: web-ingress}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      Split ingress/egress policies with destination-side rules that the author did not test
-      in isolation are a style choice; every flow is opened on both ends and default-deny
-      covers the rest. (Single-labeller negative, kept: low value but correct.)
-    evidence: []
+- id: f1
+  class: cni-not-enforcing
+  subject:
+    kind: Cluster
+  mechanism: cni
+  applies_to_cni:
+  - flannel
+  label: must
+  severity: critical
+  rationale: NetworkPolicies exist but flannel implements none of them, so every declared
+    deny (default-deny-all, per-workload allow lists) is a no-op. This is the single most
+    important thing to tell the operator on this profile.
+  evidence: []
+- id: f2
+  class: cni-not-enforcing
+  subject:
+    kind: Cluster
+  mechanism: cni
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy. Reporting
+    'CNI not enforcing' here would be a pure false positive.
+  evidence: []
+- id: f3
+  class: other
+  subject:
+    kind: Service
+    namespace: ecom-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: node-local
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: 'NodePort 30080 is allocated on every node but eTP=Local: only the edge node
+    (DaemonSet on pool=edge) forwards. Flagging the NodePort itself is noise.'
+  evidence: []
+- id: f4
+  class: node-exception-segment
+  subject:
+    kind: Namespace
+    name: ecom-orders
+  mechanism: node-local
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: checkout and orders-db (PCI) run on restricted nodes; no non-system hostNetwork
+    pod exists in the scenario. Only kube-system DaemonSets share those nodes.
+  evidence: []
+- id: f5
+  class: node-exception-segment
+  subject:
+    kind: Workload
+    namespace: kube-system
+    name: kube-proxy
+  mechanism: node-local
+  applies_to_cni:
+  - calico
+  - cilium
+  label: must-not
+  rationale: kube-proxy, the CNI agent (calico-node / cilium) and other kube-system hostNetwork
+    DaemonSets run on every node, including the nodes of ecom-orders/checkout and orders-db.
+    The spec always allows node-local traffic (kubelet probes depend on it) and these are
+    cluster infrastructure the app team cannot and should not remove. Flagging them is noise;
+    the class is about NON-system hostNetwork pods.
+  evidence: []
+- id: f6
+  class: other
+  subject:
+    kind: NetworkPolicy
+    namespace: ecom-storefront
+    name: web-ingress
+  mechanism: other
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: Split ingress/egress policies and destination-side rules that are 'not tested
+    in isolation' are a style choice; every flow is opened on both ends and default-deny covers
+    the rest. Nothing diverges.
+  evidence: []
+- id: f7
+  class: ipblock-admits-node-ips
+  subject:
+    kind: Service
+    namespace: ecom-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: snat
+  applies_to_cni:
+  - calico
+  label: must
+  severity: warning
+  rationale: 'The edge-proxy ingress ipBlock 172.18.0.0/16 is the node network and excludes
+    pods. A pod on a general node connecting to <edge-node-IP>:30080 is not DNAT''d locally
+    (dst not a local address), leaves with Calico natOutgoing SNAT to its own node IP (172.18.x,
+    outside the IP pool), and after DNAT on the edge node it matches the ipBlock -> allowed.
+    So any pod with open egress (every non-ecom namespace, kube-system, other teams) reaches
+    edge-proxy, contradicting ''any other namespace -> any ecom pod: deny''. Every hostNetwork
+    process is admitted too. Fix: set the ipBlock to the real F5 SNAT range, disjoint from
+    node IPs. Warning, not critical: edge-proxy is the public front door anyway.'
+  evidence: []
+- id: f8
+  class: ipblock-admits-node-ips
+  subject:
+    kind: Service
+    namespace: ecom-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: snat
+  applies_to_cni:
+  - cilium
+  label: must-not
+  rationale: On Cilium, CIDR rules match 'world' only; pod traffic keeps its pod identity
+    through the tunnel or, if masqueraded, arrives as remote-node, neither of which 172.18.0.0/16
+    matches (default policy-cidr-match-mode). No pod bypass.
+  evidence: []
+- id: f9
+  class: cilium-ipblock-cluster-addrs
+  subject:
+    kind: NetworkPolicy
+    namespace: ecom-edge
+    name: edge-proxy-ingress-from-f5
+  mechanism: cni
+  applies_to_cni:
+  - cilium
+  label: may
+  severity: info
+  rationale: The ipBlock literally equals the node network, so a reader could take it as 'allow
+    the nodes'; on Cilium remote nodes are not matched, so declared node->edge-proxy allows
+    are denied. Arguable because the author's intent was the F5 range, not the nodes; nobody
+    needs to fix a safe-direction overblock.
+  evidence: []
+- id: f10
+  class: other
+  subject:
+    kind: Service
+    namespace: ecom-edge
+    name: edge-proxy
+    port: 8080
+  mechanism: other
+  applies_to_cni:
+  - any
+  label: must-not
+  rationale: The lab external client 10.250.0.10 is outside 172.18.0.0/16, so it is denied.
+    That matches the declared policy exactly; not an overblock.
+  evidence: []

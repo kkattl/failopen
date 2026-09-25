@@ -58,7 +58,7 @@
 # --------------------------------------------------------------------------
 
 scenario: fintech-paylane
-labeler: consensus(network,auditor,skeptic)
+labeler: agent-auditor
 labeled_at: 2026-09-24
 blind: true
 
@@ -70,11 +70,11 @@ findings:
     applies_to_cni: [flannel]
     label: must
     severity: critical
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      NetworkPolicies exist but flannel has no policy engine; the API server accepts them
-      anyway (docs: posting a NetworkPolicy has no effect unless the network plugin supports
-      it). Every declared deny is open.
+      flannel ignores NetworkPolicy. The PCI CDE (fintech-cde: payments-core,
+      card-gateway, ledger, postgres:5432) is reachable from every pod in the
+      cluster, which breaks the whole README flow matrix (rows 13-25). This is
+      a PCI DSS segmentation failure.
     evidence: []
   - id: f2
     class: cni-not-enforcing
@@ -82,9 +82,7 @@ findings:
     mechanism: cni
     applies_to_cni: [calico, cilium]
     label: must-not
-    agreed_by: [network, auditor, skeptic]
-    rationale: >
-      Calico and Cilium both enforce networking.k8s.io/v1 NetworkPolicy.
+    rationale: Both CNIs enforce NetworkPolicy.
     evidence: []
   - id: f3
     class: ipblock-admits-node-ips
@@ -92,12 +90,12 @@ findings:
     mechanism: snat
     applies_to_cni: [any]
     label: must-not
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      NodePort 30880 (ETP Local) to edge-proxy, ingress ipBlock 0.0.0.0/0 with no except. It
-      admits node IPs but also admits pods on purpose (public entry, flow 1), so SNAT to a
-      node IP grants nothing beyond what is declared. The README's 'broad 0.0.0.0/0 that
-      already admits pods' negative.
+      The edge-proxy ingress ipBlock is 0.0.0.0/0 with no except. It admits
+      node IPs, but it also admits pods on purpose (public entry point, flow
+      1), so SNAT to a node IP grants nothing beyond what is already declared.
+      This is exactly the README's "broad allow that already admits pods"
+      negative.
     evidence: []
   - id: f4
     class: node-exception-segment
@@ -105,23 +103,27 @@ findings:
     mechanism: node-local
     applies_to_cni: [calico, cilium]
     label: must-not
-    agreed_by: [network, auditor, skeptic]
     rationale: >
-      fintech-ops/node-agent tolerates every taint and runs on the restricted nodes, but it is
-      deliberately NOT hostNetwork: an ordinary pod under default-deny that no fintech-cde
-      policy admits. The only hostNetwork processes there are system components, which the
-      class excludes. README gap 1 describes a hypothetical, not something in the manifests.
+      The only workload besides the CDE pods on pool=restricted is
+      fintech-ops/node-agent, and it is deliberately on the pod network (not
+      hostNetwork). Its pod IP is policed like any pod, and
+      fintech-cde/default-deny-all admits nothing from it. The remaining
+      host-netns traffic on those nodes comes from the kubelet and
+      kube-system CNI/kube-proxy agents: system components the spec
+      explicitly excepts. The designer documents that residual risk (known
+      gap 1). No non-system hostNetwork pod is present, so the segment holds.
     evidence: []
   - id: f5
-    class: hostnetwork-under-policy
-    subject: {kind: Workload, namespace: fintech-ops, name: node-agent}
-    mechanism: hostnetwork
+    class: other
+    subject: {kind: Service, namespace: fintech-edge, name: edge-proxy, port: 8080}
+    mechanism: other
     applies_to_cni: [any]
     label: must-not
-    agreed_by: [network, skeptic]
     rationale: >
-      node-agent is not hostNetwork (manifest comment says so deliberately). A tool keying on
-      'DaemonSet + tolerates everything + hostPath' must not report it.
+      NodePort 30880 is allocated on general and restricted (CDE) nodes, but
+      with externalTrafficPolicy=Local those nodes have no local endpoint and
+      drop the traffic (flow 13 intent). An allocated port that forwards to
+      nothing is not an exposure of the CDE nodes.
     evidence: []
   - id: f6
     class: cilium-ipblock-cluster-addrs
@@ -130,63 +132,10 @@ findings:
     applies_to_cni: [cilium]
     label: may
     severity: info
-    agreed_by: [network, auditor]
     rationale: >
-      On Cilium a CIDR peer (even 0.0.0.0/0) matches only 'world', not pods, host or remote-
-      node. Plain-spec semantics admit in-cluster pods and node traffic, so on Cilium those
-      are denied: an overblock that does not break the author's intent (internet via the LB).
-      Informational.
-    evidence: []
-  - id: f7
-    class: other
-    subject: {kind: Service, namespace: fintech-edge, name: edge-proxy, port: 8080}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [auditor, skeptic]
-    rationale: >
-      NodePort 30880 is allocated on every node, but with externalTrafficPolicy=Local nodes
-      without a local endpoint drop the traffic; only the edge node forwards. An allocated
-      port that forwards to nothing is not an exposure. README gap 9 covers the host-firewall
-      question.
-    evidence: []
-  - id: f8
-    class: other
-    subject: {kind: NetworkPolicy, namespace: fintech-cde, name: card-gateway, port: 443}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [network, skeptic]
-    rationale: >
-      Egress 0.0.0.0/0:443 except RFC1918/CGNAT/link-local/loopback excludes the pod CIDR
-      (192.168/16), node IPs (172.18/16 within 172.16/12) and the lab external network (10/8);
-      egress policy is evaluated before natOutgoing, so SNAT cannot widen it. Same for
-      fintech-ops/node-agent's egress rule.
-    evidence: []
-  - id: f9
-    class: other
-    subject: {kind: Workload, namespace: fintech-app, name: admin-panel, port: 8080}
-    mechanism: other
-    applies_to_cni: [any]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      ingress: [] is deliberate; staff use kubectl port-forward, which enters the pod netns
-      via the kubelet/CRI and is not subject to NetworkPolicy by design. Neither overblock nor
-      bypass. (Single-labeller negative, kept.)
-    evidence: []
-  - id: f10
-    class: node-exception-segment
-    subject: {kind: Workload, namespace: kube-system, name: kube-proxy}
-    mechanism: node-local
-    applies_to_cni: [calico, cilium]
-    label: must-not
-    agreed_by: [skeptic]
-    rationale: >
-      kube-proxy, the CNI agent and other kube-system hostNetwork DaemonSets run on every
-      node, including the restricted nodes of fintech-cde. The spec always allows node-local
-      traffic (kubelet probes) and these are cluster infrastructure; the class targets NON-
-      system hostNetwork pods. (Single-labeller negative, kept: consistent with the class
-      definition in labeling/README.md. Subject is not in the scenario inventory; see cross-
-      cutting question.)
+      0.0.0.0/0 is declared to admit everything, including in-cluster pods
+      and nodes. Cilium applies CIDR peers to the "world" identity only, so
+      other pods and host-network sources hitting edge-proxy:8080 may be
+      dropped. This is overblock (it fails closed), not a segmentation
+      failure, so it is only informational from an audit point of view.
     evidence: []
