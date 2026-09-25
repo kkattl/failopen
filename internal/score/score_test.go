@@ -161,6 +161,7 @@ findings:
 func TestReconcile(t *testing.T) {
 	c, r := flannelRun()
 	r.Profile = "calico"
+	r.Snapshot.CNI = collector.CNIInfo{Name: "calico", EnforcesPolicy: true}
 	r.Reachability.Probes = []scenario.Probe{
 		{Source: "outsider", Target: "edge/svc/gw", TargetKind: scenario.TargetNodePort, Address: "172.18.0.2:30080",
 			Declared: scenario.DeclaredDeny, Basis: scenario.BasisSNAT, Verdict: scenario.VerdictBypass, ObservedSources: []string{"172.18.0.3"}},
@@ -180,5 +181,22 @@ func TestReconcile(t *testing.T) {
 		if got[k] != v {
 			t.Errorf("%s = %d, want %d (all: %v)", k, got[k], v, got)
 		}
+	}
+}
+
+// On a CNI that enforces nothing, per-target divergences are all explained
+// by the cluster-level fact and aren't listed.
+func TestReconcileUnenforcedCNI(t *testing.T) {
+	c, r := flannelRun()
+	for i := 0; i < 12; i++ {
+		r.Reachability.Probes = append(r.Reachability.Probes, scenario.Probe{
+			Source: "a", Target: "shop/web-1", Basis: scenario.BasisPolicy, Declared: scenario.DeclaredDeny,
+			Baseline: scenario.EffectiveOpen, Effective: scenario.EffectiveOpen, Verdict: scenario.VerdictBypass})
+	}
+	lf := &LabelFile{Findings: []Label{
+		{Class: "ipblock-admits-node-ips", Subject: Subject{Kind: "Service", Namespace: "shop", Name: "web"}, AppliesToCNI: []string{"any"}, Label: MustNot},
+	}}
+	if got := Reconcile(c, r, lf); len(got) != 0 {
+		t.Errorf("got %d disagreements on an unenforced CNI, want 0: %+v", len(got), got)
 	}
 }

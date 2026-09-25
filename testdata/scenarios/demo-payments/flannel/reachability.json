@@ -1,0 +1,1965 @@
+{
+  "profile": "flannel",
+  "cni": "flannel",
+  "provenance": {
+    "timestamp": "2026-09-25T11:57:54Z",
+    "oracleCommit": "cb4eec20738584fa307943ac312419baea83b206-dirty",
+    "policyAssistant": "318a5176525c3dff6e5c406cb8f745506b73194e",
+    "manifestSha256": "e48d0da13643edab664940dc83996e5b3a65d5bfcaa4c377bfdc91d1150d1c6a",
+    "kubeletVersion": "v1.37.0",
+    "containerRuntime": "containerd://2.3.4",
+    "cniImages": [
+      "ghcr.io/flannel-io/flannel:v0.28.9",
+      "registry.k8s.io/kube-proxy:v1.37.0"
+    ],
+    "outsiderNode": "failopen-lab-flannel-worker",
+    "probeTimeout": "2s",
+    "serviceAttempts": 4
+  },
+  "probes": [
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "monitoring/node-agent",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/api-server",
+      "sourceKind": "pod",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.2"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "payments/host-probe",
+      "sourceKind": "hostnetwork-pod",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.7"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.6"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.8"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.3"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.4"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.2"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "spec-exception",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/api-server",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.2:80",
+      "declared": "deny",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.3"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.3"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "clusterip",
+      "address": "10.96.47.105:80",
+      "declared": "deny",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.3"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "payments/host-probe",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.5:8080",
+      "declared": "deny",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "10.250.0.10"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "deny"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "payments/svc/api-nodeport",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31080",
+      "declared": "deny",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "bypass",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "deny"
+    }
+  ]
+}

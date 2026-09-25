@@ -2,8 +2,8 @@
   "profile": "calico",
   "cni": "calico",
   "provenance": {
-    "timestamp": "2026-09-24T13:53:07Z",
-    "oracleCommit": "0b0285ebc9244614aa3c23e95948243a2b19d98f-dirty",
+    "timestamp": "2026-09-24T15:21:25Z",
+    "oracleCommit": "82824bcb4ef0848f909675c5a37e5a4b266f4dc1-dirty",
     "policyAssistant": "318a5176525c3dff6e5c406cb8f745506b73194e",
     "manifestSha256": "b8856c079267fb4bb8d64dd67dcf4e15500eaba9d2571d12f9706391a9e41d2d",
     "kubeletVersion": "v1.37.0",
@@ -12,7 +12,7 @@
       "docker.io/calico/node:v3.28.0",
       "registry.k8s.io/kube-proxy:v1.37.0"
     ],
-    "outsiderNode": "failopen-lab-worker",
+    "outsiderNode": "failopen-lab-calico-worker",
     "probeTimeout": "2s",
     "serviceAttempts": 4
   },
@@ -22,7 +22,7 @@
       "sourceKind": "pod",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -31,7 +31,7 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.156"
+        "172.18.0.8"
       ],
       "declaredObserved": "allow"
     },
@@ -40,7 +40,7 @@
       "sourceKind": "pod",
       "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -49,7 +49,7 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.156"
+        "192.168.114.22"
       ],
       "declaredObserved": "allow"
     },
@@ -58,7 +58,7 @@
       "sourceKind": "pod",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -70,9 +70,9 @@
     {
       "source": "known-open/client",
       "sourceKind": "pod",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "target": "known-open/web-77b4b98d94-8vjvn",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
+      "address": "192.168.156.92:8080",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -81,16 +81,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.156"
+        "192.168.114.22"
       ],
       "declaredObserved": "allow"
     },
     {
       "source": "known-open/client",
       "sourceKind": "pod",
-      "target": "known-open/web-77b4b98d94-xlh9t",
+      "target": "known-open/web-77b4b98d94-l8b4l",
       "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
+      "address": "192.168.20.212:8080",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -99,7 +99,7 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.156"
+        "192.168.114.22"
       ],
       "declaredObserved": "allow"
     },
@@ -108,7 +108,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -117,7 +117,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.201.156"
+        "192.168.114.22"
       ],
       "declaredObserved": "allow"
     },
@@ -126,7 +126,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -135,7 +135,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
@@ -144,7 +144,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -153,8 +153,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
@@ -163,7 +162,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -172,7 +171,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
@@ -181,7 +180,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -190,7 +189,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
@@ -199,7 +198,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -208,7 +207,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
@@ -217,7 +216,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -226,7 +225,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
@@ -235,7 +234,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
+      "address": "172.18.0.5:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -244,7 +243,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.41.0"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
@@ -253,7 +252,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -262,7 +261,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.201.156"
+        "192.168.114.22"
       ],
       "declaredObserved": "allow"
     },
@@ -271,7 +270,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -285,25 +284,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.201.156"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "known-open/client",
-      "sourceKind": "pod",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
+      "address": "172.18.0.2:32536",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -312,7 +293,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3"
+        "172.18.0.8"
       ],
       "declaredObserved": "allow"
     },
@@ -321,7 +302,43 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
+      "address": "172.18.0.4:32536",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.8"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:32536",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.114.22"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -335,7 +352,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.3:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -349,21 +366,7 @@
       "sourceKind": "pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "known-open/client",
-      "sourceKind": "pod",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -377,7 +380,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -386,7 +389,7 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.128"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
@@ -395,7 +398,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -407,27 +410,9 @@
     {
       "source": "known-open/hostnet",
       "sourceKind": "hostnetwork-pod",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "target": "known-open/web-77b4b98d94-8vjvn",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.201.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "known-open/hostnet",
-      "sourceKind": "hostnetwork-pod",
-      "target": "known-open/web-77b4b98d94-xlh9t",
-      "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
+      "address": "192.168.156.92:8080",
       "declared": "allow",
       "basis": "spec-exception",
       "effective": "open",
@@ -436,7 +421,25 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "172.18.0.3"
+        "192.168.156.64"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/web-77b4b98d94-l8b4l",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.212:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
@@ -445,7 +448,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "mixed-path",
       "effective": "open",
@@ -454,7 +457,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
@@ -463,7 +466,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -472,7 +475,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
@@ -481,7 +484,25 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
+      "address": "172.18.0.2:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.20.192"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "mixed-path",
       "effective": "open",
@@ -490,8 +511,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
@@ -500,7 +520,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -509,8 +529,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
@@ -519,7 +538,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -528,7 +547,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
@@ -537,7 +556,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -546,7 +565,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
@@ -555,7 +574,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.5:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -564,25 +583,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "known-open/hostnet",
-      "sourceKind": "hostnetwork-pod",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.41.0"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
@@ -591,7 +592,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
       "basis": "mixed-path",
       "effective": "open",
@@ -600,8 +601,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
@@ -610,7 +610,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -624,26 +624,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
-      "declared": "allow",
-      "basis": "mixed-path",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "unknown",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "known-open/hostnet",
-      "sourceKind": "hostnetwork-pod",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
+      "address": "172.18.0.2:32536",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -652,7 +633,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3"
+        "172.18.0.4"
       ],
       "declaredObserved": "allow"
     },
@@ -661,7 +642,25 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
+      "address": "172.18.0.4:32536",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.156.64"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -675,7 +674,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.6:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -689,7 +688,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
+      "address": "172.18.0.3:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -703,7 +702,7 @@
       "sourceKind": "hostnetwork-pod",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -717,7 +716,465 @@
       "sourceKind": "pod",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.2"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-8vjvn",
+      "targetKind": "pod-ip",
+      "address": "192.168.156.92:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.20.213"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-l8b4l",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.212:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.20.213"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.17.145:80",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.20.213"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.51.128"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.20.192"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.156.64"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.114.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.160.192"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.163.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.147.128"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.42.182:80",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.20.213"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:32536",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.20.213"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:32536",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.2"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-8vjvn",
+      "sourceKind": "pod",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.4:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.156.92"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-8vjvn",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.213:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.156.92"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-8vjvn",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.2:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-8vjvn",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-l8b4l",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.212:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.156.92"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-l8b4l",
+      "sourceKind": "pod",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.4:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.2"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-l8b4l",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.213:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.20.212"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-l8b4l",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.2:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-l8b4l",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-8vjvn",
+      "targetKind": "pod-ip",
+      "address": "192.168.156.92:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.20.212"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -731,65 +1188,97 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
-      "basis": "policy",
+      "basis": "undefined-snat",
       "effective": "open",
       "baseline": "open",
       "verdict": "match",
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.189.125"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
-      "target": "known-open/web-77b4b98d94-xlh9t",
-      "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
       "baseline": "open",
       "verdict": "match",
       "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-8vjvn",
+      "targetKind": "pod-ip",
+      "address": "192.168.156.92:8080",
+      "declared": "allow",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.189.125"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-l8b4l",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.212:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.156.64"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
+      "address": "10.96.17.145:80",
       "declared": "allow",
-      "basis": "policy",
+      "basis": "mixed-path",
       "effective": "open",
       "baseline": "open",
-      "verdict": "match",
+      "verdict": "unknown",
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.189.125"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -798,16 +1287,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -816,17 +1305,34 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.4:31440",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.156.64"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -835,16 +1341,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.189.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -853,16 +1359,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -871,16 +1377,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.5:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -889,52 +1395,34 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
-      "basis": "policy",
+      "basis": "mixed-path",
       "effective": "open",
       "baseline": "open",
-      "verdict": "match",
+      "verdict": "unknown",
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.189.125"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -944,13 +1432,13 @@
       "hits": "0/4"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
+      "address": "172.18.0.2:32536",
       "declared": "allow",
-      "basis": "undefined-snat",
+      "basis": "policy",
       "effective": "open",
       "baseline": "open",
       "verdict": "match",
@@ -962,29 +1450,29 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
+      "address": "172.18.0.4:32536",
       "declared": "allow",
-      "basis": "policy",
+      "basis": "mixed-path",
       "effective": "open",
       "baseline": "open",
-      "verdict": "match",
+      "verdict": "unknown",
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.189.125"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
+      "address": "172.18.0.8:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -994,11 +1482,11 @@
       "hits": "0/4"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.6:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -1008,11 +1496,11 @@
       "hits": "0/4"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
+      "address": "172.18.0.3:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -1022,11 +1510,11 @@
       "hits": "0/4"
     },
     {
-      "source": "known-open/hostport",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker2",
+      "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -1036,11 +1524,11 @@
       "hits": "0/4"
     },
     {
-      "source": "known-open/web-77b4b98d94-4gxcs",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -1049,34 +1537,34 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "172.18.0.4"
+        "172.18.0.5"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/web-77b4b98d94-4gxcs",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
-      "basis": "policy",
+      "basis": "undefined-snat",
       "effective": "open",
       "baseline": "open",
       "verdict": "match",
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.189.124"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "known-open/web-77b4b98d94-4gxcs",
-      "sourceKind": "pod",
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -1086,115 +1574,11 @@
       "hits": "1/1"
     },
     {
-      "source": "known-open/web-77b4b98d94-4gxcs",
-      "sourceKind": "pod",
-      "target": "known-open/web-77b4b98d94-xlh9t",
-      "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.189.124"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "known-open/web-77b4b98d94-xlh9t",
-      "sourceKind": "pod",
-      "target": "known-open/hostnet",
-      "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
-      "declared": "allow",
-      "basis": "undefined-hostnetwork",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.201.154"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "known-open/web-77b4b98d94-xlh9t",
-      "sourceKind": "pod",
-      "target": "known-open/hostport",
-      "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.201.154"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "known-open/web-77b4b98d94-xlh9t",
-      "sourceKind": "pod",
-      "target": "known-open/hostport",
-      "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1"
-    },
-    {
-      "source": "known-open/web-77b4b98d94-xlh9t",
-      "sourceKind": "pod",
-      "target": "known-open/web-77b4b98d94-4gxcs",
-      "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.201.154"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
-      "target": "known-open/hostnet",
-      "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
-      "declared": "allow",
-      "basis": "undefined-hostnetwork",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "172.18.0.9"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/hostport",
+      "target": "known-open/web-77b4b98d94-8vjvn",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.156.92:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1203,30 +1587,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
-      "target": "known-open/hostport",
-      "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "target": "known-open/web-77b4b98d94-l8b4l",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
+      "address": "192.168.20.212:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1235,34 +1605,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-xlh9t",
-      "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.163.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1271,16 +1623,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1289,16 +1641,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1307,16 +1659,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1325,16 +1677,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.189.64"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1343,16 +1695,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1361,16 +1713,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1379,16 +1731,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
+      "address": "172.18.0.5:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1397,16 +1749,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.41.0"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1415,16 +1767,108 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
+      "source": "node/failopen-lab-calico-worker6",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:32536",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:32536",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1433,108 +1877,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.9"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.9"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-control-plane",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -1548,11 +1900,11 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1561,16 +1913,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -1580,11 +1932,11 @@
       "hits": "1/1"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "target": "known-open/web-77b4b98d94-8vjvn",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
+      "address": "192.168.156.92:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1593,16 +1945,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-xlh9t",
+      "target": "known-open/web-77b4b98d94-l8b4l",
       "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
+      "address": "192.168.20.212:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1611,16 +1963,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1629,16 +1981,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1647,16 +1999,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1665,16 +2017,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.201.128"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1683,17 +2035,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1702,16 +2053,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1720,16 +2071,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1738,16 +2089,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
+      "address": "172.18.0.5:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1756,16 +2107,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.41.0"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1774,30 +2125,34 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
       "attempts": 4,
-      "hits": "0/4"
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.51.128"
+      ],
+      "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
+      "address": "172.18.0.2:32536",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -1811,11 +2166,11 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
+      "address": "172.18.0.4:32536",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -1829,11 +2184,11 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
+      "address": "172.18.0.8:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -1843,11 +2198,139 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-control-plane",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.6:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.4:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.8"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.213:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.114.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.2:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-8vjvn",
+      "targetKind": "pod-ip",
+      "address": "192.168.156.92:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.114.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-l8b4l",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.212:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.114.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1856,16 +2339,160 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.51.128"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.20.192"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.156.64"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.114.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.160.192"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.163.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.147.128"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.42.182:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.114.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -1875,11 +2502,65 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker4",
+      "source": "node/failopen-lab-calico-worker3",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
+      "address": "172.18.0.2:32536",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.8"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:32536",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.8"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:32536",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.114.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -1889,11 +2570,39 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:32536",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -1907,11 +2616,11 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1920,16 +2629,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.128"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -1939,11 +2648,11 @@
       "hits": "1/1"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "target": "known-open/web-77b4b98d94-8vjvn",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
+      "address": "192.168.156.92:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -1952,53 +2661,34 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.128"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-xlh9t",
+      "target": "known-open/web-77b4b98d94-l8b4l",
       "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
+      "address": "192.168.20.212:8080",
       "declared": "allow",
-      "basis": "spec-exception",
+      "basis": "undefined-snat",
       "effective": "open",
       "baseline": "open",
       "verdict": "match",
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "172.18.0.3"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
-      "declared": "allow",
-      "basis": "mixed-path",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "unknown",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2007,35 +2697,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
-      "declared": "allow",
-      "basis": "mixed-path",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "unknown",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2044,17 +2715,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2063,16 +2733,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2081,16 +2751,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2099,16 +2769,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2117,35 +2787,70 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.41.0"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.163.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.147.128"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
-      "basis": "mixed-path",
+      "basis": "undefined-snat",
       "effective": "open",
       "baseline": "open",
-      "verdict": "unknown",
+      "verdict": "match",
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2155,30 +2860,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
-      "declared": "allow",
-      "basis": "mixed-path",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "unknown",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
+      "address": "172.18.0.2:32536",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -2192,11 +2878,29 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
+      "address": "172.18.0.4:32536",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.3"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2206,11 +2910,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.6:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2220,11 +2924,29 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker",
+      "source": "node/failopen-lab-calico-worker5",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
+      "address": "172.18.0.3:32536",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.163.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2234,25 +2956,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -2261,16 +2969,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "172.18.0.4"
+        "172.18.0.2"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
       "basis": "spec-exception",
       "effective": "open",
@@ -2279,16 +2987,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "172.18.0.4"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "spec-exception",
       "effective": "open",
@@ -2298,11 +3006,29 @@
       "hits": "1/1"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "target": "known-open/web-77b4b98d94-8vjvn",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
+      "address": "192.168.156.92:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.20.192"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-l8b4l",
+      "targetKind": "pod-ip",
+      "address": "192.168.20.212:8080",
       "declared": "allow",
       "basis": "spec-exception",
       "effective": "open",
@@ -2311,34 +3037,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "172.18.0.4"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
-      "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-xlh9t",
-      "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.189.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "mixed-path",
       "effective": "open",
@@ -2347,17 +3055,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2366,35 +3073,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker2",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "mixed-path",
       "effective": "open",
@@ -2403,17 +3091,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2422,16 +3109,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2440,16 +3127,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2458,16 +3145,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2476,16 +3163,34 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.41.0"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31440",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.147.128"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
       "basis": "mixed-path",
       "effective": "open",
@@ -2494,17 +3199,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2514,11 +3218,29 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
+      "address": "172.18.0.2:32536",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.20.192"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:32536",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -2527,34 +3249,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4"
+        "172.18.0.2"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
-      "declared": "allow",
-      "basis": "mixed-path",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "unknown",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.4"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker2",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
+      "address": "172.18.0.8:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2564,11 +3268,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.6:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2578,11 +3282,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
+      "address": "172.18.0.3:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2592,11 +3296,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker2",
+      "source": "node/failopen-lab-calico-worker",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -2606,371 +3310,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker6",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
-      "declared": "allow",
-      "basis": "undefined-hostnetwork",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "172.18.0.13"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/hostport",
-      "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/hostport",
-      "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-4gxcs",
-      "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-xlh9t",
-      "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.163.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.216.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.219.192"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.13"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.13"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker6",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker3",
-      "sourceKind": "node",
-      "target": "known-open/hostnet",
-      "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -2984,11 +3328,11 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -2997,16 +3341,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3016,11 +3360,11 @@
       "hits": "1/1"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "target": "known-open/web-77b4b98d94-8vjvn",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
+      "address": "192.168.156.92:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3029,16 +3373,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-xlh9t",
+      "target": "known-open/web-77b4b98d94-l8b4l",
       "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
+      "address": "192.168.20.212:8080",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3047,16 +3391,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3065,16 +3409,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3083,16 +3427,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3101,17 +3445,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3120,17 +3463,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3139,16 +3481,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3157,16 +3499,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3175,16 +3517,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
+      "address": "172.18.0.5:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3193,16 +3535,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.41.0"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3211,16 +3553,16 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -3230,11 +3572,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
+      "address": "172.18.0.2:32536",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3248,11 +3590,11 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
+      "address": "172.18.0.4:32536",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3266,29 +3608,11 @@
       "declaredObserved": "allow"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.216.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker3",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.8:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -3298,11 +3622,29 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
+      "address": "172.18.0.6:32536",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.160.192"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-calico-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -3312,371 +3654,11 @@
       "hits": "0/4"
     },
     {
-      "source": "node/failopen-lab-worker3",
+      "source": "node/failopen-lab-calico-worker4",
       "sourceKind": "node",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/hostnet",
-      "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
-      "declared": "allow",
-      "basis": "undefined-hostnetwork",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "172.18.0.14"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/hostport",
-      "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/hostport",
-      "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-4gxcs",
-      "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/web-77b4b98d94-xlh9t",
-      "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 1,
-      "hits": "1/1",
-      "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.163.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.216.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.219.192"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-cluster",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.41.0"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.14"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
-      "declared": "allow",
-      "basis": "policy",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "172.18.0.14"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
-      "declared": "allow",
-      "basis": "etp-local",
-      "effective": "timeout",
-      "baseline": "timeout",
-      "verdict": "unreachable",
-      "attempts": 4,
-      "hits": "0/4"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
-      "declared": "allow",
-      "basis": "undefined-snat",
-      "effective": "open",
-      "baseline": "open",
-      "verdict": "match",
-      "attempts": 4,
-      "hits": "4/4",
-      "observedSources": [
-        "192.168.220.64"
-      ],
-      "declaredObserved": "allow"
-    },
-    {
-      "source": "node/failopen-lab-worker5",
-      "sourceKind": "node",
-      "target": "known-open/svc/web-local",
-      "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -3690,7 +3672,7 @@
       "sourceKind": "outsider",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -3699,7 +3681,7 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.151"
+        "172.18.0.2"
       ],
       "declaredObserved": "allow"
     },
@@ -3708,7 +3690,7 @@
       "sourceKind": "outsider",
       "target": "known-open/hostport",
       "targetKind": "pod-ip",
-      "address": "192.168.189.125:8080",
+      "address": "192.168.20.213:8080",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3717,7 +3699,7 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.151"
+        "192.168.20.214"
       ],
       "declaredObserved": "allow"
     },
@@ -3726,7 +3708,7 @@
       "sourceKind": "outsider",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3738,9 +3720,9 @@
     {
       "source": "outsider",
       "sourceKind": "outsider",
-      "target": "known-open/web-77b4b98d94-4gxcs",
+      "target": "known-open/web-77b4b98d94-8vjvn",
       "targetKind": "pod-ip",
-      "address": "192.168.189.124:8080",
+      "address": "192.168.156.92:8080",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3749,16 +3731,16 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.151"
+        "192.168.20.214"
       ],
       "declaredObserved": "allow"
     },
     {
       "source": "outsider",
       "sourceKind": "outsider",
-      "target": "known-open/web-77b4b98d94-xlh9t",
+      "target": "known-open/web-77b4b98d94-l8b4l",
       "targetKind": "pod-ip",
-      "address": "192.168.201.154:8080",
+      "address": "192.168.20.212:8080",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3767,7 +3749,7 @@
       "attempts": 1,
       "hits": "1/1",
       "observedSources": [
-        "192.168.201.151"
+        "192.168.20.214"
       ],
       "declaredObserved": "allow"
     },
@@ -3776,7 +3758,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-cluster",
       "targetKind": "clusterip",
-      "address": "10.96.22.48:80",
+      "address": "10.96.17.145:80",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3785,7 +3767,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.201.151"
+        "192.168.20.214"
       ],
       "declaredObserved": "allow"
     },
@@ -3794,7 +3776,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3803,7 +3785,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
@@ -3812,7 +3794,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3821,8 +3803,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
@@ -3831,7 +3812,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3840,8 +3821,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
@@ -3850,7 +3830,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3859,7 +3839,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
@@ -3868,7 +3848,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3877,7 +3857,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
@@ -3886,7 +3866,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3895,7 +3875,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
@@ -3904,7 +3884,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
+      "address": "172.18.0.5:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3913,7 +3893,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.41.0"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
@@ -3922,7 +3902,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-local",
       "targetKind": "clusterip",
-      "address": "10.96.176.40:80",
+      "address": "10.96.42.182:80",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3931,7 +3911,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.201.151"
+        "192.168.20.214"
       ],
       "declaredObserved": "allow"
     },
@@ -3940,7 +3920,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -3954,7 +3934,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
+      "address": "172.18.0.2:32536",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -3963,7 +3943,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.201.151"
+        "192.168.20.214"
       ],
       "declaredObserved": "allow"
     },
@@ -3972,7 +3952,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
+      "address": "172.18.0.4:32536",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -3981,7 +3961,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3"
+        "172.18.0.2"
       ],
       "declaredObserved": "allow"
     },
@@ -3990,7 +3970,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
+      "address": "172.18.0.8:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -4004,7 +3984,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.6:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -4018,7 +3998,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
+      "address": "172.18.0.3:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -4032,7 +4012,7 @@
       "sourceKind": "outsider",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -4046,7 +4026,7 @@
       "sourceKind": "external",
       "target": "known-open/hostnet",
       "targetKind": "hostnetwork",
-      "address": "172.18.0.3:30902",
+      "address": "172.18.0.4:30902",
       "declared": "allow",
       "basis": "undefined-hostnetwork",
       "effective": "open",
@@ -4064,7 +4044,7 @@
       "sourceKind": "external",
       "target": "known-open/hostport",
       "targetKind": "hostport",
-      "address": "172.18.0.4:30901",
+      "address": "172.18.0.2:30901",
       "declared": "allow",
       "basis": "policy",
       "effective": "open",
@@ -4078,7 +4058,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30344",
+      "address": "172.18.0.7:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4087,7 +4067,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.163.128"
+        "192.168.51.128"
       ],
       "declaredObserved": "allow"
     },
@@ -4096,7 +4076,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30344",
+      "address": "172.18.0.2:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4105,8 +4085,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.3",
-        "192.168.201.128"
+        "192.168.20.192"
       ],
       "declaredObserved": "allow"
     },
@@ -4115,7 +4094,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30344",
+      "address": "172.18.0.4:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4124,8 +4103,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "172.18.0.4",
-        "192.168.189.64"
+        "192.168.156.64"
       ],
       "declaredObserved": "allow"
     },
@@ -4134,7 +4112,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30344",
+      "address": "172.18.0.8:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4143,7 +4121,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.216.64"
+        "192.168.114.0"
       ],
       "declaredObserved": "allow"
     },
@@ -4152,7 +4130,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30344",
+      "address": "172.18.0.6:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4161,7 +4139,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.219.192"
+        "192.168.160.192"
       ],
       "declaredObserved": "allow"
     },
@@ -4170,7 +4148,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30344",
+      "address": "172.18.0.3:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4179,7 +4157,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.220.64"
+        "192.168.163.0"
       ],
       "declaredObserved": "allow"
     },
@@ -4188,7 +4166,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-cluster",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30344",
+      "address": "172.18.0.5:31440",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4197,7 +4175,7 @@
       "attempts": 4,
       "hits": "4/4",
       "observedSources": [
-        "192.168.41.0"
+        "192.168.147.128"
       ],
       "declaredObserved": "allow"
     },
@@ -4206,7 +4184,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.9:30653",
+      "address": "172.18.0.7:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -4220,7 +4198,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.3:30653",
+      "address": "172.18.0.2:32536",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4238,7 +4216,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.4:30653",
+      "address": "172.18.0.4:32536",
       "declared": "allow",
       "basis": "undefined-snat",
       "effective": "open",
@@ -4256,7 +4234,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.6:30653",
+      "address": "172.18.0.8:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -4270,7 +4248,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.7:30653",
+      "address": "172.18.0.6:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -4284,7 +4262,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.14:30653",
+      "address": "172.18.0.3:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",
@@ -4298,7 +4276,7 @@
       "sourceKind": "external",
       "target": "known-open/svc/web-local",
       "targetKind": "nodeport",
-      "address": "172.18.0.13:30653",
+      "address": "172.18.0.5:32536",
       "declared": "allow",
       "basis": "etp-local",
       "effective": "timeout",

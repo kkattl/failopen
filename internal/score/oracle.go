@@ -28,6 +28,17 @@ func Reconcile(c scenario.Case, r scenario.Run, lf *LabelFile) []Disagreement {
 	}
 	probes := r.Reachability.Probes
 
+	// On a CNI that measurably enforces nothing, every divergence is that
+	// one cluster-level fact (the cni-not-enforcing finding); per-target
+	// bypasses and per-class checks would just restate it hundreds of times.
+	// Too few policy-denied probes to measure it: trust the collector's
+	// claim, which TestEnforcementClaim checks wherever there is enough data.
+	blocked, denied := enforcement(probes)
+	unenforced := !r.Snapshot.CNI.EnforcesPolicy
+	if denied >= 10 {
+		unenforced = float64(blocked)/float64(denied) < 0.1
+	}
+
 	if lf != nil {
 		for i := range lf.Findings {
 			l := &lf.Findings[i]
@@ -48,6 +59,9 @@ func Reconcile(c scenario.Case, r scenario.Run, lf *LabelFile) []Disagreement {
 					add("label-contradicted", l, "label says the CNI enforces; oracle measured only %d/%d blocked", blocked, denied)
 				}
 			case "ipblock-admits-node-ips":
+				if unenforced {
+					continue
+				}
 				hits := snatBypasses(probes, l.Subject)
 				if l.Label == Must && len(hits) == 0 {
 					add("label-unsupported", l, "no SNAT bypass measured to %s/%s", l.Subject.Namespace, l.Subject.Name)
@@ -57,6 +71,10 @@ func Reconcile(c scenario.Case, r scenario.Run, lf *LabelFile) []Disagreement {
 				}
 			}
 		}
+	}
+
+	if unenforced {
+		return out
 	}
 
 	// Measured divergences nobody labelled: group bypasses by (target, basis).

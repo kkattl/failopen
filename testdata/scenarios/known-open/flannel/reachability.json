@@ -1,0 +1,4320 @@
+{
+  "profile": "flannel",
+  "cni": "flannel",
+  "provenance": {
+    "timestamp": "2026-09-25T12:42:20Z",
+    "oracleCommit": "dc91e074c19534b4d7b70a0c848258b98978f38b-dirty",
+    "policyAssistant": "318a5176525c3dff6e5c406cb8f745506b73194e",
+    "manifestSha256": "b8856c079267fb4bb8d64dd67dcf4e15500eaba9d2571d12f9706391a9e41d2d",
+    "kubeletVersion": "v1.37.0",
+    "containerRuntime": "containerd://2.3.4",
+    "cniImages": [
+      "ghcr.io/flannel-io/flannel:v0.28.9",
+      "registry.k8s.io/kube-proxy:v1.37.0"
+    ],
+    "outsiderNode": "failopen-lab-flannel-worker",
+    "probeTimeout": "2s",
+    "serviceAttempts": 4
+  },
+  "probes": [
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.42"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.42"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.42"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.42"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.42"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.42"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/client",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.3"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostnet",
+      "sourceKind": "hostnetwork-pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.6"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.3.7"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.3.7"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.7"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.7"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.6"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.6"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.7"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/hostport",
+      "sourceKind": "pod",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-9wwc2",
+      "sourceKind": "pod",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-9wwc2",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.41"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-9wwc2",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-9wwc2",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.41"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-j28hz",
+      "sourceKind": "pod",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.28"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-j28hz",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.28"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-j28hz",
+      "sourceKind": "pod",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "known-open/web-77b4b98d94-j28hz",
+      "sourceKind": "pod",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.28"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.3"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.3"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker2",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.8"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.8"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.8"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker5",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "mixed-path",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "unknown",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.6"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.3.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "spec-exception",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.6"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.6"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker3",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.2"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.2"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.2"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker6",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.7"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.7"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.7"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-control-plane",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.4"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.4"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.4"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "node/failopen-lab-flannel-worker4",
+      "sourceKind": "node",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/hostport",
+      "targetKind": "pod-ip",
+      "address": "192.168.3.7:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.43"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/web-77b4b98d94-9wwc2",
+      "targetKind": "pod-ip",
+      "address": "192.168.2.41:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.43"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/web-77b4b98d94-j28hz",
+      "targetKind": "pod-ip",
+      "address": "192.168.8.28:8080",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "192.168.2.43"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "clusterip",
+      "address": "10.96.168.125:80",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.43"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-local",
+      "targetKind": "clusterip",
+      "address": "10.96.93.132:80",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.43"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.43"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "172.18.0.5"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "outsider",
+      "sourceKind": "outsider",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/hostnet",
+      "targetKind": "hostnetwork",
+      "address": "172.18.0.3:30902",
+      "declared": "allow",
+      "basis": "undefined-hostnetwork",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1",
+      "observedSources": [
+        "10.250.0.10"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/hostport",
+      "targetKind": "hostport",
+      "address": "172.18.0.6:30901",
+      "declared": "allow",
+      "basis": "policy",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 1,
+      "hits": "1/1"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.0.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.2.0",
+        "192.168.2.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.8.0",
+        "192.168.8.1"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.3.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.7.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.9.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-cluster",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:31987",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "192.168.1.0"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.7:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.5:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "10.250.0.10"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.3:30240",
+      "declared": "allow",
+      "basis": "undefined-snat",
+      "effective": "open",
+      "baseline": "open",
+      "verdict": "match",
+      "attempts": 4,
+      "hits": "4/4",
+      "observedSources": [
+        "10.250.0.10"
+      ],
+      "declaredObserved": "allow"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.6:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.4:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.8:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    },
+    {
+      "source": "external",
+      "sourceKind": "external",
+      "target": "known-open/svc/web-local",
+      "targetKind": "nodeport",
+      "address": "172.18.0.2:30240",
+      "declared": "allow",
+      "basis": "etp-local",
+      "effective": "timeout",
+      "baseline": "timeout",
+      "verdict": "unreachable",
+      "attempts": 4,
+      "hits": "0/4"
+    }
+  ]
+}
