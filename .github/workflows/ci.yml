@@ -25,3 +25,6 @@ jobs:
 
       - name: Test
         run: go test ./...
+
+      - name: Oracle tests (separate module, pinned policy-assistant)
+        run: make oracle-deps && cd hack/oracle && go vet ./... && go test ./...

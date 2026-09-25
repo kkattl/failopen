@@ -6,8 +6,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// version is set at build time via -ldflags in M3; hardcoded for now.
-var version = "v0.0.1-dev"
+// version is set at build time: -ldflags "-X github.com/kkattl/failopen/internal/cli.version=..."
+// (see Makefile); "dev" for plain `go build`.
+var version = "dev"
 
 var versionCmd = &cobra.Command{
 	Use:   "version",

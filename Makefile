@@ -20,8 +20,10 @@ demo:
 audit: build
 	./bin/failopen audit --kubeconfig $(KUBECONFIG)
 
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
+
 build:
-	go build -o bin/failopen ./cmd/failopen
+	go build -ldflags "-X github.com/kkattl/failopen/internal/cli.version=$(VERSION)" -o bin/failopen ./cmd/failopen
 
 demo-down:
 	kind delete cluster --name $(CLUSTER)
