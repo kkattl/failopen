@@ -75,7 +75,23 @@ const (
 	EffectiveRefused = "refused" // RST: packet reached the pod, port closed
 	EffectiveTimeout = "timeout" // dropped (policy) or no route
 	EffectiveError   = "error"   // DNS/other; treat as unreachable
+	// EffectiveNodeRefused: RST to a node address (hostPort, NodePort).
+	// The node sent it — no DNAT rule for the port, nothing listening —
+	// so it says nothing about reaching the pod. See AtTarget.
+	EffectiveNodeRefused = "node-refused"
 )
+
+// AtTarget interprets a raw outcome for the kind of address probed. A
+// REFUSED from a pod IP or ClusterIP comes from the pod (or kube-proxy,
+// which the baseline comparison handles); from a hostPort or NodePort it
+// can come from the node itself — measured on Cilium, whose hostPorts
+// weren't mapped at all: every client, policies or not, got an RST.
+func AtTarget(targetKind, outcome string) string {
+	if outcome == EffectiveRefused && (targetKind == TargetHostPort || targetKind == TargetNodePort) {
+		return EffectiveNodeRefused
+	}
+	return outcome
+}
 
 // Verdicts: declared vs effective.
 const (

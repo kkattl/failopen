@@ -40,3 +40,17 @@ func TestClassify(t *testing.T) {
 		}
 	}
 }
+
+// An RST to a hostPort or NodePort may come from the node, not the pod:
+// with the same RST in the baseline, the path is dead, not reachable.
+func TestNodeRefusedIsUnreachable(t *testing.T) {
+	for _, kind := range []string{TargetHostPort, TargetNodePort} {
+		eff, base := AtTarget(kind, EffectiveRefused), AtTarget(kind, EffectiveRefused)
+		if got := Classify(DeclaredDeny, BasisPolicy, eff, base); got != VerdictUnreachable {
+			t.Errorf("%s: got %s, want %s", kind, got, VerdictUnreachable)
+		}
+	}
+	if got := AtTarget(TargetPodIP, EffectiveRefused); got != EffectiveRefused {
+		t.Errorf("pod IP: got %s, want %s", got, EffectiveRefused)
+	}
+}

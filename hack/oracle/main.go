@@ -39,6 +39,13 @@ type config struct {
 }
 
 func main() {
+	if len(os.Args) == 3 && os.Args[1] == "reclassify" {
+		if err := reclassify(os.Args[2]); err != nil {
+			fmt.Fprintln(os.Stderr, "oracle:", err)
+			os.Exit(1)
+		}
+		return
+	}
 	if len(os.Args) == 3 && os.Args[1] == "summary" {
 		if err := summary(os.Args[2]); err != nil {
 			fmt.Fprintln(os.Stderr, "oracle:", err)
@@ -60,7 +67,7 @@ func main() {
 	flag.BoolVar(&cfg.keep, "keep", false, "keep the failopen-oracle namespace after the run")
 	flag.Parse()
 	if cfg.manifests == "" || cfg.out == "" {
-		fmt.Fprintln(os.Stderr, "usage: oracle --manifests <file> --out <scenario dir> --profile <p> [--kubeconfig <file>]\n       oracle summary <scenarios dir>")
+		fmt.Fprintln(os.Stderr, "usage: oracle --manifests <file> --out <scenario dir> --profile <p> [--kubeconfig <file>]\n       oracle summary <scenarios dir>\n       oracle reclassify <scenarios dir>")
 		os.Exit(2)
 	}
 	if err := run(context.Background(), cfg); err != nil {
@@ -200,8 +207,8 @@ func run(ctx context.Context, cfg config) error {
 				continue
 			}
 			n := attempts(t)
-			eff, hits := collect(effRaw[si], ti, n, "c", baseRaw[si]) // hits judged against baseline
-			base, _ := collect(baseRaw[si], ti, n, "c", nil)
+			eff, hits := collect(effRaw[si], ti, n, t.Kind, baseRaw[si]) // hits judged against baseline
+			base, _ := collect(baseRaw[si], ti, n, t.Kind, nil)
 			observed := observedIPs(baseRaw[si], ti, n)
 
 			declared := dc.intended(src, t)
@@ -245,22 +252,23 @@ func jobKey(kind string, target, attempt int) string {
 
 // rank orders outcomes so the "best" one over attempts represents a target.
 var rank = map[string]int{
-	scenario.EffectiveOpen: 3, scenario.EffectiveRefused: 2,
+	scenario.EffectiveOpen: 4, scenario.EffectiveRefused: 3, scenario.EffectiveNodeRefused: 2,
 	scenario.EffectiveTimeout: 1, scenario.EffectiveError: 0,
 }
 
-// collect folds n connect attempts into the best outcome, plus how many
-// attempts were reachable (judged against the same attempt's baseline).
-func collect(raw map[string]string, ti, n int, kind string, baseRaw map[string]string) (string, int) {
+// collect folds n connect attempts to a target of targetKind into the best
+// outcome, plus how many attempts were reachable (judged against the same
+// attempt's baseline).
+func collect(raw map[string]string, ti, n int, targetKind string, baseRaw map[string]string) (string, int) {
 	best, hits := scenario.EffectiveError, 0
 	for a := range n {
-		got := classifyOutput(raw[jobKey(kind, ti, a)])
+		got := scenario.AtTarget(targetKind, classifyOutput(raw[jobKey("c", ti, a)]))
 		if rank[got] > rank[best] {
 			best = got
 		}
 		base := scenario.EffectiveOpen
 		if baseRaw != nil {
-			base = classifyOutput(baseRaw[jobKey(kind, ti, a)])
+			base = scenario.AtTarget(targetKind, classifyOutput(baseRaw[jobKey("c", ti, a)]))
 		}
 		if scenario.Reachable(got, base) {
 			hits++
