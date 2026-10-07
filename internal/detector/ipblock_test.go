@@ -123,6 +123,25 @@ func TestIPBlockNodeIPsNotWhenNothingIsEnforced(t *testing.T) {
 	}
 }
 
+// 0.0.0.0/0 with no excepts lets pods in on purpose, pod CIDR known or not.
+func TestIPBlockNodeIPsNotForOpenInternetWithoutPodCIDR(t *testing.T) {
+	s := edgeSnapshot(from(nil, block("0.0.0.0/0")), "192.168.0.0/16")
+	s.CNI.PodCIDRs = nil
+	if got := (&IPBlockNodeIPs{}).Detect(s); len(got) != 0 {
+		t.Errorf("got %+v, want none", got)
+	}
+}
+
+// An unrecognised CNI may enforce policies: the finding stays, downgraded.
+func TestIPBlockNodeIPsWarningOnUnknownCNI(t *testing.T) {
+	s := edgeSnapshot(from(nil, block("172.18.0.0/16")), "192.168.0.0/16")
+	s.CNI = collector.CNIInfo{Name: "unknown", PodCIDRs: []string{"192.168.0.0/16"}}
+	got := (&IPBlockNodeIPs{}).Detect(s)
+	if len(got) != 1 || got[0].Severity != SeverityWarning {
+		t.Fatalf("got %+v, want one warning", got)
+	}
+}
+
 func TestIPBlockNodeIPsFindingText(t *testing.T) {
 	got := (&IPBlockNodeIPs{}).Detect(edgeSnapshot(from(nil, block("0.0.0.0/0", "192.168.0.0/16")), "192.168.0.0/16"))
 	if len(got) != 1 {

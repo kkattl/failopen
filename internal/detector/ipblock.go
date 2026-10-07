@@ -48,8 +48,9 @@ func (*IPBlockNodeIPs) Detect(s *collector.Snapshot) []Finding {
 		return nil
 	}
 	// Policies that aren't enforced at all can't be bypassed; the cni
-	// detector already says everything there is to say.
-	if !s.CNI.EnforcesPolicy {
+	// detector already says everything there is to say. An unrecognised
+	// CNI may well enforce them: report, downgraded (see finding).
+	if !s.CNI.EnforcesPolicy && s.CNI.Name != "unknown" {
 		return nil
 	}
 	nodeIPs := internalIPs(s.Nodes)
@@ -98,6 +99,9 @@ func finding(s *collector.Snapshot, e exposure, pol *networkingv1.NetworkPolicy,
 			"--image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- connect %s --timeout=3s", e.nodePort),
 	}
 	switch {
+	case s.CNI.Name == "unknown":
+		f.Severity = SeverityWarning
+		f.Assumes = append(f.Assumes, "CNI not recognised: assumes it enforces NetworkPolicy at all")
 	case len(podCIDRs) == 0:
 		f.Severity = SeverityWarning
 		f.Assumes = append(f.Assumes, "pod CIDR unknown: could not confirm the rule excludes pods")
@@ -147,7 +151,9 @@ func admittingBlock(s *collector.Snapshot, e exposure, nodeIPs, podCIDRs []netip
 					}
 					continue
 				}
-				if len(podCIDRs) > 0 && admitsAll(peer.IPBlock, podCIDRs) {
+				// 0.0.0.0/0 with no excepts admits pods whatever their CIDR.
+				if internetWide(peer.IPBlock) && len(peer.IPBlock.Except) == 0 ||
+					len(podCIDRs) > 0 && admitsAll(peer.IPBlock, podCIDRs) {
 					return nil, nil, false // pods admitted on purpose
 				}
 				if hitBlock == nil && admitsAny(peer.IPBlock, nodeIPs) {
