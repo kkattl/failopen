@@ -18,6 +18,16 @@ func dsIn(namespace, name string) appsv1.DaemonSet {
 	}
 }
 
+func withImage(d appsv1.DaemonSet, image string) appsv1.DaemonSet {
+	d.Spec.Template.Spec.Containers = []corev1.Container{{Name: "main", Image: image}}
+	return d
+}
+
+func withArgs(d appsv1.DaemonSet, args ...string) appsv1.DaemonSet {
+	d.Spec.Template.Spec.Containers = []corev1.Container{{Name: "main", Args: args}}
+	return d
+}
+
 func TestClassifyCNI(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -66,6 +76,36 @@ func TestClassifyCNI(t *testing.T) {
 			daemonSets:   []appsv1.DaemonSet{ds("kindnet")},
 			wantName:     "kindnet",
 			wantEnforces: true,
+		},
+		{
+			name:         "kindnet before kind v0.24 does not",
+			daemonSets:   []appsv1.DaemonSet{withImage(ds("kindnet"), "docker.io/kindest/kindnetd:v20240202-8f1494ea")},
+			wantName:     "kindnet",
+			wantEnforces: false,
+		},
+		{
+			name:         "kindnet from kind v0.24 does",
+			daemonSets:   []appsv1.DaemonSet{withImage(ds("kindnet"), "docker.io/kindest/kindnetd:v20240813-c6f155d6")},
+			wantName:     "kindnet",
+			wantEnforces: true,
+		},
+		{
+			name:         "antrea enforces policy",
+			daemonSets:   []appsv1.DaemonSet{ds("antrea-agent")},
+			wantName:     "antrea",
+			wantEnforces: true,
+		},
+		{
+			name:         "kube-router next to flannel enforces policy",
+			daemonSets:   []appsv1.DaemonSet{dsIn("kube-flannel", "kube-flannel-ds"), ds("kube-router")},
+			wantName:     "kube-router",
+			wantEnforces: true,
+		},
+		{
+			name:         "kube-router with its firewall off does not",
+			daemonSets:   []appsv1.DaemonSet{withArgs(ds("kube-router"), "--run-router=true", "--run-firewall=false")},
+			wantName:     "kube-router",
+			wantEnforces: false,
 		},
 		{
 			name:         "enforcing CNI wins over flannel regardless of order",

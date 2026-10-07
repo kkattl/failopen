@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"slices"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -137,8 +138,13 @@ var cniRules = []struct {
 	// Canal = flannel networking + calico policy enforcement.
 	{[]string{"canal"}, CNIInfo{Name: "canal", EnforcesPolicy: true}},
 	// kind's default CNI; enforces NetworkPolicy since it bundled
-	// kube-network-policies (kind v0.24+). Older kindnet did not.
+	// kube-network-policies (kind v0.24+). Older kindnet did not: see
+	// kindnetEnforces.
 	{[]string{"kindnet"}, CNIInfo{Name: "kindnet", EnforcesPolicy: true}},
+	{[]string{"antrea-agent"}, CNIInfo{Name: "antrea", EnforcesPolicy: true}},
+	// kube-router as a CNI or as a policy-only controller next to another
+	// CNI (e.g. flannel); enforces unless its firewall is switched off.
+	{[]string{"kube-router"}, CNIInfo{Name: "kube-router", EnforcesPolicy: true}},
 	{[]string{"kube-flannel-ds", "kube-flannel"}, CNIInfo{Name: "flannel", EnforcesPolicy: false}},
 }
 
@@ -153,11 +159,56 @@ func classifyCNI(daemonSets []appsv1.DaemonSet) CNIInfo {
 	for _, rule := range cniRules {
 		for _, name := range rule.dsNames {
 			if present[name] {
-				return rule.info
+				info := rule.info
+				switch info.Name {
+				case "kindnet":
+					info.EnforcesPolicy = kindnetEnforces(daemonSets)
+				case "kube-router":
+					info.EnforcesPolicy = !hasArg(daemonSets, "kube-router", "--run-firewall=false")
+				}
+				return info
 			}
 		}
 	}
 	return CNIInfo{Name: "unknown", EnforcesPolicy: false}
+}
+
+// kindnetFirstEnforcing is the kindnetd image of kind v0.24.0, the first
+// release whose kindnet enforces NetworkPolicy. kind tags kindnetd by build
+// date (vYYYYMMDD-<commit>); measured: v20240202 enforces nothing.
+const kindnetFirstEnforcing = "20240813"
+
+var kindnetDateTag = regexp.MustCompile(`kindnetd:v(\d{8})-`)
+
+// kindnetEnforces reads the kindnetd image tag. Tags it can't date (custom
+// builds) are assumed to be current kindnet.
+func kindnetEnforces(daemonSets []appsv1.DaemonSet) bool {
+	for _, ds := range daemonSets {
+		if ds.Name != "kindnet" {
+			continue
+		}
+		for _, c := range ds.Spec.Template.Spec.Containers {
+			if m := kindnetDateTag.FindStringSubmatch(c.Image); m != nil {
+				return m[1] >= kindnetFirstEnforcing
+			}
+		}
+	}
+	return true
+}
+
+// hasArg: some container of the named DaemonSet is started with arg.
+func hasArg(daemonSets []appsv1.DaemonSet, name, arg string) bool {
+	for _, ds := range daemonSets {
+		if ds.Name != name {
+			continue
+		}
+		for _, c := range ds.Spec.Template.Spec.Containers {
+			if slices.Contains(c.Args, arg) || slices.Contains(c.Command, arg) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Node annotations left by distributions that embed the CNI in their own
