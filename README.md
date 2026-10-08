@@ -42,6 +42,7 @@ Snapshot: 9 namespaces · 38 pods · 11 services · 27 policies · CNI calico (e
 |---|---|---|
 | `cni` | critical / warning | NetworkPolicies exist, but the CNI doesn't implement them (flannel, k3s with `--disable-network-policy`, kindnet before kind v0.24). Every policy is decoration. Recognised: Calico, Cilium, Canal, Antrea, kube-router, kindnet, flannel, k3s. Anything else is a warning: "enforcement unverified". |
 | `ipblock-node-ips` | critical / warning | A pod exposed through a NodePort/LoadBalancer or hostPort has an ingress `ipBlock` that admits node IPs but not pods ("internet, but not pods", or an external range overlapping the nodes). Pod traffic to that port gets SNAT'd to a node IP and passes the rule meant to keep pods out. Critical for a closed allowlist overlapping the nodes, warning for an internet-wide "anything but pods". Not reported on Cilium, which doesn't match ipBlocks against cluster traffic (measured). |
+| `hostnetwork-under-policy` | critical / warning | A NetworkPolicy selects a `hostNetwork: true` pod. The pod lives in the node's network namespace, where the CNI doesn't enforce pod policy (the spec calls it undefined; measured on Calico and Cilium). Its ports on the node IP are open to every node, hostNetwork pod, external client and any pod whose own egress allows it. Warning if the CNI is unknown. |
 
 Every finding says what it **assumes** (CNI, NAT behaviour) and gives a
 **verify** command that demonstrates it on your cluster. If failopen can't
@@ -90,7 +91,7 @@ make corpus-summary                            # verdicts per profile x scenario
 ```
 
 The evaluation is in [docs/experiments](docs/experiments/README.md). It
-covers accuracy against measurement (precision 13/13, recall 13/18), CNI
+covers accuracy against measurement (precision 17/17, recall 17/18), CNI
 detection on 10 distributions, a comparison with Kubescape and
 netpol-analyzer, sensitivity to kube-proxy mode and missing data,
 performance (50k pods in 1.2 s) and an API audit log showing read-only
@@ -105,9 +106,12 @@ access.
   V2) and kube-proxy replacements are not measured yet.
 - IPv4/TCP only. CNI-specific policy CRDs (Calico GlobalNetworkPolicy,
   Cilium CCNP, AdminNetworkPolicy) are not read yet.
-- Known misses, measured: hostNetwork pods selected by a NetworkPolicy
-  (the policy has no effect on them), and on Cilium a NodePort with
-  `externalTrafficPolicy: Cluster` behind an ipBlock that excludes pods.
+- Known misses, measured:
+  - non-system hostNetwork agents that share nodes with a protected
+    namespace (the node-local exception);
+  - on Cilium, a NodePort with `externalTrafficPolicy: Cluster` behind an
+    ipBlock that excludes pods.
+
   Both are planned detectors.
 - The CNI is identified by DaemonSet names, image tags and node
   annotations. A renamed DaemonSet, or an engine configured not to

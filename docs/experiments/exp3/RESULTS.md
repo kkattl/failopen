@@ -34,6 +34,17 @@ netpol-analyzer answers "what does the policy allow?". failopen answers
 > fix. The probe counts for `iot-voltgrid` and `known-open` on Cilium
 > differ accordingly; no failopen result changes. See experiment 1.
 
+> **Update: `hostnetwork-under-policy`.** Since this comparison, failopen
+> has a third detector. It covers the 4 hostNetwork-pod-under-policy
+> instances, which were among the 8 that only Kubescape C-0041 partly
+> flagged. failopen now reports **17 of the 21** must instances, with 0 FPs.
+> The 4 still missed are `node-exception-segment`, a hostNetwork agent
+> co-located with a protected namespace. C-0041 still partly flags those.
+>
+> These 4 are development-set results: the detector was written after the
+> instances were labelled and measured. The tables below are the original
+> run.
+
 Everything here is reproduced by `hack/experiments/exp3/run.sh`. Raw outputs
 are in `raw/`, and the generated tables are in
 [`raw/analysis.md`](raw/analysis.md).

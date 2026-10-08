@@ -10,6 +10,10 @@
 | ipblock-node-ips | ALL | 4 | 0 | 4 | 0 | 1.00 (4/4) | 1.00 (4/4) | 1.00 |
 | ipblock-node-ips | dev | 3 | 0 | 3 | 0 | 1.00 (3/3) | 1.00 (3/3) | 1.00 |
 | ipblock-node-ips | hold-out | 1 | 0 | 1 | 0 | 1.00 (1/1) | 1.00 (1/1) | 1.00 |
+| hostnetwork-under-policy | calico-ipvs | 0 | 0 | 0 | 0 | - | - | - |
+| hostnetwork-under-policy | ALL | 0 | 0 | 0 | 0 | - | - | - |
+| hostnetwork-under-policy | dev | 0 | 0 | 0 | 0 | - | - | - |
+| hostnetwork-under-policy | hold-out | 0 | 0 | 0 | 0 | - | - | - |
 | all | calico-ipvs | 4 | 0 | 4 | 0 | 1.00 (4/4) | 1.00 (4/4) | 1.00 |
 | all | ALL | 4 | 0 | 4 | 0 | 1.00 (4/4) | 1.00 (4/4) | 1.00 |
 | all | dev | 3 | 0 | 3 | 0 | 1.00 (3/3) | 1.00 (3/3) | 1.00 |

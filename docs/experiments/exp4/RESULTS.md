@@ -22,15 +22,16 @@ than up?
 
 ## 4a. Hiding or flipping inputs (offline, all 30 snapshots)
 
+Numbers include all three detectors, `hostnetwork-under-policy` among them.
 `go run ./hack/experiments/exp4` audits every corpus snapshot as captured,
 and again under each transformation. It then matches findings by
 (detector, subject). Full list of changes: [offline.md](offline.md).
 
 | Transformation | unchanged | severity lowered | severity raised | finding dropped | added: warning | added: critical |
 |---|---|---|---|---|---|---|
-| `no-podcidr`: pod CIDR unknown | 12 | 1 | **0** | 0 | 0 | **0** |
-| `unknown-cni`: CNI not recognised | 3 | 10 | **0** | 0 | 26 | **0** |
-| `etp-flip`: `externalTrafficPolicy` Local ↔ Cluster | 13 | 0 | **0** | 0 | 0 | **0** |
+| `no-podcidr`: pod CIDR unknown | 16 | 1 | **0** | 0 | 0 | **0** |
+| `unknown-cni`: CNI not recognised | 3 | 14 | **0** | 0 | 28 | **0** |
+| `etp-flip`: `externalTrafficPolicy` Local ↔ Cluster | 17 | 0 | **0** | 0 | 0 | **0** |
 
 **`no-podcidr`.** The critical in `ecommerce-northwind-overlap` becomes a
 warning. Without the pod CIDR, failopen can't confirm that the rule
@@ -38,13 +39,15 @@ excludes pods, and the finding says so in `assumes:`.
 
 **`unknown-cni`.** All 9 flannel criticals ("NONE ENFORCED") become one
 warning per run, "enforcement unverified", because failopen can no longer
-claim the CNI is flannel. The 26 added warnings are of two kinds:
+claim the CNI is flannel. The 28 added warnings are of three kinds:
 
 - that same `cni` warning on Calico and Cilium snapshots (18);
 - `ipblock-node-ips` warnings on Cilium and flannel snapshots (8), where
   the detector is normally switched off because the CNI is known.
+- `hostnetwork-under-policy` warnings on flannel snapshots (2), for the
+  same reason.
 
-Both are what "we don't know" should look like: possible, unverified, not
+All three are what "we don't know" should look like: possible, unverified, not
 critical. No exit code changes from 0 to 1.
 
 **`etp-flip`.** No verdict moves. The detector doesn't read
