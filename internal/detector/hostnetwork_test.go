@@ -86,14 +86,63 @@ func TestHostNetworkNotWithoutPolicy(t *testing.T) {
 	}
 }
 
+// 0.0.0.0/0 with no excepts admits nodes, external clients and pods alike.
+func TestHostNetworkNotWhenOpenInternet(t *testing.T) {
+	s := hostNetSnapshot(true, from(nil, block("0.0.0.0/0"))...)
+	if got := (&HostNetworkUnderPolicy{}).Detect(s); len(got) != 0 {
+		t.Errorf("got %+v, want none", got)
+	}
+}
+
+// namespaceSelector: {} admits every pod, but not nodes or external
+// clients: the policy still restricts, and is still not applied.
+func TestHostNetworkAllPodsIsStillRestricted(t *testing.T) {
+	allPods := networkingv1.NetworkPolicyPeer{NamespaceSelector: &metav1.LabelSelector{}}
+	s := hostNetSnapshot(true, from(nil, allPods)...)
+	if got := (&HostNetworkUnderPolicy{}).Detect(s); len(got) != 1 {
+		t.Errorf("got %d findings, want 1", len(got))
+	}
+}
+
+// Only the restricted ports are reported.
+func TestHostNetworkReportsRestrictedPortsOnly(t *testing.T) {
+	port := intstr.FromInt32(8080)
+	s := hostNetSnapshot(true, networkingv1.NetworkPolicyIngressRule{Ports: []networkingv1.NetworkPolicyPort{{Port: &port}}})
+	c := &s.Pods[0].Spec.Containers[0]
+	c.Ports = append(c.Ports, corev1.ContainerPort{Name: "admin", ContainerPort: 9000})
+	got := (&HostNetworkUnderPolicy{}).Detect(s)
+	if len(got) != 1 || got[0].Effective != "ALLOW on the node IP, port 9000 — policy not applied (hostNetwork pod)" {
+		t.Errorf("got %+v, want one finding on port 9000 only", got)
+	}
+}
+
+func TestHostNetworkSkipsSystemNamespaces(t *testing.T) {
+	s := hostNetSnapshot(true)
+	for _, ns := range []string{"kube-system", "calico-system", "cilium"} {
+		s.Pods[0].Namespace, s.NetworkPolicies[0].Namespace = ns, ns
+		if got := (&HostNetworkUnderPolicy{}).Detect(s); len(got) != 0 {
+			t.Errorf("%s: got %+v, want none (cluster plumbing)", ns, got)
+		}
+	}
+}
+
 func TestHostNetworkNotWhenNothingIsEnforced(t *testing.T) {
 	s := hostNetSnapshot(true)
 	s.CNI = collector.CNIInfo{Name: "flannel"}
 	if got := (&HostNetworkUnderPolicy{}).Detect(s); len(got) != 0 {
 		t.Errorf("got %+v on flannel, want none (the cni detector covers it)", got)
 	}
+}
+
+// An unrecognised CNI may enforce policies: the finding stays, downgraded.
+func TestHostNetworkWarningOnUnknownCNI(t *testing.T) {
+	s := hostNetSnapshot(true)
 	s.CNI = collector.CNIInfo{Name: "unknown"}
-	if got := (&HostNetworkUnderPolicy{}).Detect(s); len(got) != 1 || got[0].Severity != SeverityWarning {
-		t.Errorf("got %+v on an unknown CNI, want one warning", got)
+	got := (&HostNetworkUnderPolicy{}).Detect(s)
+	if len(got) != 1 || got[0].Severity != SeverityWarning {
+		t.Fatalf("got %+v, want one warning", got)
+	}
+	if a := got[0].Assumes[len(got[0].Assumes)-1]; a != "CNI not recognised: assumes it enforces NetworkPolicy at all" {
+		t.Errorf("last assumption = %q, want the unknown-CNI caveat", a)
 	}
 }

@@ -112,12 +112,25 @@ func ingressPoliciesFor(s *collector.Snapshot, p *corev1.Pod) []*networkingv1.Ne
 // restrictedPorts lists the pod's TCP ports that the policies don't open to
 // everyone; nil if every port is open to everyone. A pod that declares no
 // ports gets an empty, non-nil list unless some rule opens all ports.
+//
+// "Everyone" is what reaches a node address: nodes, external clients and
+// pods. A rule with no peers admits them all, and so does 0.0.0.0/0 with no
+// excepts. namespaceSelector: {} admits every pod but no node or external
+// client, so the port stays restricted — and the bypass real.
 func restrictedPorts(p *corev1.Pod, pols []*networkingv1.NetworkPolicy) []string {
 	openToAll := func(port int32, name string) bool {
 		for _, np := range pols {
 			for _, rule := range np.Spec.Ingress {
-				if len(rule.From) == 0 && portMatches(rule.Ports, port, name) {
+				if !portMatches(rule.Ports, port, name) {
+					continue
+				}
+				if len(rule.From) == 0 {
 					return true
+				}
+				for _, peer := range rule.From {
+					if peer.IPBlock != nil && internetWide(peer.IPBlock) && len(peer.IPBlock.Except) == 0 {
+						return true
+					}
 				}
 			}
 		}
