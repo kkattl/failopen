@@ -29,7 +29,7 @@ type ObjectRef struct {
 }
 
 type Finding struct {
-	Detector  string // "cni", "ipblock-node-ips"
+	Detector  string // "cni", "ipblock-node-ips", "hostnetwork-under-policy"
 	Object    ObjectRef
 	Severity  Severity
 	Namespace string   // "" for cluster-scope findings
@@ -51,6 +51,7 @@ func All() []Detector {
 	return []Detector{
 		&CNIEnforcement{},
 		&IPBlockNodeIPs{},
+		&HostNetworkUnderPolicy{},
 	}
 }
 

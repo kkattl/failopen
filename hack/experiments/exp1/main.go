@@ -15,7 +15,8 @@
 // A finding is a TP if some divergence it explains was measured, else FP.
 // A divergence is covered if some finding explains it, else it is an FN.
 // cni explains the "not enforced" divergence; ipblock-node-ips explains
-// source-rewriting (undefined-snat) bypasses to its Service or workload.
+// source-rewriting (undefined-snat) bypasses to its Service or workload;
+// hostnetwork-under-policy explains bypasses to its hostNetwork workload.
 package main
 
 import (
@@ -164,7 +165,7 @@ func main() {
 	fmt.Println()
 	fmt.Println("| Detector | CNI / split | TP | FP | covered | FN | Precision | Recall | F1 |")
 	fmt.Println("|---|---|---|---|---|---|---|---|---|")
-	for _, det := range []string{"cni", "ipblock-node-ips", "all"} {
+	for _, det := range []string{"cni", "ipblock-node-ips", "hostnetwork-under-policy", "all"} {
 		for _, p := range profiles {
 			t := get(det, p)
 			fmt.Printf("| %s | %s | %d | %d | %d | %d | %s | %s | %s |\n", det, p, t.TP, t.FP, t.Covered, t.FN, t.precision(), t.recall(), t.f1())
@@ -353,6 +354,8 @@ func classOf(d *divergence) string {
 		return "cni"
 	case scenario.BasisSNAT:
 		return "ipblock-node-ips"
+	case scenario.BasisUndefined:
+		return "hostnetwork-under-policy"
 	}
 	return ""
 }
@@ -363,6 +366,8 @@ func explains(f detector.Finding, d *divergence) bool {
 		return d.Basis == "not-enforced"
 	case "ipblock-node-ips":
 		return d.Basis == scenario.BasisSNAT && targetMatches(d.Target, f.Object)
+	case "hostnetwork-under-policy":
+		return d.Basis == scenario.BasisUndefined && targetMatches(d.Target, f.Object)
 	}
 	return false
 }

@@ -10,8 +10,9 @@ import (
 // DetectorClass maps implemented detectors to label classes. Labels of any
 // other class are coverage gaps, not misses.
 var DetectorClass = map[string]string{
-	"cni":              "cni-not-enforcing",
-	"ipblock-node-ips": "ipblock-admits-node-ips",
+	"cni":                      "cni-not-enforcing",
+	"ipblock-node-ips":         "ipblock-admits-node-ips",
+	"hostnetwork-under-policy": "hostnetwork-under-policy",
 }
 
 // Holdout scenarios are scored only on request, once, at the end — they
