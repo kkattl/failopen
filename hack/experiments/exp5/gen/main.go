@@ -10,6 +10,8 @@
 //	                          ranges admitting the pod CIDR)
 //	nodes            ~N/30   (InternalIP in 10.0.0.0/16)
 //	hostPort pods    ~1% of app pods
+//	hostNetwork pods 3 per 10 team namespaces (a node agent under default-deny),
+//	                 plus calico-node per node (system, skipped by detectors)
 //
 //	go run ./hack/experiments/exp5/gen -pods 1000 -seed 1 -o snap-1000.json
 package main
@@ -367,6 +369,20 @@ func generate(nPods int, seed uint64) *collector.Snapshot {
 					NamespaceSelector: &metav1.LabelSelector{MatchLabels: map[string]string{"kubernetes.io/metadata.name": "monitoring"}},
 				}},
 			}}, nil))
+	}
+
+	// --- non-system hostNetwork agents: one 3-node DaemonSet in every 10th
+	// team namespace, under that namespace's default-deny, so that
+	// hostnetwork-under-policy has real work (system hostNetwork pods above
+	// are skipped by it).
+	for ns := 0; ns < nNS; ns += 10 {
+		nsName := fmt.Sprintf("team-%04d", ns)
+		for i := range min(3, nNodes) {
+			n := (ns + i) % nNodes
+			p := g.pod("node-agent", nsName, map[string]string{"app": "node-agent"}, "DaemonSet", "node-agent", nodeIP(n), s.Nodes[n].Name, nodeIP(n), 9100, "metrics", 0)
+			p.Spec.HostNetwork = true
+			s.Pods = append(s.Pods, p)
+		}
 	}
 	return s
 }

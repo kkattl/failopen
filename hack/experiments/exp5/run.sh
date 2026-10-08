@@ -28,7 +28,7 @@ go build -o "$DATA/gen" ./hack/experiments/exp5/gen
 go build -o "$DATA/bench" ./hack/experiments/exp5/bench
 
 CSV=$OUT/results.csv
-echo "pods,services,policies,namespaces,nodes,file_mb,wall_median_s,wall_min_s,wall_max_s,peak_rss_mb,load_ms,detect_ms,detect_ipblock_ms,detect_cni_ms,render_ms,findings,critical,warning" >"$CSV"
+echo "pods,services,policies,namespaces,nodes,file_mb,wall_median_s,wall_min_s,wall_max_s,peak_rss_mb,load_ms,detect_ms,detect_ipblock_ms,detect_cni_ms,detect_hostnetwork_ms,render_ms,findings,critical,warning" >"$CSV"
 
 for n in $SIZES; do
   snap=$DATA/snap-$n.json
@@ -56,7 +56,7 @@ for n in $SIZES; do
 
   b=$("$DATA/bench" -snapshot "$snap" -runs "$RUNS")
   j() { python3 -c "import json,sys; print(json.loads(sys.argv[1])[sys.argv[2]])" "$b" "$1"; }
-  echo "$(j pods),$(j services),$(j policies),$(j namespaces),$(j nodes),$file_mb,$wmed,$wmin,$wmax,$rss_mb,$(j load_ms),$(j detect_ms),$(j detect_ipblock-node-ips_ms),$(j detect_cni_ms),$(j render_ms),$(j findings),$(j critical),$(j warning)" >>"$CSV"
+  echo "$(j pods),$(j services),$(j policies),$(j namespaces),$(j nodes),$file_mb,$wmed,$wmin,$wmax,$rss_mb,$(j load_ms),$(j detect_ms),$(j detect_ipblock-node-ips_ms),$(j detect_cni_ms),$(j detect_hostnetwork-under-policy_ms),$(j render_ms),$(j findings),$(j critical),$(j warning)" >>"$CSV"
   echo "n=$n done: wall median ${wmed}s, rss ${rss_mb} MB, $b" >&2
 done
 

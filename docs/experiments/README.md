@@ -10,7 +10,7 @@ threats to validity (`expN/RESULTS.md`).
 | [2](exp2/RESULTS.md) | Is the CNI enforcement verdict right? (10 distributions/CNIs, live deny-all probe) | 7/10 on the code at `c6f9f7f`. The failures were old kindnet, Antrea, and flannel + kube-router (a false critical). After the fixes: **10/10**. |
 | [3](exp3/RESULTS.md) | What do existing tools find on the same scenarios? (Kubescape C-0041/C-0205/C-0260, netpol-analyzer) | failopen 17/21 must-label instances (13/21 before `hostnetwork-under-policy`), 0 FP. Kubescape partly flags the 4 still missed (C-0041 hostNetwork, `node-exception-segment`). netpol-analyzer computes declared connectivity correctly (98.7% agreement) and says *deny* on all 4,732 measured bypass probes. Live Kubescape C-0205 on the 10 CNIs of exp 2: 7/10. It misses old kindnet and k3s without policy, and raises a false alarm on flannel + kube-router. |
 | [4](exp4/RESULTS.md) | Do verdicts follow the network configuration, and degrade safely when knowledge is missing? | Missing pod CIDR or CNI: 0 severities raised, 0 new criticals (after 2 fixes). IPVS vs iptables: 0 bypass/overblock differences in 2,869 probes, same findings. eTP matters on Cilium: 1 FN. |
-| [5](exp5/RESULTS.md) | Is it fast enough for real clusters and CI? | 10,000 pods: 0.21 s. 50,000 pods: 1.2 s and 1.25 GB RSS. JSON decoding dominates. |
+| [5](exp5/RESULTS.md) | Is it fast enough for real clusters and CI? | 10,000 pods: 0.21 s. 50,000 pods: 1.2 s and 1.25 GB RSS, all three detectors. JSON decoding dominates; `hostnetwork-under-policy` adds 1.4 ms. |
 | [6](exp6/RESULTS.md) | Is it read-only in practice? (API server audit log) | 12 requests, all `list`, 0 mutating, under a read-only ServiceAccount. |
 
 ## What the experiments changed
