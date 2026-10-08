@@ -1,0 +1,217 @@
+[
+  {
+    "src": "0.0.0.0-192.167.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "0.0.0.0-192.167.255.255",
+    "dst": "health-edge/edge-proxy[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "192.168.0.0-192.168.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "192.169.0.0-255.255.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "192.169.0.0-255.255.255.255",
+    "dst": "health-edge/edge-proxy[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "10.0.0.0-10.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "100.64.0.0-100.127.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "127.0.0.0-127.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "169.254.0.0-169.254.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "172.16.0.0-172.31.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "192.168.0.0-192.168.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "192.169.0.0-198.51.99.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "198.51.100.0-198.51.100.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "198.51.101.0-203.0.113.9",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "203.0.113.10-203.0.113.10",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "203.0.113.11-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "health-edge/edge-proxy[Deployment]",
+    "dst": "health-web/portal[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "192.169.0.0-198.51.99.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "198.51.100.0-198.51.100.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "198.51.101.0-203.0.113.9",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "203.0.113.10-203.0.113.10",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-notify/notifications[Deployment]",
+    "dst": "203.0.113.11-255.255.255.255",
+    "conn": "TCP 443,587"
+  },
+  {
+    "src": "health-ops/backup-agent[DaemonSet]",
+    "dst": "198.51.100.0-198.51.100.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "health-ops/log-shipper[DaemonSet]",
+    "dst": "203.0.113.10-203.0.113.10",
+    "conn": "TCP 24224"
+  },
+  {
+    "src": "health-phi/records-api[Deployment]",
+    "dst": "health-phi/audit-log[StatefulSet]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "health-phi/records-api[Deployment]",
+    "dst": "health-phi/imaging[StatefulSet]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "health-phi/records-api[Deployment]",
+    "dst": "health-phi/records-db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "health-reporting/reporting-replica[StatefulSet]",
+    "dst": "health-phi/records-db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "health-reporting/reporting[CronJob]",
+    "dst": "health-reporting/reporting-replica[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "health-web/portal[Deployment]",
+    "dst": "health-notify/notifications[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "health-web/portal[Deployment]",
+    "dst": "health-phi/records-api[Deployment]",
+    "conn": "TCP 8080"
+  }
+]

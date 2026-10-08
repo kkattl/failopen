@@ -66,6 +66,8 @@ kind_create() {
   local net="  podSubnet: \"$POD_SUBNET\""
   [[ $DEFAULT_CNI == true ]] || net="  disableDefaultCNI: true
 $net"
+  [[ -z ${KUBE_PROXY_MODE:-} ]] || net="$net
+  kubeProxyMode: \"$KUBE_PROXY_MODE\""
   awk -v name="$CLUSTER" -v net="$net" '
     /__NAME__/ { sub(/__NAME__/, name) }
     /^__NETWORKING__$/ { print net; next }

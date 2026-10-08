@@ -1,0 +1,152 @@
+[
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "known-open/client[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "known-open/hostnet[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "known-open/hostport[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "known-open/web[Deployment]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "known-open/client[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "known-open/hostnet[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "known-open/hostport[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "known-open/web[Deployment]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/client[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/client[Pod]",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/client[Pod]",
+    "dst": "known-open/hostnet[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/client[Pod]",
+    "dst": "known-open/hostport[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/client[Pod]",
+    "dst": "known-open/web[Deployment]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostnet[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostnet[Pod]",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostnet[Pod]",
+    "dst": "known-open/client[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostnet[Pod]",
+    "dst": "known-open/hostport[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostnet[Pod]",
+    "dst": "known-open/web[Deployment]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostport[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostport[Pod]",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostport[Pod]",
+    "dst": "known-open/client[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostport[Pod]",
+    "dst": "known-open/hostnet[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/hostport[Pod]",
+    "dst": "known-open/web[Deployment]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/web[Deployment]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/web[Deployment]",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/web[Deployment]",
+    "dst": "known-open/client[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/web[Deployment]",
+    "dst": "known-open/hostnet[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "known-open/web[Deployment]",
+    "dst": "known-open/hostport[Pod]",
+    "conn": "All Connections"
+  }
+]

@@ -1,0 +1,93 @@
+# Known-answer scenario for the oracle itself: NO NetworkPolicies, every
+# exposure path the oracle measures. Whatever the CNI, it must yield zero
+# bypass and zero overblock (declared = allow everywhere). Anything else is
+# an oracle bug. Checked by internal/scenario TestKnownAnswer.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: known-open
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: known-open
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: web}}
+  template:
+    metadata:
+      labels: {app: web}
+    spec:
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+        - {maxSkew: 1, topologyKey: kubernetes.io/hostname, whenUnsatisfiable: DoNotSchedule, labelSelector: {matchLabels: {app: web}}}
+      containers:
+        - name: app
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080", "--udp-port=-1"]
+          ports: [{name: http, containerPort: 8080}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-cluster
+  namespace: known-open
+spec:
+  type: NodePort
+  externalTrafficPolicy: Cluster
+  selector: {app: web}
+  ports: [{port: 80, targetPort: http}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-local
+  namespace: known-open
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector: {app: web}
+  ports: [{port: 80, targetPort: http}]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+  namespace: known-open
+  labels: {app: client}
+spec:
+  nodeSelector: {pool: general}
+  containers:
+    - name: app
+      image: registry.k8s.io/e2e-test-images/agnhost:2.53
+      args: ["pause"]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostport
+  namespace: known-open
+  labels: {app: hostport}
+spec:
+  nodeSelector: {pool: general}
+  containers:
+    - name: app
+      image: registry.k8s.io/e2e-test-images/agnhost:2.53
+      args: ["netexec", "--http-port=8080", "--udp-port=-1"]
+      ports: [{containerPort: 8080, hostPort: 30901}]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostnet
+  namespace: known-open
+  labels: {app: hostnet}
+spec:
+  hostNetwork: true
+  nodeSelector: {pool: general}
+  containers:
+    - name: app
+      image: registry.k8s.io/e2e-test-images/agnhost:2.53
+      args: ["netexec", "--http-port=30902", "--udp-port=-1"]
+      ports: [{containerPort: 30902}]

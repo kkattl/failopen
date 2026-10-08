@@ -1,0 +1,5 @@
+failopen audit — 0 findings
+
+  no divergence found between declared policy and the network
+
+Snapshot: 6 namespaces · 18 pods · 8 services · 1 policy · CNI k3s (enforces: true)

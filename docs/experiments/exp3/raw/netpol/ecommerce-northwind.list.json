@@ -1,0 +1,112 @@
+[
+  {
+    "src": "0.0.0.0-10.249.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "10.250.0.0-10.250.0.255",
+    "dst": "ecom-edge/edge-proxy[DaemonSet]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "10.250.0.0-10.250.0.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "10.250.1.0-255.255.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "ecom-catalog/catalog-api[Deployment]",
+    "dst": "ecom-catalog/catalog-db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "ecom-catalog/catalog-api[Deployment]",
+    "dst": "ecom-catalog/search[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-catalog/search[Deployment]",
+    "dst": "ecom-catalog/catalog-db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "ecom-edge/edge-proxy[DaemonSet]",
+    "dst": "ecom-storefront/bff[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-edge/edge-proxy[DaemonSet]",
+    "dst": "ecom-storefront/web[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-orders/cart[Deployment]",
+    "dst": "ecom-catalog/catalog-api[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-orders/cart[Deployment]",
+    "dst": "ecom-orders/orders-db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "ecom-orders/cart[Deployment]",
+    "dst": "ecom-shared/session-cache[Deployment]",
+    "conn": "TCP 6379"
+  },
+  {
+    "src": "ecom-orders/checkout[Deployment]",
+    "dst": "ecom-catalog/catalog-api[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-orders/checkout[Deployment]",
+    "dst": "ecom-orders/cart[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-orders/checkout[Deployment]",
+    "dst": "ecom-orders/orders-db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "ecom-storefront/bff[Deployment]",
+    "dst": "ecom-catalog/catalog-api[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-storefront/bff[Deployment]",
+    "dst": "ecom-orders/cart[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-storefront/bff[Deployment]",
+    "dst": "ecom-orders/checkout[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "ecom-storefront/bff[Deployment]",
+    "dst": "ecom-shared/session-cache[Deployment]",
+    "conn": "TCP 6379"
+  },
+  {
+    "src": "ecom-storefront/web[Deployment]",
+    "dst": "ecom-shared/session-cache[Deployment]",
+    "conn": "TCP 6379"
+  },
+  {
+    "src": "ecom-storefront/web[Deployment]",
+    "dst": "ecom-storefront/bff[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  }
+]

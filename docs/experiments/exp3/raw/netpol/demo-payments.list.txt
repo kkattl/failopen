@@ -1,0 +1,12 @@
+0.0.0.0-255.255.255.255 => failopen-oracle/outsider[Pod] : All Connections
+0.0.0.0-255.255.255.255 => monitoring/node-agent[Pod] : All Connections
+failopen-oracle/outsider[Pod] => 0.0.0.0-255.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => monitoring/node-agent[Pod] : All Connections
+monitoring/node-agent[Pod] => 0.0.0.0-255.255.255.255 : All Connections
+monitoring/node-agent[Pod] => failopen-oracle/outsider[Pod] : All Connections
+payments/api-server[Pod] => 0.0.0.0-255.255.255.255 : All Connections
+payments/api-server[Pod] => failopen-oracle/outsider[Pod] : All Connections
+payments/api-server[Pod] => monitoring/node-agent[Pod] : All Connections
+payments/host-probe[Pod] => 0.0.0.0-255.255.255.255 : All Connections
+payments/host-probe[Pod] => failopen-oracle/outsider[Pod] : All Connections
+payments/host-probe[Pod] => monitoring/node-agent[Pod] : All Connections

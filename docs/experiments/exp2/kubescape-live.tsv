@@ -1,0 +1,11 @@
+variant	detected_cni	claims_enforces	same_node	cross_node	actual	predicted	correct	audit_exit
+kindnet	kindnet	true	blocked	blocked	enforced	enforced	yes	0
+kindnet-legacy	kindnet	false	open	open	not-enforced	not-enforced	yes	1
+calico	calico	true	blocked	blocked	enforced	enforced	yes	0
+cilium	cilium	true	blocked	blocked	enforced	enforced	yes	0
+flannel	flannel	false	open	open	not-enforced	not-enforced	yes	1
+canal	canal	true	blocked	blocked	enforced	enforced	yes	0
+antrea	antrea	true	blocked	blocked	enforced	enforced	yes	0
+k3s	k3s	true	blocked	blocked	enforced	enforced	yes	0
+k3s-no-policy	k3s	false	open	open	not-enforced	not-enforced	yes	1
+flannel-kube-router	kube-router	true	blocked	blocked	enforced	enforced	yes	0

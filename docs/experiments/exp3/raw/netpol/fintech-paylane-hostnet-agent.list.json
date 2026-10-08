@@ -1,0 +1,187 @@
+[
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "fintech-edge/edge-proxy[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "10.0.0.0-10.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "100.64.0.0-100.127.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "127.0.0.0-127.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "169.254.0.0-169.254.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "172.16.0.0-172.31.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "192.168.0.0-192.168.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "192.169.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "fintech-app/admin-panel[Deployment]",
+    "dst": "fintech-cde/payments-core[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "fintech-app/checkout-api[Deployment]",
+    "dst": "fintech-app/redis[Deployment]",
+    "conn": "TCP 6379"
+  },
+  {
+    "src": "fintech-app/checkout-api[Deployment]",
+    "dst": "fintech-cde/payments-core[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "fintech-cde/card-gateway[Deployment]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-cde/card-gateway[Deployment]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-cde/card-gateway[Deployment]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-cde/card-gateway[Deployment]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-cde/card-gateway[Deployment]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-cde/card-gateway[Deployment]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-cde/card-gateway[Deployment]",
+    "dst": "192.169.0.0-255.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-cde/ledger[Deployment]",
+    "dst": "fintech-cde/postgres[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "fintech-cde/payments-core[Deployment]",
+    "dst": "fintech-cde/card-gateway[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "fintech-cde/payments-core[Deployment]",
+    "dst": "fintech-cde/ledger[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "fintech-edge/edge-proxy[Deployment]",
+    "dst": "fintech-app/checkout-api[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "fintech-ops/node-agent[DaemonSet]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-ops/node-agent[DaemonSet]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-ops/node-agent[DaemonSet]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-ops/node-agent[DaemonSet]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-ops/node-agent[DaemonSet]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-ops/node-agent[DaemonSet]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-ops/node-agent[DaemonSet]",
+    "dst": "192.169.0.0-255.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "fintech-ops/prometheus[Deployment]",
+    "dst": "fintech-ops/node-agent[DaemonSet]",
+    "conn": "TCP 9100"
+  }
+]

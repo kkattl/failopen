@@ -1,0 +1,53 @@
+0.0.0.0-172.17.255.255 => failopen-oracle/outsider[Pod] : All Connections
+172.18.0.0-172.18.255.255 => ecom-edge/edge-proxy[DaemonSet] : TCP 8080
+172.18.0.0-172.18.255.255 => failopen-oracle/outsider[Pod] : All Connections
+172.19.0.0-255.255.255.255 => failopen-oracle/outsider[Pod] : All Connections
+ecom-catalog/catalog-api[Deployment] => ecom-catalog/catalog-db[StatefulSet] : TCP 5432
+ecom-catalog/catalog-api[Deployment] => ecom-catalog/search[Deployment] : TCP 8080
+ecom-catalog/search[Deployment] => ecom-catalog/catalog-db[StatefulSet] : TCP 5432
+ecom-edge/edge-proxy[DaemonSet] => ecom-storefront/bff[Deployment] : TCP 8080
+ecom-edge/edge-proxy[DaemonSet] => ecom-storefront/web[Deployment] : TCP 8080
+ecom-orders/cart[Deployment] => ecom-catalog/catalog-api[Deployment] : TCP 8080
+ecom-orders/cart[Deployment] => ecom-orders/orders-db[StatefulSet] : TCP 5432
+ecom-orders/cart[Deployment] => ecom-shared/session-cache[Deployment] : TCP 6379
+ecom-orders/checkout[Deployment] => ecom-catalog/catalog-api[Deployment] : TCP 8080
+ecom-orders/checkout[Deployment] => ecom-orders/cart[Deployment] : TCP 8080
+ecom-orders/checkout[Deployment] => ecom-orders/orders-db[StatefulSet] : TCP 5432
+ecom-storefront/bff[Deployment] => ecom-catalog/catalog-api[Deployment] : TCP 8080
+ecom-storefront/bff[Deployment] => ecom-orders/cart[Deployment] : TCP 8080
+ecom-storefront/bff[Deployment] => ecom-orders/checkout[Deployment] : TCP 8080
+ecom-storefront/bff[Deployment] => ecom-shared/session-cache[Deployment] : TCP 6379
+ecom-storefront/web[Deployment] => ecom-shared/session-cache[Deployment] : TCP 6379
+ecom-storefront/web[Deployment] => ecom-storefront/bff[Deployment] : TCP 8080
+failopen-oracle/outsider[Pod] => 0.0.0.0-255.255.255.255 : All Connections
+
+Exposure Analysis Result:
+Egress Exposure:
+ecom-catalog/catalog-api[Deployment]  	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-catalog/catalog-db[StatefulSet]  	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-catalog/search[Deployment]       	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-edge/edge-proxy[DaemonSet]       	=> 	ecom-storefront/[pod with {{Key:app,Operator:In,Values:[web bff],}}] : TCP 8080
+ecom-edge/edge-proxy[DaemonSet]       	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-orders/cart[Deployment]          	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-orders/checkout[Deployment]      	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-orders/orders-db[StatefulSet]    	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-shared/session-cache[Deployment] 	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-storefront/bff[Deployment]       	=> 	ecom-orders/[pod with {{Key:app,Operator:In,Values:[cart checkout],}}] : TCP 8080
+ecom-storefront/bff[Deployment]       	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+ecom-storefront/web[Deployment]       	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+failopen-oracle/outsider[Pod]         	=> 	0.0.0.0-255.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]         	=> 	entire-cluster : All Connections
+
+Ingress Exposure:
+ecom-catalog/catalog-api[Deployment]  	<= 	ecom-orders/[pod with {{Key:app,Operator:In,Values:[cart checkout],}}] : TCP 8080
+ecom-catalog/catalog-db[StatefulSet]  	<= 	ecom-catalog/[pod with {{Key:app,Operator:In,Values:[catalog-api search],}}] : TCP 5432
+ecom-edge/edge-proxy[DaemonSet]       	<= 	172.18.0.0-172.18.255.255 : TCP 8080
+ecom-shared/session-cache[Deployment] 	<= 	ecom-storefront/[pod with {{Key:app,Operator:In,Values:[web bff],}}] : TCP 6379
+failopen-oracle/outsider[Pod]         	<= 	0.0.0.0-172.17.255.255 : All Connections
+failopen-oracle/outsider[Pod]         	<= 	172.18.0.0-172.18.255.255 : All Connections
+failopen-oracle/outsider[Pod]         	<= 	172.19.0.0-255.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]         	<= 	entire-cluster : All Connections
+
+Workloads not protected by network policies:
+failopen-oracle/outsider[Pod] is not protected on Egress
+failopen-oracle/outsider[Pod] is not protected on Ingress

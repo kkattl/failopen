@@ -1,0 +1,18 @@
+
+##########################################
+# Specific connections and their reasons #
+##########################################
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Connections between failopen-oracle/outsider[Pod] => payments/host-probe[Pod]:
+
+Denied connections:
+	Denied TCP, UDP, SCTP due to the following policies and rules:
+		Egress (Allowed) due to the system default (Allow all)
+		Ingress (Denied)
+			NetworkPolicy 'payments/default-deny-all' selects payments/host-probe[Pod], but failopen-oracle/outsider[Pod] is not allowed by any Ingress rule (no rules defined)
+
+
+#########################################################
+# All Connections due to the system default (Allow all) #
+#########################################################
+payments/host-probe[Pod] => failopen-oracle/outsider[Pod]

@@ -1,0 +1,29 @@
+
+##########################################
+# Specific connections and their reasons #
+##########################################
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Connections between failopen-oracle/outsider[Pod] => saas-edge/gateway[Deployment]:
+
+Denied connections:
+	Denied TCP, UDP, SCTP due to the following policies and rules:
+		Egress (Allowed) due to the system default (Allow all)
+		Ingress (Denied)
+			NetworkPolicy list:
+				- NetworkPolicy 'saas-edge/default-deny-all' selects saas-edge/gateway[Deployment], but failopen-oracle/outsider[Pod] is not allowed by any Ingress rule (no rules defined)
+				- NetworkPolicy 'saas-edge/gateway-ingress-from-outside-cluster' selects saas-edge/gateway[Deployment], but failopen-oracle/outsider[Pod] is not allowed by any Ingress rule
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Connections between saas-edge/gateway[Deployment] => failopen-oracle/outsider[Pod]:
+
+Denied connections:
+	Denied TCP, UDP, SCTP due to the following policies and rules:
+		Egress (Denied)
+			NetworkPolicy list:
+				- NetworkPolicy 'saas-edge/allow-dns-egress' selects saas-edge/gateway[Deployment], but failopen-oracle/outsider[Pod] is not allowed by any Egress rule
+				- NetworkPolicy 'saas-edge/default-deny-all' selects saas-edge/gateway[Deployment], but failopen-oracle/outsider[Pod] is not allowed by any Egress rule (no rules defined)
+				- NetworkPolicy 'saas-edge/gateway-egress-to-tenant-apps' selects saas-edge/gateway[Deployment], but failopen-oracle/outsider[Pod] is not allowed by any Egress rule
+
+		Ingress (Allowed) due to the system default (Allow all)
+

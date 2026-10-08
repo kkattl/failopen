@@ -1,0 +1,8 @@
+date: 2026-10-07T11:48:34Z
+failopen: c6f9f7f (built from git archive; working-tree edits not included)
+kubescape: 4.0.15 (sha256 011569dbcde85afc96cf63262e4f967166b6680fd70a623e9065334b6767b244), controls: regolibrary v2.0.38
+  Your current version is: v4.0.15
+  Build commit: 16cfe102f11551a6455fe9bf8e37d7083da90484
+  Build date: 2026-09-29T05:54:41Z
+netpol-analyzer: v1.4.4 (github.com/np-guard/netpol-analyzer v1.4.4)
+go: go version go1.27.1 linux/amd64

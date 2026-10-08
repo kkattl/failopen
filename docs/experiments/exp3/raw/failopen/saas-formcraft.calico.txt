@@ -1,0 +1,14 @@
+failopen audit — 1 finding (1 warning)
+
+  ⚠ saas-edge/svc/gateway:31480
+      declared:  ALLOW only 0.0.0.0/0 except 192.168.0.0/16 (gateway-ingress-from-outside-cluster)
+      effective: ALLOW from any pod via NodePort 31480 (SNAT to node IP)
+      Pod traffic to the NodePort 31480 is source-NATed to a node IP, and node IPs fall inside
+      0.0.0.0/0 except 192.168.0.0/16, so the rule meant to keep pods out lets them in.
+      assumes: pod -> node-IP traffic is SNAT'd to a node address before policy evaluation
+               (kube-proxy masquerade with externalTrafficPolicy: Cluster, or CNI outgoing NAT) —
+               undefined by the spec, CNI-dependent
+      assumes: CNI calico; the source pod has egress to node IPs
+      verify:  kubectl run fo-verify -n <ns-without-egress-policy> --rm -i --restart=Never --image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- connect 172.18.0.6:31480 --timeout=3s
+
+Snapshot: 9 namespaces · 36 pods · 10 services · 28 policies · CNI calico (enforces: true)

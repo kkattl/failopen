@@ -1,0 +1,62 @@
+[
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "0.0.0.0-255.255.255.255",
+    "dst": "monitoring/node-agent[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "monitoring/node-agent[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "monitoring/node-agent[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "monitoring/node-agent[Pod]",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "payments/api-server[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "payments/api-server[Pod]",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "payments/api-server[Pod]",
+    "dst": "monitoring/node-agent[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "payments/host-probe[Pod]",
+    "dst": "0.0.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "payments/host-probe[Pod]",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "payments/host-probe[Pod]",
+    "dst": "monitoring/node-agent[Pod]",
+    "conn": "All Connections"
+  }
+]

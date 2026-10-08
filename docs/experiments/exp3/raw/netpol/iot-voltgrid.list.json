@@ -1,0 +1,167 @@
+[
+  {
+    "src": "0.0.0.0-10.250.0.9",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "10.250.0.10-10.250.0.10",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "10.250.0.10-10.250.0.10",
+    "dst": "iot-edge/dashboard-proxy[DaemonSet]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "10.250.0.10-10.250.0.10",
+    "dst": "iot-edge/ingest-gateway[DaemonSet]",
+    "conn": "TCP 8883"
+  },
+  {
+    "src": "10.250.0.11-255.255.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "10.0.0.0-10.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "100.64.0.0-100.127.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "127.0.0.0-127.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "169.254.0.0-169.254.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "172.16.0.0-172.31.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "192.168.0.0-192.168.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "192.169.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "iot-app/alerting[Deployment]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "iot-app/alerting[Deployment]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "iot-app/alerting[Deployment]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "iot-app/alerting[Deployment]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "iot-app/alerting[Deployment]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "iot-app/alerting[Deployment]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "iot-app/alerting[Deployment]",
+    "dst": "192.169.0.0-255.255.255.255",
+    "conn": "TCP 443"
+  },
+  {
+    "src": "iot-app/alerting[Deployment]",
+    "dst": "iot-data/tsdb[StatefulSet]",
+    "conn": "TCP 8428"
+  },
+  {
+    "src": "iot-app/dashboard[Deployment]",
+    "dst": "iot-data/tsdb[StatefulSet]",
+    "conn": "TCP 8428"
+  },
+  {
+    "src": "iot-app/device-registry[Deployment]",
+    "dst": "iot-data/registry-db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "iot-app/stream-processor[Deployment]",
+    "dst": "iot-data/tsdb[StatefulSet]",
+    "conn": "TCP 8428"
+  },
+  {
+    "src": "iot-app/stream-processor[Deployment]",
+    "dst": "iot-edge/ingest-gateway[DaemonSet]",
+    "conn": "TCP 9000"
+  },
+  {
+    "src": "iot-edge/dashboard-proxy[DaemonSet]",
+    "dst": "iot-app/dashboard[Deployment]",
+    "conn": "TCP 3000"
+  },
+  {
+    "src": "iot-edge/ingest-gateway[DaemonSet]",
+    "dst": "iot-app/device-registry[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "iot-ops/prometheus[Deployment]",
+    "dst": "iot-ops/node-agent[DaemonSet]",
+    "conn": "TCP 9100,9200"
+  }
+]

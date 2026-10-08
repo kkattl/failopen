@@ -1,0 +1,6 @@
+failopen audit — 0 findings
+
+  no divergence found between declared policy and the network
+
+Snapshot: 7 namespaces · 14 pods · 3 services · 1 policy · CNI kindnet (enforces: true)
+failopen audit exit code: 0

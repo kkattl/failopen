@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: failopen, namespace: default}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata: {name: failopen-readonly}
+rules:
+  - apiGroups: [""]
+    resources: [pods, services, namespaces, nodes]
+    verbs: [list]
+  - apiGroups: [networking.k8s.io]
+    resources: [networkpolicies]
+    verbs: [list]
+  - apiGroups: [apps]
+    resources: [daemonsets]
+    verbs: [list]
+  - apiGroups: [crd.projectcalico.org]
+    resources: [ippools]
+    verbs: [list]
+  - apiGroups: [""]
+    resources: [configmaps]
+    resourceNames: [kube-flannel-cfg, cilium-config]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata: {name: failopen-readonly}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: failopen-readonly}
+subjects: [{kind: ServiceAccount, name: failopen, namespace: default}]

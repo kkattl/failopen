@@ -1,0 +1,1083 @@
+# Carewell patient-records platform — lab deployment
+# Built-in kinds only. Every namespaced object carries metadata.namespace.
+# See README.md for the architecture and the network-flow matrix.
+#
+# Namespaces
+#   health-edge       edge reverse proxy (pool=edge, NodePort w/ externalTrafficPolicy=Local)
+#   health-web        portal (pool=general)
+#   health-notify     notifications (pool=general, never talks to PHI)
+#   health-phi        records-api, records-db, imaging, audit-log (pool=restricted)
+#   health-reporting  reporting-replica (PHI copy) + reporting CronJob (pool=restricted)
+#   health-ops        node agents: log-shipper (every node), backup-agent (data nodes)
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: health-edge
+  labels:
+    app.kubernetes.io/part-of: carewell
+    carewell.io/zone: edge
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: health-web
+  labels:
+    app.kubernetes.io/part-of: carewell
+    carewell.io/zone: app
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: health-notify
+  labels:
+    app.kubernetes.io/part-of: carewell
+    carewell.io/zone: app
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: health-phi
+  labels:
+    app.kubernetes.io/part-of: carewell
+    carewell.io/zone: phi
+    carewell.io/data-class: phi
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: health-reporting
+  labels:
+    app.kubernetes.io/part-of: carewell
+    carewell.io/zone: phi
+    carewell.io/data-class: phi
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+# Node agents need read-only hostPath mounts (container logs, volume data),
+# which only the "privileged" Pod Security level permits. Audit/warn stay at
+# baseline so anything beyond hostPath is still flagged.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: health-ops
+  labels:
+    app.kubernetes.io/part-of: carewell
+    carewell.io/zone: ops
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/warn: baseline
+
+# =====================================================================
+# Baseline network posture: default-deny ingress+egress in every
+# namespace, plus DNS egress to CoreDNS only.
+# =====================================================================
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: health-edge}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: health-web}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: health-notify}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: health-phi}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: health-reporting}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny-all, namespace: health-ops}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: health-edge}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+          podSelector: {matchLabels: {k8s-app: kube-dns}}
+      ports:
+        - {protocol: UDP, port: 53}
+        - {protocol: TCP, port: 53}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: health-web}
+spec: {podSelector: {}, policyTypes: [Egress], egress: [{to: [{namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}, podSelector: {matchLabels: {k8s-app: kube-dns}}}], ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]}]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: health-notify}
+spec: {podSelector: {}, policyTypes: [Egress], egress: [{to: [{namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}, podSelector: {matchLabels: {k8s-app: kube-dns}}}], ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]}]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: health-phi}
+spec: {podSelector: {}, policyTypes: [Egress], egress: [{to: [{namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}, podSelector: {matchLabels: {k8s-app: kube-dns}}}], ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]}]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns-egress, namespace: health-reporting}
+spec: {podSelector: {}, policyTypes: [Egress], egress: [{to: [{namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}, podSelector: {matchLabels: {k8s-app: kube-dns}}}], ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]}]}
+# health-ops agents talk to fixed IPs only; they get no DNS egress.
+
+# =====================================================================
+# health-edge: reverse proxy — the only internet-facing component
+# =====================================================================
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: edge-proxy, namespace: health-edge}
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: edge-proxy-conf, namespace: health-edge}
+data:
+  default.conf: |
+    server {
+      listen 8080;
+      server_tokens off;
+      client_max_body_size 10m;
+      add_header X-Content-Type-Options nosniff always;
+      add_header X-Frame-Options DENY always;
+      add_header Strict-Transport-Security "max-age=31536000" always;
+      location = /healthz { access_log off; return 200 "ok\n"; }
+      # Only the portal is published. PHI services are never routable from here.
+      location / {
+        proxy_pass http://portal.health-web.svc.cluster.local:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_connect_timeout 3s;
+        proxy_read_timeout 30s;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-proxy
+  namespace: health-edge
+  labels: {app.kubernetes.io/name: edge-proxy, app.kubernetes.io/part-of: carewell}
+spec:
+  replicas: 1   # the edge pool has a single node; see README "compromises"
+  strategy: {type: RollingUpdate, rollingUpdate: {maxUnavailable: 0, maxSurge: 1}}
+  selector: {matchLabels: {app.kubernetes.io/name: edge-proxy}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: edge-proxy, app.kubernetes.io/part-of: carewell}
+    spec:
+      serviceAccountName: edge-proxy
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: edge}
+      tolerations:
+        - {key: dedicated, operator: Equal, value: edge, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: nginx
+          image: docker.io/nginxinc/nginx-unprivileged:1.27-alpine
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+          livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: conf, mountPath: /etc/nginx/conf.d, readOnly: true}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: conf
+          configMap: {name: edge-proxy-conf}
+        - name: tmp
+          emptyDir: {sizeLimit: 64Mi}
+---
+# The corporate edge LB forwards to edge-pool node IPs. externalTrafficPolicy
+# Local: only nodes running an edge-proxy pod (= the edge node) answer on the
+# NodePort; every other node (incl. restricted) drops it, and the client source
+# IP is preserved for the NetworkPolicy below.
+apiVersion: v1
+kind: Service
+metadata:
+  name: edge-proxy
+  namespace: health-edge
+  labels: {app.kubernetes.io/name: edge-proxy}
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector: {app.kubernetes.io/name: edge-proxy}
+  ports:
+    # nodePort left to the allocator: the cluster is shared and fixed ports collide.
+    # The edge LB target port is read from .spec.ports[0].nodePort (see smoke.sh).
+    - {name: http, port: 8080, targetPort: http}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: edge-proxy, namespace: health-edge}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: edge-proxy}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    # Internet / edge LB. Pod CIDR excluded: in-cluster workloads must not use
+    # the public entry point as a pivot.
+    - from:
+        - ipBlock: {cidr: 0.0.0.0/0, except: [192.168.0.0/16]}
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-web}}
+          podSelector: {matchLabels: {app.kubernetes.io/name: portal}}
+      ports: [{protocol: TCP, port: 8080}]
+
+# =====================================================================
+# health-web: portal
+# =====================================================================
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: portal, namespace: health-web}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal
+  namespace: health-web
+  labels: {app.kubernetes.io/name: portal, app.kubernetes.io/part-of: carewell}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app.kubernetes.io/name: portal}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: portal, app.kubernetes.io/part-of: carewell}
+    spec:
+      serviceAccountName: portal
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: general}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector: {matchLabels: {app.kubernetes.io/name: portal}}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: portal
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: portal, namespace: health-web, labels: {app.kubernetes.io/name: portal}}
+spec:
+  selector: {app.kubernetes.io/name: portal}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: portal, namespace: health-web}
+spec:
+  minAvailable: 1
+  selector: {matchLabels: {app.kubernetes.io/name: portal}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: portal, namespace: health-web}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: portal}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-edge}}
+          podSelector: {matchLabels: {app.kubernetes.io/name: edge-proxy}}
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-phi}}
+          podSelector: {matchLabels: {app.kubernetes.io/name: records-api}}
+      ports: [{protocol: TCP, port: 8080}]
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-notify}}
+          podSelector: {matchLabels: {app.kubernetes.io/name: notifications}}
+      ports: [{protocol: TCP, port: 8080}]
+
+# =====================================================================
+# health-notify: notifications (no PHI access, ever)
+# =====================================================================
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: notifications, namespace: health-notify}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications
+  namespace: health-notify
+  labels: {app.kubernetes.io/name: notifications, app.kubernetes.io/part-of: carewell}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app.kubernetes.io/name: notifications}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: notifications, app.kubernetes.io/part-of: carewell}
+    spec:
+      serviceAccountName: notifications
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: general}
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, runAsGroup: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: notifications
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+          resources: {requests: {cpu: 10m, memory: 16Mi}, limits: {memory: 64Mi}}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: notifications, namespace: health-notify, labels: {app.kubernetes.io/name: notifications}}
+spec:
+  selector: {app.kubernetes.io/name: notifications}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: notifications, namespace: health-notify}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: notifications}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-web}}
+          podSelector: {matchLabels: {app.kubernetes.io/name: portal}}
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    # Public email/SMS providers only (HTTPS API + SMTP submission).
+    # All private, link-local, CGNAT and cluster ranges are excluded, so no
+    # in-cluster or internal destination (and certainly no PHI service) matches.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10, 169.254.0.0/16, 127.0.0.0/8]
+      ports:
+        - {protocol: TCP, port: 443}
+        - {protocol: TCP, port: 587}
+
+# =====================================================================
+# health-phi: PHI zone — records-api, records-db, imaging, audit-log
+# All pinned to pool=restricted.
+# =====================================================================
+---
+apiVersion: v1
+kind: Secret
+metadata: {name: records-db, namespace: health-phi}
+type: Opaque
+stringData:
+  # LAB ONLY. In production these come from an external secret manager.
+  POSTGRES_PASSWORD: lab-owner-7f3c1e
+  REPLICATION_PASSWORD: lab-repl-2b9d44
+  REPORTING_PASSWORD: lab-report-91aa0c
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: records-db-init, namespace: health-phi}
+data:
+  10-roles.sh: |
+    #!/bin/sh
+    set -eu
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<EOSQL
+      CREATE ROLE replicator WITH REPLICATION LOGIN PASSWORD '${REPLICATION_PASSWORD}';
+      CREATE ROLE reporting WITH LOGIN PASSWORD '${REPORTING_PASSWORD}';
+      GRANT pg_read_all_data TO reporting;
+    EOSQL
+    # streaming replication only for the replicator role, only from pod network
+    echo "host replication replicator 192.168.0.0/16 scram-sha-256" >> "$PGDATA/pg_hba.conf"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: records-db, namespace: health-phi}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: records-db
+  namespace: health-phi
+  labels: {app.kubernetes.io/name: records-db, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+spec:
+  serviceName: records-db
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy: {whenDeleted: Retain, whenScaled: Retain}
+  selector: {matchLabels: {app.kubernetes.io/name: records-db}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: records-db, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+    spec:
+      serviceAccountName: records-db
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations:
+        - {key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: postgres
+          image: docker.io/library/postgres:17-alpine
+          env:
+            - {name: POSTGRES_USER, value: records}
+            - {name: POSTGRES_DB, value: records}
+            - {name: PGDATA, value: /var/lib/postgresql/data/pgdata}
+            - {name: POSTGRES_PASSWORD, valueFrom: {secretKeyRef: {name: records-db, key: POSTGRES_PASSWORD}}}
+            - {name: REPLICATION_PASSWORD, valueFrom: {secretKeyRef: {name: records-db, key: REPLICATION_PASSWORD}}}
+            - {name: REPORTING_PASSWORD, valueFrom: {secretKeyRef: {name: records-db, key: REPORTING_PASSWORD}}}
+          ports: [{name: postgres, containerPort: 5432}]
+          readinessProbe: {exec: {command: [pg_isready, -U, records, -d, records]}, periodSeconds: 5}
+          livenessProbe: {exec: {command: [pg_isready, -U, records, -d, records]}, periodSeconds: 15, initialDelaySeconds: 30}
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {memory: 256Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/postgresql/data}
+            - {name: run, mountPath: /var/run/postgresql}
+            - {name: tmp, mountPath: /tmp}
+            - {name: init, mountPath: /docker-entrypoint-initdb.d, readOnly: true}
+      volumes:
+        - {name: run, emptyDir: {}}
+        - {name: tmp, emptyDir: {}}
+        - {name: init, configMap: {name: records-db-init, defaultMode: 0555}}
+  volumeClaimTemplates:
+    - metadata: {name: data, labels: {carewell.io/data-class: phi}}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 1Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: records-db, namespace: health-phi, labels: {app.kubernetes.io/name: records-db}}
+spec:
+  selector: {app.kubernetes.io/name: records-db}
+  ports: [{name: postgres, port: 5432, targetPort: postgres}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: records-db, namespace: health-phi}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: records-db}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: records-api}}
+      ports: [{protocol: TCP, port: 5432}]
+    # streaming replication (pg_hba additionally restricts this to the replicator role)
+    - from:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-reporting}}
+          podSelector: {matchLabels: {app.kubernetes.io/name: reporting-replica}}
+      ports: [{protocol: TCP, port: 5432}]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: records-api, namespace: health-phi}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: records-api
+  namespace: health-phi
+  labels: {app.kubernetes.io/name: records-api, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app.kubernetes.io/name: records-api}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: records-api, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+    spec:
+      serviceAccountName: records-api
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations: [{key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}]
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector: {matchLabels: {app.kubernetes.io/name: records-api}}
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, runAsGroup: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: records-api
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+          resources: {requests: {cpu: 10m, memory: 16Mi}, limits: {memory: 64Mi}}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: records-api, namespace: health-phi, labels: {app.kubernetes.io/name: records-api}}
+spec:
+  selector: {app.kubernetes.io/name: records-api}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: records-api, namespace: health-phi}
+spec:
+  minAvailable: 1
+  selector: {matchLabels: {app.kubernetes.io/name: records-api}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: records-api, namespace: health-phi}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: records-api}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-web}}
+          podSelector: {matchLabels: {app.kubernetes.io/name: portal}}
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    - to:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: records-db}}
+      ports: [{protocol: TCP, port: 5432}]
+    - to:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: imaging}}
+      ports: [{protocol: TCP, port: 8080}]
+    - to:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: audit-log}}
+      ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: imaging, namespace: health-phi}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: imaging
+  namespace: health-phi
+  labels: {app.kubernetes.io/name: imaging, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+spec:
+  serviceName: imaging
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy: {whenDeleted: Retain, whenScaled: Retain}
+  selector: {matchLabels: {app.kubernetes.io/name: imaging}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: imaging, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+    spec:
+      serviceAccountName: imaging
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations: [{key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}]
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: imaging
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+          resources: {requests: {cpu: 10m, memory: 16Mi}, limits: {memory: 64Mi}}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: images, mountPath: /data}]
+  volumeClaimTemplates:
+    - metadata: {name: images, labels: {carewell.io/data-class: phi}}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 1Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: imaging, namespace: health-phi, labels: {app.kubernetes.io/name: imaging}}
+spec:
+  selector: {app.kubernetes.io/name: imaging}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: imaging, namespace: health-phi}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: imaging}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: records-api}}
+      ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: audit-log, namespace: health-phi}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: audit-log
+  namespace: health-phi
+  labels: {app.kubernetes.io/name: audit-log, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+spec:
+  serviceName: audit-log
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy: {whenDeleted: Retain, whenScaled: Retain}
+  selector: {matchLabels: {app.kubernetes.io/name: audit-log}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: audit-log, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+    spec:
+      serviceAccountName: audit-log
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations: [{key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}]
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: audit-log
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53
+          args: ["netexec", "--http-port=8080"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 5}
+          resources: {requests: {cpu: 10m, memory: 16Mi}, limits: {memory: 64Mi}}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: trail, mountPath: /data}]
+  volumeClaimTemplates:
+    - metadata: {name: trail, labels: {carewell.io/data-class: phi}}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 1Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: audit-log, namespace: health-phi, labels: {app.kubernetes.io/name: audit-log}}
+spec:
+  selector: {app.kubernetes.io/name: audit-log}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: audit-log, namespace: health-phi}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: audit-log}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: records-api}}
+      ports: [{protocol: TCP, port: 8080}]
+
+# =====================================================================
+# health-reporting: streaming replica of records-db (still PHI -> restricted
+# pool) and the nightly de-identification CronJob.
+# =====================================================================
+---
+apiVersion: v1
+kind: Secret
+metadata: {name: reporting-replica, namespace: health-reporting}
+type: Opaque
+stringData:
+  REPLICATION_PASSWORD: lab-repl-2b9d44
+---
+apiVersion: v1
+kind: Secret
+metadata: {name: reporting-job, namespace: health-reporting}
+type: Opaque
+stringData:
+  PGPASSWORD: lab-report-91aa0c
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: reporting-replica, namespace: health-reporting}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: reporting-replica
+  namespace: health-reporting
+  labels: {app.kubernetes.io/name: reporting-replica, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+spec:
+  serviceName: reporting-replica
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy: {whenDeleted: Retain, whenScaled: Retain}
+  selector: {matchLabels: {app.kubernetes.io/name: reporting-replica}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: reporting-replica, app.kubernetes.io/part-of: carewell, carewell.io/data-class: phi}
+    spec:
+      serviceAccountName: reporting-replica
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector: {pool: restricted}
+      tolerations: [{key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}]
+      # keep the replica off the primary's node/zone
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-phi}}
+                labelSelector: {matchLabels: {app.kubernetes.io/name: records-db}}
+      securityContext: {runAsNonRoot: true, runAsUser: 70, runAsGroup: 70, fsGroup: 70, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: postgres
+          image: docker.io/library/postgres:17-alpine
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              if [ ! -s "$PGDATA/PG_VERSION" ]; then
+                until PGPASSWORD="$REPLICATION_PASSWORD" pg_basebackup \
+                    -h records-db.health-phi.svc.cluster.local -U replicator \
+                    -D "$PGDATA" -R -X stream; do
+                  echo "base backup failed, retrying"; rm -rf "$PGDATA"; sleep 5
+                done
+                chmod 0700 "$PGDATA"
+              fi
+              exec postgres -c hot_standby=on
+          env:
+            - {name: PGDATA, value: /var/lib/postgresql/data/pgdata}
+            - {name: REPLICATION_PASSWORD, valueFrom: {secretKeyRef: {name: reporting-replica, key: REPLICATION_PASSWORD}}}
+          ports: [{name: postgres, containerPort: 5432}]
+          readinessProbe: {exec: {command: [pg_isready, -U, reporting, -d, records]}, periodSeconds: 5}
+          resources: {requests: {cpu: 50m, memory: 64Mi}, limits: {memory: 256Mi}}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/postgresql/data}
+            - {name: run, mountPath: /var/run/postgresql}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - {name: run, emptyDir: {}}
+        - {name: tmp, emptyDir: {}}
+  volumeClaimTemplates:
+    - metadata: {name: data, labels: {carewell.io/data-class: phi}}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 1Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: reporting-replica, namespace: health-reporting, labels: {app.kubernetes.io/name: reporting-replica}}
+spec:
+  selector: {app.kubernetes.io/name: reporting-replica}
+  ports: [{name: postgres, port: 5432, targetPort: postgres}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: reporting-replica, namespace: health-reporting}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: reporting-replica}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: reporting}}
+      ports: [{protocol: TCP, port: 5432}]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: health-phi}}
+          podSelector: {matchLabels: {app.kubernetes.io/name: records-db}}
+      ports: [{protocol: TCP, port: 5432}]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: reporting, namespace: health-reporting}
+automountServiceAccountToken: false
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: reporting
+  namespace: health-reporting
+  labels: {app.kubernetes.io/name: reporting, app.kubernetes.io/part-of: carewell}
+spec:
+  schedule: "15 2 * * *"
+  timeZone: Etc/UTC
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 3600
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels: {app.kubernetes.io/name: reporting, app.kubernetes.io/part-of: carewell}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: reporting
+          automountServiceAccountToken: false
+          enableServiceLinks: false
+          # processes PHI (before de-identification) -> restricted pool
+          nodeSelector: {pool: restricted}
+          tolerations: [{key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}]
+          securityContext: {runAsNonRoot: true, runAsUser: 70, runAsGroup: 70, fsGroup: 70, seccompProfile: {type: RuntimeDefault}}
+          containers:
+            - name: reporting
+              image: docker.io/library/postgres:17-alpine
+              # stand-in for the de-identification batch: read-only query on the replica
+              command: ["psql", "-v", "ON_ERROR_STOP=1", "-h", "reporting-replica.health-reporting.svc.cluster.local",
+                        "-U", "reporting", "-d", "records", "-tAc",
+                        "select 'replica_in_recovery=' || pg_is_in_recovery() || ' tables=' || count(*) from pg_catalog.pg_tables"]
+              env:
+                - {name: PGPASSWORD, valueFrom: {secretKeyRef: {name: reporting-job, key: PGPASSWORD}}}
+                - {name: PGCONNECT_TIMEOUT, value: "5"}
+              resources:
+                requests: {cpu: 10m, memory: 16Mi}
+                limits: {memory: 64Mi}
+              securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: reporting, namespace: health-reporting}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: reporting}}
+  policyTypes: [Ingress, Egress]
+  egress:
+    - to:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: reporting-replica}}
+      ports: [{protocol: TCP, port: 5432}]
+
+# =====================================================================
+# health-ops: node agents
+# =====================================================================
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: log-shipper, namespace: health-ops}
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: log-shipper, namespace: health-ops}
+data:
+  # SIEM collector address is a placeholder (TEST-NET-3); set the real one.
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush         5
+        Log_Level     warn
+        HTTP_Server   On
+        HTTP_Listen   0.0.0.0
+        HTTP_Port     2020
+        storage.path  /buffers/
+    [INPUT]
+        Name              tail
+        Tag               kube.*
+        Path              /var/log/containers/*.log
+        multiline.parser  cri
+        DB                /buffers/tail.db
+        Mem_Buf_Limit     5MB
+        Skip_Long_Lines   On
+        storage.type      filesystem
+    [INPUT]
+        Name              systemd
+        Tag               node.*
+        # kind/most nodes keep a volatile journal in /run/log/journal
+        Path              /run/log/journal
+        Systemd_Filter    _SYSTEMD_UNIT=kubelet.service
+        Systemd_Filter    _SYSTEMD_UNIT=containerd.service
+        Read_From_Tail    On
+        DB                /buffers/journal.db
+    [FILTER]
+        Name    record_modifier
+        Match   *
+        Record  node ${NODE_NAME}
+        Record  cluster carewell-lab
+    [OUTPUT]
+        Name          forward
+        Match         *
+        Host          203.0.113.10
+        Port          24224
+        tls           On
+        tls.verify    On
+        Retry_Limit   False
+        storage.total_limit_size 256M
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-shipper
+  namespace: health-ops
+  labels: {app.kubernetes.io/name: log-shipper, app.kubernetes.io/part-of: carewell}
+spec:
+  selector: {matchLabels: {app.kubernetes.io/name: log-shipper}}
+  updateStrategy: {type: RollingUpdate, rollingUpdate: {maxUnavailable: 1}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: log-shipper, app.kubernetes.io/part-of: carewell}
+    spec:
+      serviceAccountName: log-shipper
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      # EVERY node: general, edge, restricted and the control plane.
+      tolerations:
+        - {operator: Exists}
+      securityContext:
+        runAsUser: 0          # container log files are root-owned 0640
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: fluent-bit
+          image: docker.io/fluent/fluent-bit:3.2
+          env:
+            - {name: NODE_NAME, valueFrom: {fieldRef: {fieldPath: spec.nodeName}}}
+          ports: [{name: metrics, containerPort: 2020}]
+          readinessProbe: {httpGet: {path: /, port: metrics}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /, port: metrics}, periodSeconds: 20, initialDelaySeconds: 10}
+          resources:
+            requests: {cpu: 10m, memory: 24Mi}
+            limits: {memory: 96Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL], add: [DAC_READ_SEARCH]}
+          volumeMounts:
+            - {name: config, mountPath: /fluent-bit/etc, readOnly: true}
+            - {name: varlog, mountPath: /var/log, readOnly: true}
+            - {name: machine-id, mountPath: /etc/machine-id, readOnly: true}
+            - {name: journal, mountPath: /run/log/journal, readOnly: true}
+            - {name: buffers, mountPath: /buffers}
+      volumes:
+        - {name: config, configMap: {name: log-shipper}}
+        - {name: varlog, hostPath: {path: /var/log, type: Directory}}
+        - {name: machine-id, hostPath: {path: /etc/machine-id, type: File}}
+        - {name: journal, hostPath: {path: /run/log/journal, type: Directory}}
+        - {name: buffers, emptyDir: {sizeLimit: 300Mi}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: log-shipper, namespace: health-ops}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: log-shipper}}
+  policyTypes: [Ingress, Egress]
+  egress:
+    - to:
+        - ipBlock: {cidr: 203.0.113.10/32}   # SIEM collector (placeholder)
+      ports: [{protocol: TCP, port: 24224}]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: backup-agent, namespace: health-ops}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: backup-agent
+  namespace: health-ops
+  labels: {app.kubernetes.io/name: backup-agent, app.kubernetes.io/part-of: carewell}
+spec:
+  selector: {matchLabels: {app.kubernetes.io/name: backup-agent}}
+  updateStrategy: {type: RollingUpdate, rollingUpdate: {maxUnavailable: 1}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: backup-agent, app.kubernetes.io/part-of: carewell}
+    spec:
+      serviceAccountName: backup-agent
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      # All persistent volumes of this platform live on pool=restricted
+      # (every stateful workload is pinned there), so that pool == "nodes that store data".
+      nodeSelector: {pool: restricted}
+      tolerations: [{key: dedicated, operator: Equal, value: restricted, effect: NoSchedule}]
+      securityContext:
+        runAsUser: 0          # must read postgres (uid 70, 0700) data dirs
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: agent
+          image: registry.k8s.io/e2e-test-images/agnhost:2.53   # stand-in for the vendor agent
+          args: ["pause"]
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL], add: [DAC_READ_SEARCH]}
+          volumeMounts:
+            - {name: volumes, mountPath: /backup-source, readOnly: true}
+      volumes:
+        - {name: volumes, hostPath: {path: /var/local-path-provisioner, type: DirectoryOrCreate}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: backup-agent, namespace: health-ops}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: backup-agent}}
+  policyTypes: [Ingress, Egress]
+  egress:
+    - to:
+        - ipBlock: {cidr: 198.51.100.0/24}   # backup vendor endpoint (placeholder)
+      ports: [{protocol: TCP, port: 443}]

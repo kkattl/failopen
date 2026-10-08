@@ -1,0 +1,108 @@
+0.0.0.0-192.167.255.255 => failopen-oracle/outsider[Pod] : All Connections
+0.0.0.0-192.167.255.255 => saas-edge/gateway[Deployment] : TCP 8080
+192.168.0.0-192.168.255.255 => failopen-oracle/outsider[Pod] : All Connections
+192.169.0.0-255.255.255.255 => failopen-oracle/outsider[Pod] : All Connections
+192.169.0.0-255.255.255.255 => saas-edge/gateway[Deployment] : TCP 8080
+failopen-oracle/outsider[Pod] => 0.0.0.0-9.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 10.0.0.0-10.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 100.128.0.0-126.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 100.64.0.0-100.127.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 11.0.0.0-100.63.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 127.0.0.0-127.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 128.0.0.0-169.253.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 169.254.0.0-169.254.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 169.255.0.0-172.15.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 172.16.0.0-172.31.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 172.32.0.0-192.167.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 192.168.0.0-192.168.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 192.169.0.0-255.255.255.255 : All Connections
+saas-edge/gateway[Deployment] => saas-tenant-acme/app[Deployment] : TCP 8080
+saas-edge/gateway[Deployment] => saas-tenant-globex/app[Deployment] : TCP 8080
+saas-edge/gateway[Deployment] => saas-tenant-initech/app[Deployment] : TCP 8080
+saas-platform/billing[Deployment] => saas-tenant-acme/app[Deployment] : TCP 8080
+saas-platform/billing[Deployment] => saas-tenant-globex/app[Deployment] : TCP 8080
+saas-platform/billing[Deployment] => saas-tenant-initech/app[Deployment] : TCP 8080
+saas-platform/mailer[Deployment] => 0.0.0.0-9.255.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment] => 100.128.0.0-126.255.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment] => 11.0.0.0-100.63.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment] => 128.0.0.0-169.253.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment] => 169.255.0.0-172.15.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment] => 172.32.0.0-192.167.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment] => 192.169.0.0-255.255.255.255 : TCP 25,465,587
+saas-tenant-acme/app[Deployment] => saas-platform/auth[Deployment] : TCP 8080
+saas-tenant-acme/app[Deployment] => saas-tenant-acme/db[StatefulSet] : TCP 5432
+saas-tenant-acme/worker[Deployment] => saas-platform/mailer[Deployment] : TCP 2525
+saas-tenant-acme/worker[Deployment] => saas-tenant-acme/db[StatefulSet] : TCP 5432
+saas-tenant-globex/app[Deployment] => saas-platform/auth[Deployment] : TCP 8080
+saas-tenant-globex/app[Deployment] => saas-tenant-globex/db[StatefulSet] : TCP 5432
+saas-tenant-globex/worker[Deployment] => saas-platform/mailer[Deployment] : TCP 2525
+saas-tenant-globex/worker[Deployment] => saas-tenant-globex/db[StatefulSet] : TCP 5432
+saas-tenant-initech/app[Deployment] => saas-platform/auth[Deployment] : TCP 8080
+saas-tenant-initech/app[Deployment] => saas-tenant-initech/db[StatefulSet] : TCP 5432
+saas-tenant-initech/worker[Deployment] => saas-platform/mailer[Deployment] : TCP 2525
+saas-tenant-initech/worker[Deployment] => saas-tenant-initech/db[StatefulSet] : TCP 5432
+
+Exposure Analysis Result:
+Egress Exposure:
+failopen-oracle/outsider[Pod]          	=> 	0.0.0.0-9.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	10.0.0.0-10.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	100.128.0.0-126.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	100.64.0.0-100.127.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	11.0.0.0-100.63.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	127.0.0.0-127.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	128.0.0.0-169.253.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	169.254.0.0-169.254.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	169.255.0.0-172.15.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	172.16.0.0-172.31.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	172.32.0.0-192.167.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	192.168.0.0-192.168.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	192.169.0.0-255.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	=> 	entire-cluster : All Connections
+saas-edge/gateway[Deployment]          	=> 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-tenant-acme saas-tenant-globex saas-tenant-initech],}}]/[pod with {app.kubernetes.io/name=app}] : TCP 8080
+saas-edge/gateway[Deployment]          	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-platform/auth[Deployment]         	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-platform/billing[Deployment]      	=> 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-tenant-acme saas-tenant-globex saas-tenant-initech],}}]/[pod with {app.kubernetes.io/name=app}] : TCP 8080
+saas-platform/billing[Deployment]      	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-platform/mailer[Deployment]       	=> 	0.0.0.0-9.255.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment]       	=> 	100.128.0.0-126.255.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment]       	=> 	11.0.0.0-100.63.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment]       	=> 	128.0.0.0-169.253.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment]       	=> 	169.255.0.0-172.15.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment]       	=> 	172.32.0.0-192.167.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment]       	=> 	192.169.0.0-255.255.255.255 : TCP 25,465,587
+saas-platform/mailer[Deployment]       	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-acme/app[Deployment]       	=> 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=auth}] : TCP 8080
+saas-tenant-acme/app[Deployment]       	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-acme/db[StatefulSet]       	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-acme/worker[Deployment]    	=> 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=mailer}] : TCP 2525
+saas-tenant-acme/worker[Deployment]    	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-globex/app[Deployment]     	=> 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=auth}] : TCP 8080
+saas-tenant-globex/app[Deployment]     	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-globex/db[StatefulSet]     	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-globex/worker[Deployment]  	=> 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=mailer}] : TCP 2525
+saas-tenant-globex/worker[Deployment]  	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-initech/app[Deployment]    	=> 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=auth}] : TCP 8080
+saas-tenant-initech/app[Deployment]    	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-initech/db[StatefulSet]    	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+saas-tenant-initech/worker[Deployment] 	=> 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=mailer}] : TCP 2525
+saas-tenant-initech/worker[Deployment] 	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+
+Ingress Exposure:
+failopen-oracle/outsider[Pod]          	<= 	0.0.0.0-192.167.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	<= 	192.168.0.0-192.168.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	<= 	192.169.0.0-255.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]          	<= 	entire-cluster : All Connections
+saas-edge/gateway[Deployment]          	<= 	0.0.0.0-192.167.255.255 : TCP 8080
+saas-edge/gateway[Deployment]          	<= 	192.169.0.0-255.255.255.255 : TCP 8080
+saas-platform/auth[Deployment]         	<= 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-tenant-acme saas-tenant-globex saas-tenant-initech],}}]/[pod with {app.kubernetes.io/name=app}] : TCP 8080
+saas-platform/mailer[Deployment]       	<= 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-tenant-acme saas-tenant-globex saas-tenant-initech],}}]/[pod with {app.kubernetes.io/name=worker}] : TCP 2525
+saas-tenant-acme/app[Deployment]       	<= 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-edge],}}]/[pod with {app.kubernetes.io/name=gateway}] : TCP 8080
+saas-tenant-acme/app[Deployment]       	<= 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=billing}] : TCP 8080
+saas-tenant-globex/app[Deployment]     	<= 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-edge],}}]/[pod with {app.kubernetes.io/name=gateway}] : TCP 8080
+saas-tenant-globex/app[Deployment]     	<= 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=billing}] : TCP 8080
+saas-tenant-initech/app[Deployment]    	<= 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-edge],}}]/[pod with {app.kubernetes.io/name=gateway}] : TCP 8080
+saas-tenant-initech/app[Deployment]    	<= 	[namespace with {{Key:kubernetes.io/metadata.name,Operator:In,Values:[saas-platform],}}]/[pod with {app.kubernetes.io/name=billing}] : TCP 8080
+
+Workloads not protected by network policies:
+failopen-oracle/outsider[Pod] is not protected on Egress
+failopen-oracle/outsider[Pod] is not protected on Ingress

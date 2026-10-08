@@ -1,0 +1,1600 @@
+{
+ "scenarios": {
+  "demo-payments": {
+   "calico": {
+    "bypass_probes": 11,
+    "bypass_groups": 1,
+    "probes": 108,
+    "verdicts": {
+     "spec-exception": 6,
+     "bypass": 11,
+     "match": 91
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     2,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     1,
+     22
+    ],
+    "netpol": {
+     "mapped": 108,
+     "agree_declared": 108,
+     "disagree_effective": 17,
+     "diseff:spec-exception": 6,
+     "specexc_np_denied": 6,
+     "diseff:bypass": 11,
+     "bypass_mapped": 11,
+     "bypass_np_denied": 11,
+     "agree_effective": 91
+    }
+   },
+   "cilium": {
+    "bypass_probes": 11,
+    "bypass_groups": 1,
+    "probes": 108,
+    "verdicts": {
+     "spec-exception": 6,
+     "bypass": 11,
+     "match": 91
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     2,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     1,
+     30
+    ],
+    "netpol": {
+     "mapped": 108,
+     "agree_declared": 108,
+     "disagree_effective": 17,
+     "diseff:spec-exception": 6,
+     "specexc_np_denied": 6,
+     "diseff:bypass": 11,
+     "bypass_mapped": 11,
+     "bypass_np_denied": 11,
+     "agree_effective": 91
+    }
+   },
+   "flannel": {
+    "bypass_probes": 99,
+    "bypass_groups": 6,
+    "probes": 108,
+    "verdicts": {
+     "spec-exception": 9,
+     "bypass": 99
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     2,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     1,
+     21
+    ],
+    "netpol": {
+     "mapped": 108,
+     "agree_declared": 108,
+     "disagree_effective": 108,
+     "diseff:spec-exception": 9,
+     "specexc_np_denied": 9,
+     "diseff:bypass": 99,
+     "bypass_mapped": 99,
+     "bypass_np_denied": 99
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [
+     [
+      "monitoring",
+      "Pod",
+      "node-agent"
+     ],
+     [
+      "payments",
+      "Pod",
+      "host-probe"
+     ]
+    ],
+    "C-0260": [
+     [
+      "monitoring",
+      "Pod",
+      "node-agent"
+     ]
+    ],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "ecommerce-northwind": {
+   "calico": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 760,
+    "verdicts": {
+     "match": 605,
+     "unreachable": 122,
+     "spec-exception": 21,
+     "unknown": 12
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     22
+    ],
+    "netpol": {
+     "same_workload": 12,
+     "mapped": 748,
+     "agree_declared": 748,
+     "agree_effective": 709,
+     "disagree_effective": 39,
+     "diseff:spec-exception": 21,
+     "specexc_np_denied": 21,
+     "diseff:unknown": 12,
+     "diseff:unreachable": 6
+    }
+   },
+   "cilium": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 760,
+    "verdicts": {
+     "match": 605,
+     "unreachable": 122,
+     "spec-exception": 21,
+     "unknown": 12
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     30
+    ],
+    "netpol": {
+     "same_workload": 12,
+     "mapped": 748,
+     "agree_declared": 748,
+     "agree_effective": 709,
+     "disagree_effective": 39,
+     "diseff:spec-exception": 21,
+     "specexc_np_denied": 21,
+     "diseff:unknown": 12,
+     "diseff:unreachable": 6
+    }
+   },
+   "flannel": {
+    "bypass_probes": 522,
+    "bypass_groups": 42,
+    "probes": 760,
+    "verdicts": {
+     "bypass": 522,
+     "match": 83,
+     "unreachable": 122,
+     "spec-exception": 21,
+     "unknown": 12
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     21
+    ],
+    "netpol": {
+     "same_workload": 12,
+     "mapped": 748,
+     "agree_declared": 748,
+     "agree_effective": 199,
+     "disagree_effective": 549,
+     "diseff:bypass": 510,
+     "bypass_mapped": 510,
+     "bypass_np_denied": 510,
+     "diseff:spec-exception": 21,
+     "specexc_np_denied": 21,
+     "diseff:unknown": 12,
+     "diseff:unreachable": 6
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [],
+    "C-0260": [],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "ecommerce-northwind-overlap": {
+   "calico": {
+    "bypass_probes": 1,
+    "bypass_groups": 1,
+    "probes": 760,
+    "verdicts": {
+     "match": 589,
+     "unreachable": 122,
+     "spec-exception": 18,
+     "overblock": 18,
+     "unknown": 12,
+     "bypass": 1
+    },
+    "failopen": [
+     "ecom-edge/svc/edge-proxy:30080"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     22
+    ],
+    "netpol": {
+     "same_workload": 12,
+     "mapped": 748,
+     "agree_declared": 748,
+     "agree_effective": 663,
+     "disagree_effective": 85,
+     "diseff:spec-exception": 18,
+     "specexc_np_denied": 18,
+     "diseff:overblock": 18,
+     "overblock_mapped": 18,
+     "overblock_np_allowed": 18,
+     "diseff:unknown": 12,
+     "diseff:unreachable": 36,
+     "diseff:bypass": 1,
+     "bypass_mapped": 1,
+     "bypass_np_denied": 1
+    }
+   },
+   "cilium": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 760,
+    "verdicts": {
+     "match": 584,
+     "unreachable": 122,
+     "overblock": 24,
+     "spec-exception": 18,
+     "unknown": 12
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     30
+    ],
+    "netpol": {
+     "same_workload": 12,
+     "mapped": 748,
+     "agree_declared": 748,
+     "agree_effective": 658,
+     "disagree_effective": 90,
+     "diseff:overblock": 24,
+     "overblock_mapped": 24,
+     "overblock_np_allowed": 24,
+     "diseff:unreachable": 36,
+     "diseff:spec-exception": 18,
+     "specexc_np_denied": 18,
+     "diseff:unknown": 12
+    }
+   },
+   "flannel": {
+    "bypass_probes": 499,
+    "bypass_groups": 40,
+    "probes": 760,
+    "verdicts": {
+     "bypass": 499,
+     "match": 109,
+     "unreachable": 122,
+     "spec-exception": 18,
+     "unknown": 12
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     21
+    ],
+    "netpol": {
+     "same_workload": 12,
+     "mapped": 748,
+     "agree_declared": 748,
+     "agree_effective": 195,
+     "disagree_effective": 553,
+     "diseff:bypass": 487,
+     "bypass_mapped": 487,
+     "bypass_np_denied": 487,
+     "diseff:spec-exception": 18,
+     "specexc_np_denied": 18,
+     "diseff:unreachable": 36,
+     "diseff:unknown": 12
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [],
+    "C-0260": [],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "fintech-paylane": {
+   "calico": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 1070,
+    "verdicts": {
+     "match": 897,
+     "unreachable": 138,
+     "spec-exception": 29,
+     "unknown": 6
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     22
+    ],
+    "netpol": {
+     "mapped": 980,
+     "agree_declared": 971,
+     "agree_effective": 899,
+     "same_workload": 90,
+     "disagree_effective": 81,
+     "diseff:spec-exception": 29,
+     "specexc_np_denied": 29,
+     "diseff:unknown": 6,
+     "diseff:unreachable": 42,
+     "disagree_declared": 9,
+     "diseff:match": 4
+    }
+   },
+   "cilium": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 1070,
+    "verdicts": {
+     "match": 869,
+     "unreachable": 138,
+     "spec-exception": 29,
+     "overblock": 28,
+     "unknown": 6
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     30
+    ],
+    "netpol": {
+     "mapped": 980,
+     "agree_declared": 971,
+     "agree_effective": 879,
+     "same_workload": 90,
+     "disagree_effective": 101,
+     "diseff:spec-exception": 29,
+     "specexc_np_denied": 29,
+     "diseff:overblock": 24,
+     "overblock_mapped": 28,
+     "overblock_np_allowed": 24,
+     "diseff:unknown": 6,
+     "diseff:unreachable": 42,
+     "disagree_declared": 9,
+     "overblock_np_denied": 4
+    }
+   },
+   "flannel": {
+    "bypass_probes": 830,
+    "bypass_groups": 36,
+    "probes": 1070,
+    "verdicts": {
+     "bypass": 830,
+     "match": 67,
+     "unreachable": 138,
+     "spec-exception": 29,
+     "unknown": 6
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     21
+    ],
+    "netpol": {
+     "mapped": 980,
+     "agree_declared": 971,
+     "disagree_effective": 821,
+     "diseff:bypass": 740,
+     "bypass_mapped": 740,
+     "bypass_np_denied": 740,
+     "agree_effective": 159,
+     "same_workload": 90,
+     "diseff:spec-exception": 29,
+     "specexc_np_denied": 29,
+     "diseff:unreachable": 42,
+     "diseff:unknown": 6,
+     "disagree_declared": 9,
+     "diseff:match": 4
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [],
+    "C-0260": [],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "fintech-paylane-hostnet-agent": {
+   "calico": {
+    "bypass_probes": 210,
+    "bypass_groups": 1,
+    "probes": 1084,
+    "verdicts": {
+     "match": 687,
+     "unreachable": 138,
+     "bypass": 210,
+     "spec-exception": 30,
+     "unknown": 12,
+     "overblock": 7
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     7,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     22
+    ],
+    "netpol": {
+     "mapped": 994,
+     "agree_declared": 922,
+     "agree_effective": 746,
+     "same_workload": 90,
+     "disagree_declared": 72,
+     "disagree_effective": 248,
+     "diseff:match": 31,
+     "diseff:spec-exception": 30,
+     "specexc_np_denied": 30,
+     "diseff:unknown": 12,
+     "diseff:overblock": 7,
+     "overblock_mapped": 7,
+     "overblock_np_allowed": 7,
+     "diseff:bypass": 126,
+     "bypass_mapped": 126,
+     "bypass_np_denied": 126,
+     "diseff:unreachable": 42
+    }
+   },
+   "cilium": {
+    "bypass_probes": 210,
+    "bypass_groups": 1,
+    "probes": 1084,
+    "verdicts": {
+     "match": 635,
+     "unreachable": 138,
+     "overblock": 59,
+     "bypass": 210,
+     "spec-exception": 30,
+     "unknown": 12
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     7,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     30
+    ],
+    "netpol": {
+     "mapped": 994,
+     "agree_declared": 922,
+     "agree_effective": 750,
+     "same_workload": 90,
+     "disagree_declared": 72,
+     "overblock_mapped": 59,
+     "overblock_np_denied": 28,
+     "disagree_effective": 244,
+     "diseff:spec-exception": 30,
+     "specexc_np_denied": 30,
+     "diseff:unknown": 12,
+     "diseff:match": 3,
+     "diseff:overblock": 31,
+     "overblock_np_allowed": 31,
+     "diseff:bypass": 126,
+     "bypass_mapped": 126,
+     "bypass_np_denied": 126,
+     "diseff:unreachable": 42
+    }
+   },
+   "flannel": {
+    "bypass_probes": 810,
+    "bypass_groups": 35,
+    "probes": 1084,
+    "verdicts": {
+     "bypass": 810,
+     "match": 94,
+     "unreachable": 138,
+     "spec-exception": 30,
+     "unknown": 12
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     7,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     21
+    ],
+    "netpol": {
+     "mapped": 994,
+     "agree_declared": 922,
+     "disagree_effective": 835,
+     "diseff:bypass": 720,
+     "bypass_mapped": 720,
+     "bypass_np_denied": 720,
+     "agree_effective": 159,
+     "same_workload": 90,
+     "disagree_declared": 72,
+     "diseff:match": 31,
+     "diseff:spec-exception": 30,
+     "specexc_np_denied": 30,
+     "diseff:unknown": 12,
+     "diseff:unreachable": 42
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [
+     [
+      "fintech-ops",
+      "DaemonSet",
+      "node-agent"
+     ]
+    ],
+    "C-0260": [],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "health-carewell": {
+   "calico": {
+    "bypass_probes": 1,
+    "bypass_groups": 1,
+    "probes": 837,
+    "verdicts": {
+     "match": 655,
+     "unreachable": 138,
+     "overblock": 18,
+     "spec-exception": 21,
+     "unknown": 4,
+     "bypass": 1
+    },
+    "failopen": [
+     "health-edge/svc/edge-proxy:30240"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     22
+    ],
+    "netpol": {
+     "mapped": 791,
+     "agree_declared": 791,
+     "agree_effective": 705,
+     "same_workload": 46,
+     "disagree_effective": 86,
+     "diseff:overblock": 18,
+     "overblock_mapped": 18,
+     "overblock_np_allowed": 18,
+     "diseff:spec-exception": 21,
+     "specexc_np_denied": 21,
+     "diseff:unreachable": 42,
+     "diseff:unknown": 4,
+     "diseff:bypass": 1,
+     "bypass_mapped": 1,
+     "bypass_np_denied": 1
+    }
+   },
+   "cilium": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 837,
+    "verdicts": {
+     "match": 650,
+     "unreachable": 138,
+     "overblock": 24,
+     "spec-exception": 21,
+     "unknown": 4
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     30
+    ],
+    "netpol": {
+     "mapped": 791,
+     "agree_declared": 791,
+     "agree_effective": 700,
+     "same_workload": 46,
+     "disagree_effective": 91,
+     "diseff:overblock": 24,
+     "overblock_mapped": 24,
+     "overblock_np_allowed": 24,
+     "diseff:spec-exception": 21,
+     "specexc_np_denied": 21,
+     "diseff:unreachable": 42,
+     "diseff:unknown": 4
+    }
+   },
+   "flannel": {
+    "bypass_probes": 619,
+    "bypass_groups": 34,
+    "probes": 837,
+    "verdicts": {
+     "bypass": 619,
+     "match": 55,
+     "unreachable": 138,
+     "spec-exception": 21,
+     "unknown": 4
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     21
+    ],
+    "netpol": {
+     "mapped": 791,
+     "agree_declared": 791,
+     "disagree_effective": 640,
+     "diseff:bypass": 573,
+     "bypass_mapped": 573,
+     "bypass_np_denied": 573,
+     "agree_effective": 151,
+     "same_workload": 46,
+     "diseff:spec-exception": 21,
+     "specexc_np_denied": 21,
+     "diseff:unreachable": 42,
+     "diseff:unknown": 4
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [],
+    "C-0260": [],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "iot-voltgrid": {
+   "calico": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 751,
+    "verdicts": {
+     "match": 720,
+     "spec-exception": 29,
+     "unknown": 2
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     22
+    ],
+    "netpol": {
+     "mapped": 665,
+     "agree_declared": 665,
+     "agree_effective": 634,
+     "same_workload": 86,
+     "disagree_effective": 31,
+     "diseff:spec-exception": 29,
+     "specexc_np_denied": 29,
+     "diseff:unknown": 2
+    }
+   },
+   "cilium": {
+    "bypass_probes": 14,
+    "bypass_groups": 2,
+    "probes": 751,
+    "verdicts": {
+     "match": 706,
+     "bypass": 14,
+     "spec-exception": 29,
+     "unknown": 2
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     30
+    ],
+    "netpol": {
+     "mapped": 665,
+     "agree_declared": 665,
+     "agree_effective": 620,
+     "same_workload": 86,
+     "disagree_effective": 45,
+     "diseff:bypass": 14,
+     "bypass_mapped": 14,
+     "bypass_np_denied": 14,
+     "diseff:spec-exception": 29,
+     "specexc_np_denied": 29,
+     "diseff:unknown": 2
+    }
+   },
+   "flannel": {
+    "bypass_probes": 683,
+    "bypass_groups": 28,
+    "probes": 751,
+    "verdicts": {
+     "bypass": 683,
+     "match": 37,
+     "spec-exception": 29,
+     "unknown": 2
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     21
+    ],
+    "netpol": {
+     "mapped": 665,
+     "agree_declared": 665,
+     "disagree_effective": 628,
+     "diseff:bypass": 597,
+     "bypass_mapped": 597,
+     "bypass_np_denied": 597,
+     "agree_effective": 37,
+     "same_workload": 86,
+     "diseff:spec-exception": 29,
+     "specexc_np_denied": 29,
+     "diseff:unknown": 2
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [],
+    "C-0260": [],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "known-open": {
+   "calico": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 252,
+    "verdicts": {
+     "match": 186,
+     "unreachable": 54,
+     "unknown": 12
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     1,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     5,
+     22
+    ],
+    "netpol": {
+     "mapped": 250,
+     "agree_declared": 250,
+     "agree_effective": 196,
+     "disagree_effective": 54,
+     "diseff:unreachable": 54,
+     "same_workload": 2
+    }
+   },
+   "cilium": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 252,
+    "verdicts": {
+     "match": 186,
+     "unreachable": 54,
+     "unknown": 12
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     1,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     5,
+     30
+    ],
+    "netpol": {
+     "mapped": 250,
+     "agree_declared": 250,
+     "agree_effective": 196,
+     "disagree_effective": 54,
+     "diseff:unreachable": 54,
+     "same_workload": 2
+    }
+   },
+   "flannel": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 252,
+    "verdicts": {
+     "match": 186,
+     "unreachable": 54,
+     "unknown": 12
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     1,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     5,
+     21
+    ],
+    "netpol": {
+     "mapped": 250,
+     "agree_declared": 250,
+     "agree_effective": 196,
+     "disagree_effective": 54,
+     "diseff:unreachable": 54,
+     "same_workload": 2
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [
+     [
+      "known-open",
+      "Pod",
+      "hostnet"
+     ]
+    ],
+    "C-0260": [
+     [
+      "known-open",
+      "Deployment",
+      "web"
+     ],
+     [
+      "known-open",
+      "Pod",
+      "client"
+     ],
+     [
+      "known-open",
+      "Pod",
+      "hostnet"
+     ],
+     [
+      "known-open",
+      "Pod",
+      "hostport"
+     ]
+    ],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "saas-formcraft": {
+   "calico": {
+    "bypass_probes": 1,
+    "bypass_groups": 1,
+    "probes": 510,
+    "verdicts": {
+     "match": 363,
+     "unreachable": 112,
+     "overblock": 18,
+     "spec-exception": 14,
+     "unknown": 2,
+     "bypass": 1
+    },
+    "failopen": [
+     "saas-edge/svc/gateway:31480"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     22
+    ],
+    "netpol": {
+     "mapped": 508,
+     "agree_declared": 508,
+     "agree_effective": 431,
+     "same_workload": 2,
+     "disagree_effective": 77,
+     "diseff:overblock": 18,
+     "overblock_mapped": 18,
+     "overblock_np_allowed": 18,
+     "diseff:spec-exception": 14,
+     "specexc_np_denied": 14,
+     "diseff:unreachable": 42,
+     "diseff:unknown": 2,
+     "diseff:bypass": 1,
+     "bypass_mapped": 1,
+     "bypass_np_denied": 1
+    }
+   },
+   "cilium": {
+    "bypass_probes": 0,
+    "bypass_groups": 0,
+    "probes": 510,
+    "verdicts": {
+     "match": 358,
+     "unreachable": 112,
+     "overblock": 24,
+     "spec-exception": 14,
+     "unknown": 2
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     30
+    ],
+    "netpol": {
+     "mapped": 508,
+     "agree_declared": 508,
+     "agree_effective": 426,
+     "same_workload": 2,
+     "disagree_effective": 82,
+     "diseff:unreachable": 42,
+     "diseff:overblock": 24,
+     "overblock_mapped": 24,
+     "overblock_np_allowed": 24,
+     "diseff:spec-exception": 14,
+     "specexc_np_denied": 14,
+     "diseff:unknown": 2
+    }
+   },
+   "flannel": {
+    "bypass_probes": 321,
+    "bypass_groups": 32,
+    "probes": 510,
+    "verdicts": {
+     "bypass": 321,
+     "match": 61,
+     "unreachable": 112,
+     "spec-exception": 14,
+     "unknown": 2
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     21
+    ],
+    "netpol": {
+     "mapped": 508,
+     "agree_declared": 508,
+     "disagree_effective": 377,
+     "diseff:bypass": 319,
+     "bypass_mapped": 319,
+     "bypass_np_denied": 319,
+     "agree_effective": 131,
+     "same_workload": 2,
+     "diseff:unreachable": 42,
+     "diseff:spec-exception": 14,
+     "specexc_np_denied": 14,
+     "diseff:unknown": 2
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [],
+    "C-0260": [],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  },
+  "saas-formcraft-etp-cluster": {
+   "calico": {
+    "bypass_probes": 1,
+    "bypass_groups": 1,
+    "probes": 510,
+    "verdicts": {
+     "match": 433,
+     "overblock": 60,
+     "spec-exception": 14,
+     "unknown": 2,
+     "bypass": 1
+    },
+    "failopen": [
+     "saas-edge/svc/gateway:31480"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     22
+    ],
+    "netpol": {
+     "mapped": 508,
+     "agree_declared": 508,
+     "agree_effective": 431,
+     "same_workload": 2,
+     "disagree_effective": 77,
+     "diseff:overblock": 60,
+     "overblock_mapped": 60,
+     "overblock_np_allowed": 60,
+     "diseff:spec-exception": 14,
+     "specexc_np_denied": 14,
+     "diseff:unknown": 2,
+     "diseff:bypass": 1,
+     "bypass_mapped": 1,
+     "bypass_np_denied": 1
+    }
+   },
+   "cilium": {
+    "bypass_probes": 6,
+    "bypass_groups": 1,
+    "probes": 510,
+    "verdicts": {
+     "match": 470,
+     "overblock": 18,
+     "spec-exception": 14,
+     "unknown": 2,
+     "bypass": 6
+    },
+    "failopen": [],
+    "ks_snapshot_C0041": [
+     0,
+     27
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     30
+    ],
+    "netpol": {
+     "mapped": 508,
+     "agree_declared": 508,
+     "agree_effective": 468,
+     "same_workload": 2,
+     "disagree_effective": 40,
+     "diseff:overblock": 18,
+     "overblock_mapped": 18,
+     "overblock_np_allowed": 18,
+     "diseff:spec-exception": 14,
+     "specexc_np_denied": 14,
+     "diseff:unknown": 2,
+     "diseff:bypass": 6,
+     "bypass_mapped": 6,
+     "bypass_np_denied": 6
+    }
+   },
+   "flannel": {
+    "bypass_probes": 391,
+    "bypass_groups": 31,
+    "probes": 510,
+    "verdicts": {
+     "bypass": 391,
+     "match": 103,
+     "spec-exception": 14,
+     "unknown": 2
+    },
+    "failopen": [
+     "cluster"
+    ],
+    "ks_snapshot_C0041": [
+     0,
+     18
+    ],
+    "ks_snapshot_C0260": [
+     0,
+     21
+    ],
+    "netpol": {
+     "mapped": 508,
+     "agree_declared": 508,
+     "disagree_effective": 405,
+     "diseff:bypass": 389,
+     "bypass_mapped": 389,
+     "bypass_np_denied": 389,
+     "agree_effective": 103,
+     "same_workload": 2,
+     "diseff:spec-exception": 14,
+     "specexc_np_denied": 14,
+     "diseff:unknown": 2
+    }
+   },
+   "ks_manifests": {
+    "C-0041": [],
+    "C-0260": [],
+    "C-0205": "not evaluated (alone: `Error: no resources found to scan`)"
+   }
+  }
+ },
+ "must": [
+  {
+   "scenario": "demo-payments",
+   "id": "f1",
+   "class": "hostnetwork-under-policy",
+   "cni": "calico",
+   "failopen": "no",
+   "kubescape": "partial \u2014 C-0041 flags the object as hostNetwork, not the policy gap",
+   "netpol": "no \u2014 models the hostNetwork pod as policy-protected ('deny')"
+  },
+  {
+   "scenario": "demo-payments",
+   "id": "f1",
+   "class": "hostnetwork-under-policy",
+   "cni": "cilium",
+   "failopen": "no",
+   "kubescape": "partial \u2014 C-0041 flags the object as hostNetwork, not the policy gap",
+   "netpol": "no \u2014 models the hostNetwork pod as policy-protected ('deny')"
+  },
+  {
+   "scenario": "demo-payments",
+   "id": "f2",
+   "class": "node-exception-segment",
+   "cni": "calico",
+   "failopen": "no",
+   "kubescape": "partial \u2014 C-0041 flags the agent monitoring/node-agent, not the namespace it reaches",
+   "netpol": "no \u2014 node-local traffic not modelled ('deny')"
+  },
+  {
+   "scenario": "demo-payments",
+   "id": "f2",
+   "class": "node-exception-segment",
+   "cni": "cilium",
+   "failopen": "no",
+   "kubescape": "partial \u2014 C-0041 flags the agent monitoring/node-agent, not the namespace it reaches",
+   "netpol": "no \u2014 node-local traffic not modelled ('deny')"
+  },
+  {
+   "scenario": "demo-payments",
+   "id": "f6",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (99/99 bypass probes 'deny')"
+  },
+  {
+   "scenario": "ecommerce-northwind",
+   "id": "f1",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (510/510 bypass probes 'deny')"
+  },
+  {
+   "scenario": "ecommerce-northwind-overlap",
+   "id": "f1",
+   "class": "ipblock-admits-node-ips",
+   "cni": "calico",
+   "failopen": "yes",
+   "kubescape": "no \u2014 no control covers ipBlock/SNAT",
+   "netpol": "no \u2014 outsider\u2192target 'deny'; node-IP range 'allow'"
+  },
+  {
+   "scenario": "ecommerce-northwind-overlap",
+   "id": "f5",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (487/487 bypass probes 'deny')"
+  },
+  {
+   "scenario": "fintech-paylane",
+   "id": "f1",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (740/740 bypass probes 'deny')"
+  },
+  {
+   "scenario": "fintech-paylane-hostnet-agent",
+   "id": "f1",
+   "class": "hostnetwork-under-policy",
+   "cni": "calico",
+   "failopen": "no",
+   "kubescape": "partial \u2014 C-0041 flags the object as hostNetwork, not the policy gap",
+   "netpol": "no \u2014 models the hostNetwork pod as policy-protected ('deny')"
+  },
+  {
+   "scenario": "fintech-paylane-hostnet-agent",
+   "id": "f1",
+   "class": "hostnetwork-under-policy",
+   "cni": "cilium",
+   "failopen": "no",
+   "kubescape": "partial \u2014 C-0041 flags the object as hostNetwork, not the policy gap",
+   "netpol": "no \u2014 models the hostNetwork pod as policy-protected ('deny')"
+  },
+  {
+   "scenario": "fintech-paylane-hostnet-agent",
+   "id": "f2",
+   "class": "node-exception-segment",
+   "cni": "calico",
+   "failopen": "no",
+   "kubescape": "partial \u2014 C-0041 flags the agent fintech-ops/node-agent, not the namespace it reaches",
+   "netpol": "no \u2014 node-local traffic not modelled ('deny')"
+  },
+  {
+   "scenario": "fintech-paylane-hostnet-agent",
+   "id": "f2",
+   "class": "node-exception-segment",
+   "cni": "cilium",
+   "failopen": "no",
+   "kubescape": "partial \u2014 C-0041 flags the agent fintech-ops/node-agent, not the namespace it reaches",
+   "netpol": "no \u2014 node-local traffic not modelled ('deny')"
+  },
+  {
+   "scenario": "fintech-paylane-hostnet-agent",
+   "id": "f12",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (720/720 bypass probes 'deny')"
+  },
+  {
+   "scenario": "health-carewell",
+   "id": "f1",
+   "class": "ipblock-admits-node-ips",
+   "cni": "calico",
+   "failopen": "yes",
+   "kubescape": "no \u2014 no control covers ipBlock/SNAT",
+   "netpol": "no \u2014 outsider\u2192target 'deny'"
+  },
+  {
+   "scenario": "health-carewell",
+   "id": "f10",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (573/573 bypass probes 'deny')"
+  },
+  {
+   "scenario": "iot-voltgrid",
+   "id": "f12",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (597/597 bypass probes 'deny')"
+  },
+  {
+   "scenario": "saas-formcraft",
+   "id": "f1",
+   "class": "ipblock-admits-node-ips",
+   "cni": "calico",
+   "failopen": "yes",
+   "kubescape": "no \u2014 no control covers ipBlock/SNAT",
+   "netpol": "no \u2014 outsider\u2192target 'deny'"
+  },
+  {
+   "scenario": "saas-formcraft",
+   "id": "f11",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (319/319 bypass probes 'deny')"
+  },
+  {
+   "scenario": "saas-formcraft-etp-cluster",
+   "id": "f1",
+   "class": "ipblock-admits-node-ips",
+   "cni": "calico",
+   "failopen": "yes",
+   "kubescape": "no \u2014 no control covers ipBlock/SNAT",
+   "netpol": "no \u2014 outsider\u2192target 'deny'"
+  },
+  {
+   "scenario": "saas-formcraft-etp-cluster",
+   "id": "f11",
+   "class": "cni-not-enforcing",
+   "cni": "flannel",
+   "failopen": "yes",
+   "kubescape": "no \u2014 C-0205 not evaluable offline",
+   "netpol": "no \u2014 reports declared policy as effective (389/389 bypass probes 'deny')"
+  }
+ ],
+ "kubescape_alerts": [
+  {
+   "scenario": "demo-payments",
+   "control": "C-0041",
+   "object": "monitoring/Pod/node-agent",
+   "corresponds": "yes",
+   "labels": [
+    "must f2 node-exception-segment (agent)"
+   ],
+   "must_not": [
+    "must-not f8 hostnetwork-under-policy"
+   ],
+   "bypass_probes_as_target": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "scenario": "demo-payments",
+   "control": "C-0041",
+   "object": "payments/Pod/host-probe",
+   "corresponds": "yes",
+   "labels": [
+    "must f1 hostnetwork-under-policy"
+   ],
+   "must_not": [],
+   "bypass_probes_as_target": [
+    11,
+    11,
+    11
+   ]
+  },
+  {
+   "scenario": "demo-payments",
+   "control": "C-0260",
+   "object": "monitoring/Pod/node-agent",
+   "corresponds": "yes",
+   "labels": [
+    "must f2 node-exception-segment (agent)"
+   ],
+   "must_not": [
+    "must-not f8 hostnetwork-under-policy"
+   ],
+   "bypass_probes_as_target": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "scenario": "fintech-paylane-hostnet-agent",
+   "control": "C-0041",
+   "object": "fintech-ops/DaemonSet/node-agent",
+   "corresponds": "yes",
+   "labels": [
+    "must f1 hostnetwork-under-policy",
+    "must f2 node-exception-segment (agent)",
+    "may f3 node-exception-segment (agent)",
+    "may f4 node-exception-segment (agent)"
+   ],
+   "must_not": [],
+   "bypass_probes_as_target": [
+    210,
+    210,
+    371
+   ]
+  },
+  {
+   "scenario": "known-open",
+   "control": "C-0041",
+   "object": "known-open/Pod/hostnet",
+   "corresponds": "no",
+   "labels": [],
+   "must_not": [
+    "must-not f3 hostnetwork-under-policy"
+   ],
+   "bypass_probes_as_target": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "scenario": "known-open",
+   "control": "C-0260",
+   "object": "known-open/Deployment/web",
+   "corresponds": "no",
+   "labels": [],
+   "must_not": [],
+   "bypass_probes_as_target": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "scenario": "known-open",
+   "control": "C-0260",
+   "object": "known-open/Pod/client",
+   "corresponds": "no",
+   "labels": [],
+   "must_not": [],
+   "bypass_probes_as_target": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "scenario": "known-open",
+   "control": "C-0260",
+   "object": "known-open/Pod/hostnet",
+   "corresponds": "no",
+   "labels": [],
+   "must_not": [
+    "must-not f3 hostnetwork-under-policy"
+   ],
+   "bypass_probes_as_target": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "scenario": "known-open",
+   "control": "C-0260",
+   "object": "known-open/Pod/hostport",
+   "corresponds": "no",
+   "labels": [],
+   "must_not": [
+    "must-not f5 other",
+    "must-not f6 ipblock-admits-node-ips"
+   ],
+   "bypass_probes_as_target": [
+    0,
+    0,
+    0
+   ]
+  }
+ ],
+ "failopen_silent": [
+  {
+   "scenario": "demo-payments",
+   "cni": "calico",
+   "groups": "payments/host-probe hostnetwork undefined-hostnetwork: 11",
+   "labels": [
+    "must f1 hostnetwork-under-policy",
+    "must f2 node-exception-segment"
+   ]
+  },
+  {
+   "scenario": "demo-payments",
+   "cni": "cilium",
+   "groups": "payments/host-probe hostnetwork undefined-hostnetwork: 11",
+   "labels": [
+    "must f1 hostnetwork-under-policy",
+    "must f2 node-exception-segment",
+    "may f5 other"
+   ]
+  },
+  {
+   "scenario": "fintech-paylane-hostnet-agent",
+   "cni": "calico",
+   "groups": "fintech-ops/node-agent hostnetwork undefined-hostnetwork: 210",
+   "labels": [
+    "must f1 hostnetwork-under-policy",
+    "must f2 node-exception-segment",
+    "may f3 node-exception-segment",
+    "may f4 node-exception-segment",
+    "may f5 other"
+   ]
+  },
+  {
+   "scenario": "fintech-paylane-hostnet-agent",
+   "cni": "cilium",
+   "groups": "fintech-ops/node-agent hostnetwork undefined-hostnetwork: 210",
+   "labels": [
+    "must f1 hostnetwork-under-policy",
+    "must f2 node-exception-segment",
+    "may f3 node-exception-segment",
+    "may f4 node-exception-segment",
+    "may f5 other",
+    "may f7 cilium-ipblock-cluster-addrs"
+   ]
+  },
+  {
+   "scenario": "iot-voltgrid",
+   "cni": "cilium",
+   "groups": "iot-edge/dashboard-proxy hostport policy: 7; iot-edge/ingest-gateway hostport policy: 7",
+   "labels": [
+    "may f8 other"
+   ]
+  },
+  {
+   "scenario": "saas-formcraft-etp-cluster",
+   "cni": "cilium",
+   "groups": "saas-edge/svc/gateway nodeport undefined-snat: 6",
+   "labels": [
+    "may f2 ipblock-admits-node-ips",
+    "may f3 other"
+   ]
+  }
+ ],
+ "must_totals": {
+  "failopen:no": 8,
+  "kubescape:partial": 8,
+  "netpol:no": 21,
+  "failopen:yes": 13,
+  "kubescape:no": 13
+ },
+ "kubescape_alert_totals": {
+  "C-0041:yes": 3,
+  "C-0260:yes": 1,
+  "C-0041:no": 1,
+  "C-0260:no": 4
+ },
+ "netpol_totals": {
+  "mapped": 18900,
+  "agree_declared": 18657,
+  "disagree_effective": 6568,
+  "diseff:spec-exception": 549,
+  "specexc_np_denied": 549,
+  "diseff:bypass": 4732,
+  "bypass_mapped": 4732,
+  "bypass_np_denied": 4732,
+  "agree_effective": 12332,
+  "same_workload": 1026,
+  "diseff:unknown": 156,
+  "diseff:unreachable": 792,
+  "diseff:overblock": 266,
+  "overblock_mapped": 298,
+  "overblock_np_allowed": 266,
+  "disagree_declared": 243,
+  "diseff:match": 73,
+  "overblock_np_denied": 32
+ }
+}

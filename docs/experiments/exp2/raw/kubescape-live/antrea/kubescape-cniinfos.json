@@ -1,0 +1,67 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:33:46Z",
+                "generation": 1,
+                "name": "fo-exp2-antrea-worker",
+                "resourceVersion": "1274",
+                "uid": "aa54206e-48ef-4f1e-a560-b8e8e9007f01"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/10-antrea.conflist",
+                        "permissions": 420
+                    }
+                ],
+                "nodeName": "fo-exp2-antrea-worker"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:33:46Z"
+            }
+        },
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:33:46Z",
+                "generation": 1,
+                "name": "fo-exp2-antrea-worker2",
+                "resourceVersion": "1276",
+                "uid": "af6a5b4a-3ef3-4efb-abca-9c9d6828c5dd"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/10-antrea.conflist",
+                        "permissions": 420
+                    }
+                ],
+                "nodeName": "fo-exp2-antrea-worker2"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:33:46Z"
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

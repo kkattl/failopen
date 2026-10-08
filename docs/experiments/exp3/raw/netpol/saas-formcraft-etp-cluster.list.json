@@ -1,0 +1,217 @@
+[
+  {
+    "src": "0.0.0.0-192.167.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "0.0.0.0-192.167.255.255",
+    "dst": "saas-edge/gateway[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "192.168.0.0-192.168.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "192.169.0.0-255.255.255.255",
+    "dst": "failopen-oracle/outsider[Pod]",
+    "conn": "All Connections"
+  },
+  {
+    "src": "192.169.0.0-255.255.255.255",
+    "dst": "saas-edge/gateway[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "10.0.0.0-10.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "100.64.0.0-100.127.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "127.0.0.0-127.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "169.254.0.0-169.254.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "172.16.0.0-172.31.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "192.168.0.0-192.168.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "failopen-oracle/outsider[Pod]",
+    "dst": "192.169.0.0-255.255.255.255",
+    "conn": "All Connections"
+  },
+  {
+    "src": "saas-edge/gateway[Deployment]",
+    "dst": "saas-tenant-acme/app[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-edge/gateway[Deployment]",
+    "dst": "saas-tenant-globex/app[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-edge/gateway[Deployment]",
+    "dst": "saas-tenant-initech/app[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-platform/billing[Deployment]",
+    "dst": "saas-tenant-acme/app[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-platform/billing[Deployment]",
+    "dst": "saas-tenant-globex/app[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-platform/billing[Deployment]",
+    "dst": "saas-tenant-initech/app[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-platform/mailer[Deployment]",
+    "dst": "0.0.0.0-9.255.255.255",
+    "conn": "TCP 25,465,587"
+  },
+  {
+    "src": "saas-platform/mailer[Deployment]",
+    "dst": "100.128.0.0-126.255.255.255",
+    "conn": "TCP 25,465,587"
+  },
+  {
+    "src": "saas-platform/mailer[Deployment]",
+    "dst": "11.0.0.0-100.63.255.255",
+    "conn": "TCP 25,465,587"
+  },
+  {
+    "src": "saas-platform/mailer[Deployment]",
+    "dst": "128.0.0.0-169.253.255.255",
+    "conn": "TCP 25,465,587"
+  },
+  {
+    "src": "saas-platform/mailer[Deployment]",
+    "dst": "169.255.0.0-172.15.255.255",
+    "conn": "TCP 25,465,587"
+  },
+  {
+    "src": "saas-platform/mailer[Deployment]",
+    "dst": "172.32.0.0-192.167.255.255",
+    "conn": "TCP 25,465,587"
+  },
+  {
+    "src": "saas-platform/mailer[Deployment]",
+    "dst": "192.169.0.0-255.255.255.255",
+    "conn": "TCP 25,465,587"
+  },
+  {
+    "src": "saas-tenant-acme/app[Deployment]",
+    "dst": "saas-platform/auth[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-tenant-acme/app[Deployment]",
+    "dst": "saas-tenant-acme/db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "saas-tenant-acme/worker[Deployment]",
+    "dst": "saas-platform/mailer[Deployment]",
+    "conn": "TCP 2525"
+  },
+  {
+    "src": "saas-tenant-acme/worker[Deployment]",
+    "dst": "saas-tenant-acme/db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "saas-tenant-globex/app[Deployment]",
+    "dst": "saas-platform/auth[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-tenant-globex/app[Deployment]",
+    "dst": "saas-tenant-globex/db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "saas-tenant-globex/worker[Deployment]",
+    "dst": "saas-platform/mailer[Deployment]",
+    "conn": "TCP 2525"
+  },
+  {
+    "src": "saas-tenant-globex/worker[Deployment]",
+    "dst": "saas-tenant-globex/db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "saas-tenant-initech/app[Deployment]",
+    "dst": "saas-platform/auth[Deployment]",
+    "conn": "TCP 8080"
+  },
+  {
+    "src": "saas-tenant-initech/app[Deployment]",
+    "dst": "saas-tenant-initech/db[StatefulSet]",
+    "conn": "TCP 5432"
+  },
+  {
+    "src": "saas-tenant-initech/worker[Deployment]",
+    "dst": "saas-platform/mailer[Deployment]",
+    "conn": "TCP 2525"
+  },
+  {
+    "src": "saas-tenant-initech/worker[Deployment]",
+    "dst": "saas-tenant-initech/db[StatefulSet]",
+    "conn": "TCP 5432"
+  }
+]

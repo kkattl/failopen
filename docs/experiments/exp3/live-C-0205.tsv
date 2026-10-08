@@ -1,0 +1,11 @@
+variant	kubescape_C-0205	host_sensor_CNINames
+kindnet	passed	Kindnet
+kindnet-legacy	passed	Kindnet
+calico	passed	Calico
+cilium	passed	Cilium
+flannel	failed	Flannel
+canal	passed	Calico,Flannel
+antrea	passed	-
+k3s	passed	-
+k3s-no-policy	passed	-
+flannel-kube-router	failed	Flannel

@@ -1,0 +1,15 @@
+PROFILE  TP  FN  FP must-not  FP unlabeled  may  sev-mismatch  PRECISION     RECALL
+calico   4   0   0            0             0    0             1.00 (4/4)    1.00 (4/4)
+cilium   0   0   0            0             0    0             -             -
+flannel  9   0   0            0             0    0             1.00 (9/9)    1.00 (9/9)
+TOTAL    13  0   0            0             0    0             1.00 (13/13)  1.00 (13/13)
+
+Misses, false positives, severity mismatches:
+  none
+
+Coverage gaps (must labels of classes without a detector yet):
+  hostnetwork-under-policy     2
+  node-exception-segment       2
+
+Labels vs oracle (each is a labelling error or an oracle bug — log the verdict):
+  none

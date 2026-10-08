@@ -1,0 +1,29 @@
+
+##########################################
+# Specific connections and their reasons #
+##########################################
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Connections between failopen-oracle/outsider[Pod] => fintech-ops/node-agent[DaemonSet]:
+
+Denied connections:
+	Denied TCP, UDP, SCTP due to the following policies and rules:
+		Egress (Allowed) due to the system default (Allow all)
+		Ingress (Denied)
+			NetworkPolicy list:
+				- NetworkPolicy 'fintech-ops/default-deny-all' selects fintech-ops/node-agent[DaemonSet], but failopen-oracle/outsider[Pod] is not allowed by any Ingress rule (no rules defined)
+				- NetworkPolicy 'fintech-ops/node-agent' selects fintech-ops/node-agent[DaemonSet], but failopen-oracle/outsider[Pod] is not allowed by any Ingress rule
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Connections between fintech-ops/node-agent[DaemonSet] => failopen-oracle/outsider[Pod]:
+
+Denied connections:
+	Denied TCP, UDP, SCTP due to the following policies and rules:
+		Egress (Denied)
+			NetworkPolicy list:
+				- NetworkPolicy 'fintech-ops/allow-dns-egress' selects fintech-ops/node-agent[DaemonSet], but failopen-oracle/outsider[Pod] is not allowed by any Egress rule
+				- NetworkPolicy 'fintech-ops/default-deny-all' selects fintech-ops/node-agent[DaemonSet], but failopen-oracle/outsider[Pod] is not allowed by any Egress rule (no rules defined)
+				- NetworkPolicy 'fintech-ops/node-agent' selects fintech-ops/node-agent[DaemonSet], but failopen-oracle/outsider[Pod] is not allowed by any Egress rule
+
+		Ingress (Allowed) due to the system default (Allow all)
+

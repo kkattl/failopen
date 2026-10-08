@@ -1,0 +1,73 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:40:36Z",
+                "generation": 1,
+                "name": "fo-exp2-flannel-kube-router-worker",
+                "resourceVersion": "1093",
+                "uid": "0e5d0e5e-bdb9-46a2-b5a2-1443d5b828b3"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/10-flannel.conflist",
+                        "permissions": 420
+                    }
+                ],
+                "CNINames": [
+                    "Flannel"
+                ],
+                "nodeName": "fo-exp2-flannel-kube-router-worker"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:40:36Z"
+            }
+        },
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:40:36Z",
+                "generation": 1,
+                "name": "fo-exp2-flannel-kube-router-worker2",
+                "resourceVersion": "1091",
+                "uid": "29d74ecd-239b-4424-9ae2-46ed2094354a"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/10-flannel.conflist",
+                        "permissions": 420
+                    }
+                ],
+                "CNINames": [
+                    "Flannel"
+                ],
+                "nodeName": "fo-exp2-flannel-kube-router-worker2"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:40:36Z"
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

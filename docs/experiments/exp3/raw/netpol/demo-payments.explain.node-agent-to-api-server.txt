@@ -1,0 +1,18 @@
+
+##########################################
+# Specific connections and their reasons #
+##########################################
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Connections between monitoring/node-agent[Pod] => payments/api-server[Pod]:
+
+Denied connections:
+	Denied TCP, UDP, SCTP due to the following policies and rules:
+		Egress (Allowed) due to the system default (Allow all)
+		Ingress (Denied)
+			NetworkPolicy 'payments/default-deny-all' selects payments/api-server[Pod], but monitoring/node-agent[Pod] is not allowed by any Ingress rule (no rules defined)
+
+
+#########################################################
+# All Connections due to the system default (Allow all) #
+#########################################################
+payments/api-server[Pod] => monitoring/node-agent[Pod]

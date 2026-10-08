@@ -1,0 +1,3 @@
+NAMESPACE     NAME         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE   CONTAINERS    IMAGES                                          SELECTOR
+kube-system   kindnet      3         3         3       3            3           kubernetes.io/os=linux   18s   kindnet-cni   docker.io/kindest/kindnetd:v20260820-69b56db7   app=kindnet
+kube-system   kube-proxy   3         3         3       3            3           kubernetes.io/os=linux   19s   kube-proxy    registry.k8s.io/kube-proxy:v1.37.0              k8s-app=kube-proxy

@@ -1,0 +1,4 @@
+NAME                                   STATUS   ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION     CONTAINER-RUNTIME
+fo-exp2-kindnet-legacy-control-plane   Ready    control-plane   22s   v1.30.0   172.18.0.3    <none>        Debian GNU/Linux 12 (bookworm)   7.0.0-31-generic   containerd://1.7.15
+fo-exp2-kindnet-legacy-worker          Ready    <none>          2s    v1.30.0   172.18.0.2    <none>        Debian GNU/Linux 12 (bookworm)   7.0.0-31-generic   containerd://1.7.15
+fo-exp2-kindnet-legacy-worker2         Ready    <none>          2s    v1.30.0   172.18.0.4    <none>        Debian GNU/Linux 12 (bookworm)   7.0.0-31-generic   containerd://1.7.15

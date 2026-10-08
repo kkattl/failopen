@@ -1,0 +1,96 @@
+0.0.0.0-192.167.255.255 => failopen-oracle/outsider[Pod] : All Connections
+0.0.0.0-192.167.255.255 => health-edge/edge-proxy[Deployment] : TCP 8080
+192.168.0.0-192.168.255.255 => failopen-oracle/outsider[Pod] : All Connections
+192.169.0.0-255.255.255.255 => failopen-oracle/outsider[Pod] : All Connections
+192.169.0.0-255.255.255.255 => health-edge/edge-proxy[Deployment] : TCP 8080
+failopen-oracle/outsider[Pod] => 0.0.0.0-9.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 10.0.0.0-10.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 100.128.0.0-126.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 100.64.0.0-100.127.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 11.0.0.0-100.63.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 127.0.0.0-127.255.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 128.0.0.0-169.253.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 169.254.0.0-169.254.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 169.255.0.0-172.15.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 172.16.0.0-172.31.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 172.32.0.0-192.167.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 192.168.0.0-192.168.255.255 : All Connections
+failopen-oracle/outsider[Pod] => 192.169.0.0-198.51.99.255 : All Connections
+failopen-oracle/outsider[Pod] => 198.51.100.0-198.51.100.255 : All Connections
+failopen-oracle/outsider[Pod] => 198.51.101.0-203.0.113.9 : All Connections
+failopen-oracle/outsider[Pod] => 203.0.113.10-203.0.113.10 : All Connections
+failopen-oracle/outsider[Pod] => 203.0.113.11-255.255.255.255 : All Connections
+health-edge/edge-proxy[Deployment] => health-web/portal[Deployment] : TCP 8080
+health-notify/notifications[Deployment] => 0.0.0.0-9.255.255.255 : TCP 443,587
+health-notify/notifications[Deployment] => 100.128.0.0-126.255.255.255 : TCP 443,587
+health-notify/notifications[Deployment] => 11.0.0.0-100.63.255.255 : TCP 443,587
+health-notify/notifications[Deployment] => 128.0.0.0-169.253.255.255 : TCP 443,587
+health-notify/notifications[Deployment] => 169.255.0.0-172.15.255.255 : TCP 443,587
+health-notify/notifications[Deployment] => 172.32.0.0-192.167.255.255 : TCP 443,587
+health-notify/notifications[Deployment] => 192.169.0.0-198.51.99.255 : TCP 443,587
+health-notify/notifications[Deployment] => 198.51.100.0-198.51.100.255 : TCP 443,587
+health-notify/notifications[Deployment] => 198.51.101.0-203.0.113.9 : TCP 443,587
+health-notify/notifications[Deployment] => 203.0.113.10-203.0.113.10 : TCP 443,587
+health-notify/notifications[Deployment] => 203.0.113.11-255.255.255.255 : TCP 443,587
+health-ops/backup-agent[DaemonSet] => 198.51.100.0-198.51.100.255 : TCP 443
+health-ops/log-shipper[DaemonSet] => 203.0.113.10-203.0.113.10 : TCP 24224
+health-phi/records-api[Deployment] => health-phi/audit-log[StatefulSet] : TCP 8080
+health-phi/records-api[Deployment] => health-phi/imaging[StatefulSet] : TCP 8080
+health-phi/records-api[Deployment] => health-phi/records-db[StatefulSet] : TCP 5432
+health-reporting/reporting-replica[StatefulSet] => health-phi/records-db[StatefulSet] : TCP 5432
+health-reporting/reporting[CronJob] => health-reporting/reporting-replica[StatefulSet] : TCP 5432
+health-web/portal[Deployment] => health-notify/notifications[Deployment] : TCP 8080
+health-web/portal[Deployment] => health-phi/records-api[Deployment] : TCP 8080
+
+Exposure Analysis Result:
+Egress Exposure:
+failopen-oracle/outsider[Pod]                   	=> 	0.0.0.0-9.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	10.0.0.0-10.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	100.128.0.0-126.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	100.64.0.0-100.127.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	11.0.0.0-100.63.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	127.0.0.0-127.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	128.0.0.0-169.253.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	169.254.0.0-169.254.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	169.255.0.0-172.15.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	172.16.0.0-172.31.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	172.32.0.0-192.167.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	192.168.0.0-192.168.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	192.169.0.0-198.51.99.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	198.51.100.0-198.51.100.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	198.51.101.0-203.0.113.9 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	203.0.113.10-203.0.113.10 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	203.0.113.11-255.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	=> 	entire-cluster : All Connections
+health-edge/edge-proxy[Deployment]              	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+health-notify/notifications[Deployment]         	=> 	0.0.0.0-9.255.255.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	100.128.0.0-126.255.255.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	11.0.0.0-100.63.255.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	128.0.0.0-169.253.255.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	169.255.0.0-172.15.255.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	172.32.0.0-192.167.255.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	192.169.0.0-198.51.99.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	198.51.100.0-198.51.100.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	198.51.101.0-203.0.113.9 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	203.0.113.10-203.0.113.10 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	203.0.113.11-255.255.255.255 : TCP 443,587
+health-notify/notifications[Deployment]         	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+health-phi/audit-log[StatefulSet]               	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+health-phi/imaging[StatefulSet]                 	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+health-phi/records-api[Deployment]              	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+health-phi/records-db[StatefulSet]              	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+health-reporting/reporting-replica[StatefulSet] 	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+health-reporting/reporting[CronJob]             	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+health-web/portal[Deployment]                   	=> 	kube-system/[pod with {k8s-app=kube-dns}] : TCP 53,UDP 53
+
+Ingress Exposure:
+failopen-oracle/outsider[Pod]                   	<= 	0.0.0.0-192.167.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	<= 	192.168.0.0-192.168.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	<= 	192.169.0.0-255.255.255.255 : All Connections
+failopen-oracle/outsider[Pod]                   	<= 	entire-cluster : All Connections
+health-edge/edge-proxy[Deployment]              	<= 	0.0.0.0-192.167.255.255 : TCP 8080
+health-edge/edge-proxy[Deployment]              	<= 	192.169.0.0-255.255.255.255 : TCP 8080
+
+Workloads not protected by network policies:
+failopen-oracle/outsider[Pod] is not protected on Egress
+failopen-oracle/outsider[Pod] is not protected on Ingress

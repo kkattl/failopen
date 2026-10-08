@@ -1,0 +1,73 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:26:00Z",
+                "generation": 1,
+                "name": "fo-exp2-cilium-worker",
+                "resourceVersion": "1377",
+                "uid": "95a5d357-fd62-43fd-a663-27088909fd5f"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/05-cilium.conflist",
+                        "permissions": 384
+                    }
+                ],
+                "CNINames": [
+                    "Cilium"
+                ],
+                "nodeName": "fo-exp2-cilium-worker"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:26:00Z"
+            }
+        },
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:26:00Z",
+                "generation": 1,
+                "name": "fo-exp2-cilium-worker2",
+                "resourceVersion": "1378",
+                "uid": "25ca4ec4-3d9c-4020-8c44-f3ff0fd21c13"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/05-cilium.conflist",
+                        "permissions": 384
+                    }
+                ],
+                "CNINames": [
+                    "Cilium"
+                ],
+                "nodeName": "fo-exp2-cilium-worker2"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:26:00Z"
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

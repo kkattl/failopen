@@ -1,0 +1,2 @@
+NAMESPACE     NAME                     DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE   CONTAINERS             IMAGES                                                  SELECTOR
+kube-system   svclb-traefik-b21eef69   3         3         0       3            0           <none>          2s    lb-tcp-80,lb-tcp-443   rancher/klipper-lb:v0.4.17,rancher/klipper-lb:v0.4.17   app=svclb-traefik-b21eef69

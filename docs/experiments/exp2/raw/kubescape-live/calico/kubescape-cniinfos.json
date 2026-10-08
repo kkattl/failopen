@@ -1,0 +1,93 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:23:28Z",
+                "generation": 1,
+                "name": "fo-exp2-calico-worker",
+                "resourceVersion": "1277",
+                "uid": "c1d05c5a-e369-4d83-a9e6-e55974e47713"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/calico-kubeconfig",
+                        "permissions": 384
+                    },
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/10-calico.conflist",
+                        "permissions": 420
+                    }
+                ],
+                "CNINames": [
+                    "Calico"
+                ],
+                "nodeName": "fo-exp2-calico-worker"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:23:28Z"
+            }
+        },
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:23:29Z",
+                "generation": 1,
+                "name": "fo-exp2-calico-worker2",
+                "resourceVersion": "1281",
+                "uid": "46e45146-1bac-4019-9da0-c729d0f4c832"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/calico-kubeconfig",
+                        "permissions": 384
+                    },
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/10-calico.conflist",
+                        "permissions": 420
+                    }
+                ],
+                "CNINames": [
+                    "Calico"
+                ],
+                "nodeName": "fo-exp2-calico-worker2"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:23:29Z"
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

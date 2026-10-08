@@ -1,0 +1,14 @@
+# The oracle's "outsider" probe source (hack/oracle/kube.go): an unlabelled
+# pod in a namespace that no policy selects. Added to the netpol-analyzer
+# input so its verdicts can be compared with the oracle's probes.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: failopen-oracle
+  labels: {kubernetes.io/metadata.name: failopen-oracle}
+---
+apiVersion: v1
+kind: Pod
+metadata: {name: outsider, namespace: failopen-oracle}
+spec:
+  containers: [{name: pause, image: registry.k8s.io/e2e-test-images/agnhost:2.53, args: [pause]}]

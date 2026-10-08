@@ -1,0 +1,95 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:31:20Z",
+                "generation": 1,
+                "name": "fo-exp2-canal-worker",
+                "resourceVersion": "1208",
+                "uid": "befdbc6f-7f82-4575-bc6f-1637ea42cd55"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/calico-kubeconfig",
+                        "permissions": 384
+                    },
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/10-canal.conflist",
+                        "permissions": 420
+                    }
+                ],
+                "CNINames": [
+                    "Calico",
+                    "Flannel"
+                ],
+                "nodeName": "fo-exp2-canal-worker"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:31:20Z"
+            }
+        },
+        {
+            "apiVersion": "hostdata.kubescape.cloud/v1beta1",
+            "kind": "CNIInfo",
+            "metadata": {
+                "creationTimestamp": "2026-10-07T13:31:20Z",
+                "generation": 1,
+                "name": "fo-exp2-canal-worker2",
+                "resourceVersion": "1206",
+                "uid": "98e46eeb-71bb-4efe-96a6-c1f3fcf1b0c3"
+            },
+            "spec": {
+                "CNIConfigFiles": [
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/calico-kubeconfig",
+                        "permissions": 384
+                    },
+                    {
+                        "ownership": {
+                            "gid": 0,
+                            "groupname": "0",
+                            "uid": 0,
+                            "username": "0"
+                        },
+                        "path": "/etc/cni/net.d/10-canal.conflist",
+                        "permissions": 420
+                    }
+                ],
+                "CNINames": [
+                    "Calico",
+                    "Flannel"
+                ],
+                "nodeName": "fo-exp2-canal-worker2"
+            },
+            "status": {
+                "lastSensed": "2026-10-07T13:31:20Z"
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

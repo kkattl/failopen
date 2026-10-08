@@ -1,0 +1,5 @@
+failopen audit — 0 findings
+
+  no divergence found between declared policy and the network
+
+Snapshot: 10 namespaces · 44 pods · 12 services · 28 policies · CNI cilium (enforces: true)
